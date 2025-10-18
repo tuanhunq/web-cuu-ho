@@ -1,0 +1,17 @@
+/* Request page specific styles */
+.form-page{
+  max-width:720px;
+  margin:28px auto;
+  padding:18px;
+}
+.form-page h2{margin-bottom:12px}
+.form-page label{display:block;margin-top:12px;font-weight:700}
+.form-page input,.form-page select,.form-page textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #e6eef6;margin-top:6px}
+.form-page textarea{min-height:120px}
+.form-page .btn{margin-top:12px}
+
+.form-result{background:#f8fffb;border-radius:8px;padding:10px;margin-top:10px;color:#064e3b}
+
+@media (max-width:600px){
+  .form-page{padding:12px;margin:12px}
+}

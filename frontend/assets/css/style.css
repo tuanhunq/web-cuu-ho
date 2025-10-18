@@ -1,0 +1,140 @@
+/* ===============================
+   🌐 CỨU HỘ TOÀN QUỐC - MAIN STYLE
+   =============================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+}
+
+body {
+  background: #f2f5f7;
+  color: #222;
+  line-height: 1.6;
+}
+
+/* ===== SITE HEADER / NAV ===== */
+.nav{
+  display:flex;align-items:center;justify-content:space-between;padding:12px 18px;background:white;border-bottom:1px solid #eef2f7;box-shadow:0 4px 18px rgba(2,6,23,0.03)
+}
+.nav .brand{display:flex;align-items:center;gap:10px}
+.nav .logo{width:44px;height:44px;border-radius:8px;background:#00a36c;color:white;display:flex;align-items:center;justify-content:center;font-weight:800}
+.nav .nav-links{display:flex;gap:12px;align-items:center}
+.nav .nav-links a{color:#0f172a;text-decoration:none;font-weight:600}
+.nav .actions{display:flex;gap:8px;align-items:center}
+.btn-outline{background:transparent;border:1px solid #e6eef6;padding:8px 12px;border-radius:8px}
+
+/* active nav link */
+.nav .nav-links a.active{color:#00a36c;border-bottom:2px solid #00a36c;padding-bottom:6px}
+
+/* header action tweaks */
+.nav .actions .btn-primary{padding:8px 14px}
+
+@media (max-width:700px){
+  .nav{flex-direction:column;align-items:flex-start;gap:8px}
+  .nav .nav-links{flex-wrap:wrap}
+  .nav .actions{width:100%;justify-content:flex-end}
+}
+
+/* ===== AUTH PAGES ===== */
+.auth{max-width:420px;margin:48px auto;padding:18px;background:#fff;border-radius:12px;box-shadow:0 6px 20px rgba(2,6,23,0.06)}
+.auth h2{margin-bottom:12px}
+.auth input{width:100%;padding:10px;border-radius:8px;border:1px solid #e6eef6;margin-bottom:10px}
+.auth .btn{width:100%;display:block}
+
+/* ===== HERO ===== */
+.hero {
+  text-align: center;
+  background: linear-gradient(135deg, #00a36c, #0097e6);
+  color: #fff;
+  padding: 40px 20px;
+  border-radius: 0 0 25px 25px;
+}
+
+.hero h1 {
+  font-size: 2.4rem;
+  margin-bottom: 10px;
+}
+
+/* ===== MAP ===== */
+#map {
+  width: 90%;
+  height: 480px;
+  margin: 20px auto;
+  border-radius: 20px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* ===== CARD CONTAINER ===== */
+.card-container {
+  width: 90%;
+  margin: 20px auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.report-card {
+  background: #fff;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease;
+}
+
+.report-card:hover {
+  transform: translateY(-5px);
+}
+
+.tag {
+  font-size: 0.85rem;
+  padding: 4px 8px;
+  border-radius: 8px;
+  color: #fff;
+}
+
+.tag-need {
+  background: #e84118;
+}
+
+/* ===== BUTTONS ===== */
+.btn {
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn-primary {
+  background: #00a36c;
+  color: #fff;
+}
+
+.btn-success {
+  background: #0097e6;
+  color: #fff;
+}
+
+/* ===== MODAL ===== */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 30px;
+  border-radius: 15px;
+  width: 400px;
+}
+@media (max-width:600px){
+  #map{height:320px}
+  .modal-content{width:92%}
+}

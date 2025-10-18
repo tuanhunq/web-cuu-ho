@@ -1,0 +1,67 @@
+<p class="hide-text">Gửi yêu cầu cứu hộ</p>
+<!-- public/request.html -->
+<!doctype html>
+<html lang="vi">
+  <head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Gửi yêu cầu - Cứu Hộ</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="assets/css/request.css" />
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="logo">CH</div>
+      <div>
+        <div style="font-weight:800">Cứu Hộ Toàn Quốc</div>
+        <div style="font-size:12px;color:var(--muted)">Mạng lưới cứu hộ & trợ giúp 24/7</div>
+      </div>
+    </div>
+
+    <nav>
+      <a href="index.html">Trang chủ</a>
+      <a href="index.html#fullMap">Bản đồ</a>
+      <a href="tracking.html">Theo dõi</a>
+      <a href="index.html#view-team">Đội cứu hộ</a>
+      <a href="admin.html">Admin</a>
+    </nav>
+
+    <div class="actions">
+      <a class="btn btn-outline" href="login.html">Đăng nhập</a>
+      <button class="btn btn-primary" id="btn-sos">🆘 Gửi yêu cầu cứu hộ</button>
+      <a class="btn btn-primary" href="request.html" style="margin-left:8px">📝 Trang gửi yêu cầu</a>
+    </div>
+  </header>
+
+  <main class="form-page">
+    <h2>Gửi yêu cầu cứu hộ</h2>
+    <form id="reqForm">
+      <label>Loại cứu hộ</label>
+      <select id="type">
+        <option value="xe-may">Xe máy</option>
+        <option value="oto">Ô tô</option>
+        <option value="thientai">Thiên tai</option>
+        <option value="yte">Cứu hộ y tế</option>
+      </select>
+
+      <label>Số điện thoại</label>
+      <input id="phone" placeholder="Số điện thoại" required />
+
+      <label>Vị trí (tự động hoặc nhập)</label>
+      <input id="locationText" placeholder="Địa chỉ hoặc toạ độ" />
+
+      <button class="btn" type="button" id="getLocation">Lấy vị trí GPS</button>
+
+      <label>Mô tả</label>
+      <textarea id="desc" placeholder="Mô tả tình huống"></textarea>
+
+      <button class="btn" type="submit">Gửi yêu cầu</button>
+    </form>
+
+    <div id="result" class="card" style="display:none;margin-top:12px"></div>
+  </main>
+
+  <script src="assets/js/request.js"></script>
+</body>
+</html>
