@@ -36,6 +36,7 @@
 
   <main class="form-page">
     <h2>Gửi yêu cầu cứu hộ</h2>
+    <div class="form-card">
     <form id="reqForm">
       <label>Loại cứu hộ</label>
       <select id="type">
@@ -51,13 +52,17 @@
       <label>Vị trí (tự động hoặc nhập)</label>
       <input id="locationText" placeholder="Địa chỉ hoặc toạ độ" />
 
-      <button class="btn" type="button" id="getLocation">Lấy vị trí GPS</button>
+  <button class="btn get-loc" type="button" id="getLocation">Lấy vị trí GPS</button>
 
       <label>Mô tả</label>
       <textarea id="desc" placeholder="Mô tả tình huống"></textarea>
 
-      <button class="btn" type="submit">Gửi yêu cầu</button>
+      <div class="form-actions">
+        <div style="flex:1"></div>
+        <button class="btn submit" type="submit">Gửi yêu cầu</button>
+      </div>
     </form>
+    </div>
 
     <div id="result" class="card" style="display:none;margin-top:12px"></div>
   </main>

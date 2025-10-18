@@ -1,17 +1,65 @@
 /* Request page specific styles */
 .form-page{
-  max-width:720px;
+  max-width:780px;
   margin:28px auto;
-  padding:18px;
+  padding:0 16px;
 }
-.form-page h2{margin-bottom:12px}
-.form-page label{display:block;margin-top:12px;font-weight:700}
-.form-page input,.form-page select,.form-page textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #e6eef6;margin-top:6px}
-.form-page textarea{min-height:120px}
-.form-page .btn{margin-top:12px}
 
-.form-result{background:#f8fffb;border-radius:8px;padding:10px;margin-top:10px;color:#064e3b}
+.form-page > h2{
+  margin:18px 0;
+  text-align:center;
+}
+
+/* card wrapper for the form */
+.form-card{
+  background: #fff;
+  padding:18px;
+  border-radius:12px;
+  box-shadow: 0 8px 30px rgba(2,6,23,0.06);
+}
+
+.form-page label{display:block;margin-top:12px;font-weight:700}
+.form-page input,.form-page select,.form-page textarea{width:100%;padding:12px;border-radius:8px;border:1px solid #e6eef6;margin-top:6px;font-size:14px}
+.form-page textarea{min-height:140px}
+
+/* Buttons: align get-location and submit nicely */
+.form-actions{
+  display:flex;
+  gap:10px;
+  margin-top:14px;
+  align-items:center;
+  justify-content:flex-end;
+  flex-wrap:wrap;
+}
+
+.form-actions .btn{margin:0}
+.form-actions .btn.get-loc{
+  background:transparent;
+  border:1px dashed #cdebe6;
+  color:#00683f;
+  padding:8px 12px;
+}
+.form-actions .btn.submit{
+  background:#00a36c;
+  color:#fff;
+  padding:10px 14px;
+  border-radius:8px;
+  border:0;
+}
+
+/* Result card */
+#result.card{
+  display:block; /* default hidden inline-style in HTML may toggle this */
+  background:#f8fffb;
+  border-radius:8px;
+  padding:12px;
+  margin-top:12px;
+  color:#064e3b;
+  border-left:4px solid #00a36c;
+}
 
 @media (max-width:600px){
   .form-page{padding:12px;margin:12px}
+  .form-actions{flex-direction:column;align-items:stretch}
+  .form-actions .btn{width:100%}
 }

@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const type = document.getElementById('type')?.value || '';
     const phone = document.getElementById('phone')?.value.trim() || '';
@@ -38,16 +38,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
     showResult('Đang gửi yêu cầu...');
 
-    // simulate network send; replace with real fetch to backend if available
-    setTimeout(() => {
-      const id = 'REQ-' + Date.now().toString().slice(-6);
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch('/api/rescue', {
+        method: 'POST',
+        headers: Object.assign({ 'Content-Type': 'application/json' }, token ? { Authorization: 'Bearer ' + token } : {}),
+        body: JSON.stringify({ type, phone, location: { text: locationText }, description: desc })
+      });
+
+      const json = await res.json();
+      if (!res.ok) {
+        showResult(json.message || 'Lỗi gửi yêu cầu', false);
+        return;
+      }
+
+      // backend returns report object
+      const id = json.report?._id || json.report?.id || json.id || ('REQ-' + Date.now().toString().slice(-6));
       showResult('✅ Yêu cầu đã gửi. Mã: ' + id);
       form.reset();
-      // optionally link to tracking page
       const follow = document.createElement('div');
       follow.style.marginTop = '8px';
       follow.innerHTML = `<a href="tracking.html#${id}" class="btn btn-primary">Theo dõi yêu cầu ${id}</a>`;
       resultBox.appendChild(follow);
-    }, 900);
+    } catch (err) {
+      console.error('send request error', err);
+      showResult('Lỗi kết nối tới server: ' + (err.message || ''), false);
+    }
   });
 });
