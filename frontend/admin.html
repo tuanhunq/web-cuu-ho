@@ -1,27 +1,2520 @@
-<p class="hide-text">Giao diện quản trị</p>
-<!-- public/admin.html -->
-<!doctype html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Admin - Cứu Hộ</title>
-  <link rel="stylesheet" href="assets/css/style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Trị Hệ Thống - Cứu Hộ Quốc Gia</title>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        :root {
+            --primary: #dc2626;
+            --primary-light: #fecaca;
+            --primary-dark: #b91c1c;
+            --secondary: #1e40af;
+            --accent: #f59e0b;
+            --dark: #1f2937;
+            --light: #f9fafb;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            min-height: 100vh;
+            color: #374151;
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .sidebar {
+            background: linear-gradient(180deg, var(--dark) 0%, #111827 100%);
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .sidebar.collapsed {
+            width: 80px;
+        }
+        
+        .sidebar.collapsed .sidebar-text,
+        .sidebar.collapsed .logo-text,
+        .sidebar.collapsed .user-info {
+            opacity: 0;
+            visibility: hidden;
+            width: 0;
+            height: 0;
+        }
+        
+        .nav-item {
+            position: relative;
+            transition: all 0.3s ease;
+            border-radius: 12px;
+            margin: 4px 12px;
+        }
+        
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(4px);
+        }
+        
+        .nav-item.active {
+            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-dark) 100%);
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+        }
+        
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 60%;
+            background: white;
+            border-radius: 0 4px 4px 0;
+        }
+        
+        .main-content {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(229, 231, 235, 0.8);
+        }
+        
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.05) 0%, transparent 100%);
+            border-radius: 0 16px 0 100px;
+        }
+        
+        .badge {
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.025em;
+        }
+        
+        .badge-success {
+            background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+            color: white;
+        }
+        
+        .badge-warning {
+            background: linear-gradient(135deg, var(--warning) 0%, #d97706 100%);
+            color: white;
+        }
+        
+        .badge-danger {
+            background: linear-gradient(135deg, var(--danger) 0%, var(--primary-dark) 100%);
+            color: white;
+        }
+        
+        .badge-info {
+            background: linear-gradient(135deg, var(--info) 0%, #1d4ed8 100%);
+            color: white;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
+        }
+        
+        .modal {
+            transition: all 0.3s ease;
+        }
+        
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .table-row {
+            transition: all 0.2s ease;
+        }
+        
+        .table-row:hover {
+            background: linear-gradient(90deg, #fef2f2 0%, #fef2f2 100%);
+            transform: scale(1.01);
+        }
+        
+        .progress-bar {
+            height: 6px;
+            border-radius: 3px;
+            background: #e5e7eb;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+        
+        .notification-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--danger);
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+        
+        .floating-action {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+        
+        .floating-action:hover {
+            transform: scale(1.1) rotate(90deg);
+        }
+        
+        .search-box {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(229, 231, 235, 0.8);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .shadow-custom {
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        }
+        
+        .data-sync-status {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+        
+        .sync-success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .sync-error {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .sync-pending {
+            background: var(--warning);
+            color: white;
+        }
+    </style>
 </head>
-<body>
-  <header class="nav">
-    <div class="brand">🧩 Admin Dashboard</div>
-    <div class="nav-links"><a href="index.html">Trang chủ</a></div>
-  </header>
-
-  <main style="padding:16px;max-width:1200px;margin:0 auto">
-    <h2>Danh sách yêu cầu (Admin)</h2>
-    <div style="margin:12px 0">
-      <button id="load" class="btn">Tải danh sách</button>
+<body class="bg-gray-50">
+    <!-- Data Sync Status -->
+    <div id="sync-status" class="data-sync-status sync-success hidden">
+        <i class="fas fa-check-circle mr-2"></i>
+        <span>Dữ liệu đã đồng bộ</span>
     </div>
-    <div id="list"></div>
-  </main>
 
-  <script src="assets/js/admin.js"></script>
+    <!-- Layout Container -->
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <div class="sidebar w-80 flex flex-col z-20">
+            <!-- Logo -->
+            <div class="p-6 border-b border-gray-700 flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-shield-alt text-white text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <h1 class="text-xl font-bold text-white logo-text">CỨU HỘ QUỐC GIA</h1>
+                        <p class="text-xs text-gray-300 logo-text">Trung tâm điều hành</p>
+                    </div>
+                </div>
+                <button id="sidebar-toggle" class="text-gray-400 hover:text-white transition p-2 rounded-lg hover:bg-gray-700">
+                    <i class="fas fa-bars text-lg"></i>
+                </button>
+            </div>
+            
+            <!-- Navigation -->
+            <div class="flex-1 overflow-y-auto py-6">
+                <nav class="space-y-2 px-4">
+                    <a href="#" class="nav-item active flex items-center px-4 py-3 text-white" data-tab="dashboard">
+                        <i class="fas fa-chart-pie text-lg w-6 text-center"></i>
+                        <span class="sidebar-text ml-4 font-medium">Tổng quan hệ thống</span>
+                    </a>
+                    <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-300 hover:text-white" data-tab="news">
+                        <i class="fas fa-newspaper text-lg w-6 text-center"></i>
+                        <span class="sidebar-text ml-4 font-medium">Quản lý Bản tin</span>
+                    </a>
+                    <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-300 hover:text-white" data-tab="reports">
+                        <i class="fas fa-exclamation-triangle text-lg w-6 text-center"></i>
+                        <span class="sidebar-text ml-4 font-medium">Báo cáo khẩn cấp</span>
+                        <span class="badge badge-danger ml-auto sidebar-text" id="reports-count">12</span>
+                    </a>
+                    <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-300 hover:text-white" data-tab="keys">
+                        <i class="fas fa-key text-lg w-6 text-center"></i>
+                        <span class="sidebar-text ml-4 font-medium">Quản lý Key ID</span>
+                    </a>
+                    <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-300 hover:text-white" data-tab="users">
+                        <i class="fas fa-users text-lg w-6 text-center"></i>
+                        <span class="sidebar-text ml-4 font-medium">Quản lý Người dùng</span>
+                    </a>
+                    <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-300 hover:text-white" data-tab="settings">
+                        <i class="fas fa-cogs text-lg w-6 text-center"></i>
+                        <span class="sidebar-text ml-4 font-medium">Cài đặt hệ thống</span>
+                    </a>
+                </nav>
+                
+                <!-- System Status -->
+                <div class="mt-8 mx-4 p-4 bg-gray-800 rounded-xl sidebar-text">
+                    <h3 class="text-white font-semibold mb-3">Trạng thái hệ thống</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <div class="flex justify-between text-sm text-gray-300 mb-1">
+                                <span>Hiệu suất</span>
+                                <span>92%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill bg-green-500" style="width: 92%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm text-gray-300 mb-1">
+                                <span>Bộ nhớ</span>
+                                <span>78%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill bg-yellow-500" style="width: 78%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm text-gray-300 mb-1">
+                                <span>Lưu trữ</span>
+                                <span>65%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill bg-blue-500" style="width: 65%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- User Profile -->
+            <div class="p-4 border-t border-gray-700">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-gradient-to-br from-red-400 to-red-500 rounded-full flex items-center justify-center shadow-md">
+                        <i class="fas fa-user text-white"></i>
+                    </div>
+                    <div class="ml-3 user-info">
+                        <p class="text-sm font-medium text-white">Nguyễn Văn Admin</p>
+                        <p class="text-xs text-gray-400">Quản trị viên cấp cao</p>
+                    </div>
+                    <button class="ml-auto text-gray-400 hover:text-white transition user-info">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content flex-1 overflow-y-auto ml-0 transition-all duration-300">
+            <!-- Header -->
+            <header class="glass-effect shadow-sm sticky top-0 z-10">
+                <div class="flex justify-between items-center px-8 py-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-800" id="page-title">Tổng quan hệ thống</h2>
+                        <p class="text-sm text-gray-600 mt-1" id="page-description">Thống kê và phân tích toàn bộ hệ thống cứu hộ quốc gia</p>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="relative search-box rounded-xl">
+                            <input type="text" placeholder="Tìm kiếm..." class="pl-12 pr-4 py-3 bg-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 w-80">
+                            <i class="fas fa-search absolute left-4 top-3.5 text-gray-400"></i>
+                        </div>
+                        <button class="relative p-3 text-gray-600 hover:text-gray-800 rounded-xl hover:bg-gray-100 transition">
+                            <i class="fas fa-bell text-xl"></i>
+                            <div class="notification-dot"></div>
+                        </button>
+                        <button id="sync-data-btn" class="p-3 text-gray-600 hover:text-gray-800 rounded-xl hover:bg-gray-100 transition" title="Đồng bộ dữ liệu">
+                            <i class="fas fa-sync-alt text-xl"></i>
+                        </button>
+                        <button class="p-3 text-gray-600 hover:text-gray-800 rounded-xl hover:bg-gray-100 transition">
+                            <i class="fas fa-cog text-xl"></i>
+                        </button>
+                        <div class="w-px h-8 bg-gray-300"></div>
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-gradient-to-br from-red-400 to-red-500 rounded-full flex items-center justify-center shadow-md">
+                                <i class="fas fa-user text-white"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-800">Nguyễn Văn Admin</p>
+                                <p class="text-xs text-gray-500">Quản trị viên</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <main class="p-8">
+                <!-- Dashboard Tab -->
+                <div id="dashboard" class="tab-content active">
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div class="stat-card card p-6">
+                            <div class="flex items-center">
+                                <div class="w-14 h-14 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg">
+                                    <i class="fas fa-exclamation-triangle text-white text-xl"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <p class="text-sm font-medium text-gray-500">Sự cố đang xử lý</p>
+                                    <p class="text-2xl font-bold text-gray-800" id="active-incidents">24</p>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <div class="flex items-center text-sm">
+                                    <span class="text-green-500 flex items-center font-medium">
+                                        <i class="fas fa-arrow-up mr-1"></i> 12%
+                                    </span>
+                                    <span class="text-gray-500 ml-2">so với tuần trước</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card card p-6">
+                            <div class="flex items-center">
+                                <div class="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+                                    <i class="fas fa-newspaper text-white text-xl"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <p class="text-sm font-medium text-gray-500">Bản tin đã đăng</p>
+                                    <p class="text-2xl font-bold text-gray-800" id="total-news">156</p>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <div class="flex items-center text-sm">
+                                    <span class="text-green-500 flex items-center font-medium">
+                                        <i class="fas fa-arrow-up mr-1"></i> 8%
+                                    </span>
+                                    <span class="text-gray-500 ml-2">so với tháng trước</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card card p-6">
+                            <div class="flex items-center">
+                                <div class="w-14 h-14 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
+                                    <i class="fas fa-users text-white text-xl"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <p class="text-sm font-medium text-gray-500">Người dùng hoạt động</p>
+                                    <p class="text-2xl font-bold text-gray-800" id="active-users">2,847</p>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <div class="flex items-center text-sm">
+                                    <span class="text-green-500 flex items-center font-medium">
+                                        <i class="fas fa-arrow-up mr-1"></i> 5%
+                                    </span>
+                                    <span class="text-gray-500 ml-2">so với tháng trước</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card card p-6">
+                            <div class="flex items-center">
+                                <div class="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                                    <i class="fas fa-key text-white text-xl"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <p class="text-sm font-medium text-gray-500">Key ID đang hoạt động</p>
+                                    <p class="text-2xl font-bold text-gray-800" id="active-keys">42</p>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <div class="flex items-center text-sm">
+                                    <span class="text-red-500 flex items-center font-medium">
+                                        <i class="fas fa-arrow-down mr-1"></i> 3%
+                                    </span>
+                                    <span class="text-gray-500 ml-2">so với tháng trước</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Charts and Recent Activity -->
+                    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
+                        <!-- Activity Chart -->
+                        <div class="card p-6 xl:col-span-2">
+                            <div class="flex justify-between items-center mb-6">
+                                <h3 class="text-lg font-semibold text-gray-800">Hoạt động hệ thống (7 ngày)</h3>
+                                <div class="flex space-x-2">
+                                    <button class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-lg font-medium">Tuần</button>
+                                    <button class="px-3 py-1 text-sm bg-red-500 text-white rounded-lg font-medium">Tháng</button>
+                                    <button class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-lg font-medium">Năm</button>
+                                </div>
+                            </div>
+                            <div class="h-80">
+                                <canvas id="activityChart"></canvas>
+                            </div>
+                        </div>
+                        
+                        <!-- Recent Reports -->
+                        <div class="card p-6">
+                            <div class="flex justify-between items-center mb-6">
+                                <h3 class="text-lg font-semibold text-gray-800">Báo cáo gần đây</h3>
+                                <a href="#" class="text-sm text-red-600 hover:text-red-800 font-medium">Xem tất cả</a>
+                            </div>
+                            <div class="space-y-4 max-h-80 overflow-y-auto" id="recent-reports">
+                                <!-- Recent reports will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions and System Overview -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Quick Actions -->
+                        <div class="card p-6">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-6">Thao tác nhanh</h3>
+                            <div class="grid grid-cols-2 gap-4">
+                                <button class="quick-action-btn flex flex-col items-center justify-center p-4 bg-red-50 rounded-xl hover:bg-red-100 transition group" data-action="add-news">
+                                    <div class="w-12 h-12 bg-red-500 rounded-xl flex items-center justify-center text-white mb-3 group-hover:scale-110 transition">
+                                        <i class="fas fa-plus-circle text-lg"></i>
+                                    </div>
+                                    <span class="text-sm font-medium text-gray-800">Thêm bản tin</span>
+                                </button>
+                                <button class="quick-action-btn flex flex-col items-center justify-center p-4 bg-blue-50 rounded-xl hover:bg-blue-100 transition group" data-action="add-key">
+                                    <div class="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center text-white mb-3 group-hover:scale-110 transition">
+                                        <i class="fas fa-key text-lg"></i>
+                                    </div>
+                                    <span class="text-sm font-medium text-gray-800">Tạo Key mới</span>
+                                </button>
+                                <button class="quick-action-btn flex flex-col items-center justify-center p-4 bg-green-50 rounded-xl hover:bg-green-100 transition group" data-action="add-user">
+                                    <div class="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center text-white mb-3 group-hover:scale-110 transition">
+                                        <i class="fas fa-user-plus text-lg"></i>
+                                    </div>
+                                    <span class="text-sm font-medium text-gray-800">Thêm người dùng</span>
+                                </button>
+                                <button class="quick-action-btn flex flex-col items-center justify-center p-4 bg-purple-50 rounded-xl hover:bg-purple-100 transition group" data-action="view-reports">
+                                    <div class="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center text-white mb-3 group-hover:scale-110 transition">
+                                        <i class="fas fa-chart-bar text-lg"></i>
+                                    </div>
+                                    <span class="text-sm font-medium text-gray-800">Xem báo cáo</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- System Overview -->
+                        <div class="card p-6 lg:col-span-2">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-6">Tổng quan hệ thống</h3>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                                <div class="text-center">
+                                    <div class="w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center text-white mx-auto mb-3 shadow-md">
+                                        <i class="fas fa-bullhorn text-xl"></i>
+                                    </div>
+                                    <p class="text-sm text-gray-600">Sự cố hôm nay</p>
+                                    <p class="text-2xl font-bold text-gray-800 mt-1" id="today-incidents">8</p>
+                                </div>
+                                <div class="text-center">
+                                    <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center text-white mx-auto mb-3 shadow-md">
+                                        <i class="fas fa-check-circle text-xl"></i>
+                                    </div>
+                                    <p class="text-sm text-gray-600">Đã giải quyết</p>
+                                    <p class="text-2xl font-bold text-gray-800 mt-1" id="resolved-incidents">142</p>
+                                </div>
+                                <div class="text-center">
+                                    <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center text-white mx-auto mb-3 shadow-md">
+                                        <i class="fas fa-map-marker-alt text-xl"></i>
+                                    </div>
+                                    <p class="text-sm text-gray-600">Tỉnh thành</p>
+                                    <p class="text-2xl font-bold text-gray-800 mt-1" id="total-provinces">63</p>
+                                </div>
+                                <div class="text-center">
+                                    <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center text-white mx-auto mb-3 shadow-md">
+                                        <i class="fas fa-clock text-xl"></i>
+                                    </div>
+                                    <p class="text-sm text-gray-600">Thời gian phản hồi</p>
+                                    <p class="text-2xl font-bold text-gray-800 mt-1" id="avg-response-time">5.2p</p>
+                                </div>
+                            </div>
+                            <div class="mt-6 pt-6 border-t border-gray-200">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <p class="text-sm text-gray-600">Thời gian hoạt động</p>
+                                        <p class="text-lg font-bold text-gray-800">99.8%</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-sm text-gray-600">Phiên bản hệ thống</p>
+                                        <p class="text-lg font-bold text-gray-800">v2.4.1</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- News Management Tab -->
+                <div id="news" class="tab-content">
+                    <div class="card p-6 mb-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-800">Quản lý Bản tin</h3>
+                                <p class="text-gray-600 mt-1">Quản lý và xuất bản các bản tin khẩn cấp</p>
+                            </div>
+                            <div class="flex space-x-3">
+                                <button id="sync-news-btn" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition flex items-center">
+                                    <i class="fas fa-sync-alt mr-2"></i>
+                                    Đồng bộ từ trang tin
+                                </button>
+                                <button id="export-news-btn" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition flex items-center">
+                                    <i class="fas fa-download mr-2"></i>
+                                    Xuất Excel
+                                </button>
+                                <button id="add-news-btn" class="btn-primary text-white px-5 py-3 rounded-xl font-medium flex items-center">
+                                    <i class="fas fa-plus mr-2"></i>
+                                    Thêm Bản tin mới
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="overflow-x-auto rounded-xl shadow-custom">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tiêu đề</th>
+                                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày</th>
+                                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Loại</th>
+                                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
+                                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200" id="news-table-body">
+                                    <!-- News data will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Reports Management Tab -->
+                <div id="reports" class="tab-content">
+                    <div class="card p-6 mb-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-800">Quản lý Báo cáo Khẩn cấp</h3>
+                                <p class="text-gray-600 mt-1">Xem và xử lý các báo cáo khẩn cấp từ người dùng</p>
+                            </div>
+                            <div class="flex space-x-3">
+                                <button id="filter-reports-btn" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition flex items-center">
+                                    <i class="fas fa-filter mr-2"></i>
+                                    Lọc
+                                </button>
+                                <button id="export-reports-btn" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition flex items-center">
+                                    <i class="fas fa-download mr-2"></i>
+                                    Xuất Excel
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="overflow-x-auto rounded-xl shadow-custom">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Loại sự cố</th>
+                                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Địa điểm</th>
+                                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mức độ</th>
+                                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thời gian</th>
+                                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
+                                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200" id="reports-table-body">
+                                    <!-- Reports data will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Keys Management Tab -->
+                <div id="keys" class="tab-content">
+                    <div class="card p-6 mb-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-800">Quản lý Key ID</h3>
+                                <p class="text-gray-600 mt-1">Tạo và quản lý các Key ID cho đơn vị cứu hộ</p>
+                            </div>
+                            <button id="add-key-btn" class="btn-primary text-white px-5 py-3 rounded-xl font-medium flex items-center">
+                                <i class="fas fa-plus mr-2"></i>
+                                Tạo Key mới
+                            </button>
+                        </div>
+                        
+                        <div class="overflow-x-auto rounded-xl shadow-custom">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Key ID</th>
+                                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Loại Key</th>
+                                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Người sở hữu</th>
+                                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày tạo</th>
+                                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hạn sử dụng</th>
+                                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
+                                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200" id="keys-table-body">
+                                    <!-- Keys data will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Users Management Tab -->
+                <div id="users" class="tab-content">
+                    <div class="card p-6 mb-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-800">Quản lý Người dùng</h3>
+                                <p class="text-gray-600 mt-1">Quản lý tài khoản người dùng và phân quyền</p>
+                            </div>
+                            <button id="add-user-btn" class="btn-primary text-white px-5 py-3 rounded-xl font-medium flex items-center">
+                                <i class="fas fa-plus mr-2"></i>
+                                Thêm Người dùng
+                            </button>
+                        </div>
+                        
+                        <div class="overflow-x-auto rounded-xl shadow-custom">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tên đăng nhập</th>
+                                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Họ tên</th>
+                                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vai trò</th>
+                                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
+                                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200" id="users-table-body">
+                                    <!-- Users data will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Settings Tab -->
+                <div id="settings" class="tab-content">
+                    <div class="card p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-6">Cài đặt Hệ thống</h3>
+                        <p class="text-gray-600">Nội dung cài đặt hệ thống sẽ được hiển thị tại đây.</p>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Floating Action Button -->
+    <div class="floating-action" id="quick-action-btn">
+        <i class="fas fa-plus"></i>
+    </div>
+
+    <!-- News Modal -->
+    <div id="news-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 modal">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-screen overflow-y-auto">
+            <div class="p-8">
+                <div class="flex justify-between items-center mb-8">
+                    <h3 id="news-modal-title" class="text-2xl font-bold text-gray-900">Thêm Bản tin mới</h3>
+                    <button id="close-news-modal" class="text-gray-400 hover:text-gray-500 p-2 rounded-full hover:bg-gray-100">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <form id="news-form" class="space-y-6">
+                    <input type="hidden" id="news-id" value="">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="news-title" class="block text-sm font-medium text-gray-700 mb-2">Tiêu đề *</label>
+                            <input type="text" id="news-title" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                        </div>
+                        <div>
+                            <label for="news-date" class="block text-sm font-medium text-gray-700 mb-2">Ngày *</label>
+                            <input type="date" id="news-date" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="news-type" class="block text-sm font-medium text-gray-700 mb-2">Loại *</label>
+                            <select id="news-type" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                                <option value="">Chọn loại</option>
+                                <option value="thien-tai">Thiên tai</option>
+                                <option value="tai-nan">Tai nạn</option>
+                                <option value="cuu-ho">Cứu hộ</option>
+                                <option value="canh-bao">Cảnh báo</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="news-status" class="block text-sm font-medium text-gray-700 mb-2">Trạng thái</label>
+                            <select id="news-status" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                                <option value="published">Đã đăng</option>
+                                <option value="draft">Bản nháp</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="news-location" class="block text-sm font-medium text-gray-700 mb-2">Vị trí (cách nhau bằng dấu phẩy) *</label>
+                        <input type="text" id="news-location" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                    </div>
+                    <div>
+                        <label for="news-img" class="block text-sm font-medium text-gray-700 mb-2">URL Hình ảnh *</label>
+                        <input type="url" id="news-img" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                        <div id="image-preview" class="mt-2"></div>
+                    </div>
+                    <div>
+                        <label for="news-content" class="block text-sm font-medium text-gray-700 mb-2">Nội dung (HTML) *</label>
+                        <textarea id="news-content" rows="8" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"></textarea>
+                    </div>
+                    <div class="flex justify-end space-x-4 pt-4">
+                        <button type="button" id="cancel-news-btn" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition">
+                            Hủy bỏ
+                        </button>
+                        <button type="submit" class="btn-primary text-white px-6 py-3 rounded-xl font-medium flex items-center">
+                            <i class="fas fa-save mr-2"></i>
+                            Lưu Bản tin
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- News Detail Modal -->
+    <div id="news-detail-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 modal">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-screen overflow-y-auto">
+            <div class="p-8">
+                <div class="flex justify-between items-center mb-8">
+                    <h3 class="text-2xl font-bold text-gray-900">Chi tiết Bản tin</h3>
+                    <button id="close-news-detail-modal" class="text-gray-400 hover:text-gray-500 p-2 rounded-full hover:bg-gray-100">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-6">
+                    <div>
+                        <img id="detail-news-img" src="" alt="" class="w-full h-64 object-cover rounded-xl mb-4">
+                        <h2 id="detail-news-title" class="text-2xl font-bold text-gray-900 mb-4"></h2>
+                        
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <p class="text-sm text-gray-600">Ngày đăng</p>
+                                <p id="detail-news-date" class="font-medium"></p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600">Loại tin</p>
+                                <p id="detail-news-type" class="font-medium"></p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600">Địa điểm</p>
+                                <p id="detail-news-location" class="font-medium"></p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600">Trạng thái</p>
+                                <p id="detail-news-status" class="font-medium"></p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 class="text-lg font-semibold text-gray-800 mb-3">Nội dung</h4>
+                        <div id="detail-news-content" class="prose max-w-none bg-gray-50 p-4 rounded-lg"></div>
+                    </div>
+                    
+                    <div class="flex justify-end space-x-4 pt-6 border-t">
+                        <button id="edit-from-detail-btn" class="btn-primary text-white px-6 py-3 rounded-xl font-medium flex items-center">
+                            <i class="fas fa-edit mr-2"></i>
+                            Sửa Bản tin
+                        </button>
+                        <button id="close-detail-modal" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition">
+                            Đóng
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Key Generation Modal -->
+    <div id="key-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 modal">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full">
+            <div class="p-8">
+                <div class="flex justify-between items-center mb-8">
+                    <h3 class="text-2xl font-bold text-gray-900">Tạo Key ID mới</h3>
+                    <button id="close-key-modal" class="text-gray-400 hover:text-gray-500 p-2 rounded-full hover:bg-gray-100">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <form id="key-form" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="key-type" class="block text-sm font-medium text-gray-700 mb-2">Loại Key *</label>
+                            <select id="key-type" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                                <option value="">Chọn loại key</option>
+                                <option value="fire">Cứu hỏa</option>
+                                <option value="police">Công an</option>
+                                <option value="medical">Y tế</option>
+                                <option value="rescuer">Cứu hộ</option>
+                                <option value="admin">Quản trị</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="key-owner" class="block text-sm font-medium text-gray-700 mb-2">Người/Tổ chức sở hữu *</label>
+                            <input type="text" id="key-owner" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="key-expiry" class="block text-sm font-medium text-gray-700 mb-2">Thời hạn (ngày) *</label>
+                        <select id="key-expiry" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                            <option value="30">30 ngày</option>
+                            <option value="90">90 ngày</option>
+                            <option value="180">180 ngày</option>
+                            <option value="365">1 năm</option>
+                            <option value="0">Vĩnh viễn</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Quyền hạn</label>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="flex items-center">
+                                <input id="perm-reports" name="permissions" type="checkbox" class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded">
+                                <label for="perm-reports" class="ml-2 block text-sm text-gray-700">Xem báo cáo</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input id="perm-respond" name="permissions" type="checkbox" class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded">
+                                <label for="perm-respond" class="ml-2 block text-sm text-gray-700">Phản hồi</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input id="perm-create" name="permissions" type="checkbox" class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded">
+                                <label for="perm-create" class="ml-2 block text-sm text-gray-700">Tạo sự kiện</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input id="perm-admin" name="permissions" type="checkbox" class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded">
+                                <label for="perm-admin" class="ml-2 block text-sm text-gray-700">Quản trị</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex justify-end space-x-4 pt-4">
+                        <button type="button" id="cancel-key-btn" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition">
+                            Hủy bỏ
+                        </button>
+                        <button type="submit" class="btn-primary text-white px-6 py-3 rounded-xl font-medium flex items-center">
+                            <i class="fas fa-key mr-2"></i>
+                            Tạo Key ID
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Key Modal -->
+    <div id="edit-key-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 modal">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full">
+            <div class="p-8">
+                <div class="flex justify-between items-center mb-8">
+                    <h3 class="text-2xl font-bold text-gray-900">Chỉnh sửa Key ID</h3>
+                    <button id="close-edit-key-modal" class="text-gray-400 hover:text-gray-500 p-2 rounded-full hover:bg-gray-100">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <form id="edit-key-form" class="space-y-6">
+                    <input type="hidden" id="edit-key-id" value="">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="edit-key-type" class="block text-sm font-medium text-gray-700 mb-2">Loại Key *</label>
+                            <select id="edit-key-type" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                                <option value="">Chọn loại key</option>
+                                <option value="fire">Cứu hỏa</option>
+                                <option value="police">Công an</option>
+                                <option value="medical">Y tế</option>
+                                <option value="rescuer">Cứu hộ</option>
+                                <option value="admin">Quản trị</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="edit-key-owner" class="block text-sm font-medium text-gray-700 mb-2">Người/Tổ chức sở hữu *</label>
+                            <input type="text" id="edit-key-owner" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="edit-key-created" class="block text-sm font-medium text-gray-700 mb-2">Ngày tạo</label>
+                            <input type="date" id="edit-key-created" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                        </div>
+                        <div>
+                            <label for="edit-key-expiry" class="block text-sm font-medium text-gray-700 mb-2">Hạn sử dụng</label>
+                            <input type="date" id="edit-key-expiry" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="edit-key-status" class="block text-sm font-medium text-gray-700 mb-2">Trạng thái</label>
+                        <select id="edit-key-status" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                            <option value="active">Hoạt động</option>
+                            <option value="inactive">Đã khóa</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Quyền hạn</label>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="flex items-center">
+                                <input id="edit-perm-reports" name="edit-permissions" type="checkbox" class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded">
+                                <label for="edit-perm-reports" class="ml-2 block text-sm text-gray-700">Xem báo cáo</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input id="edit-perm-respond" name="edit-permissions" type="checkbox" class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded">
+                                <label for="edit-perm-respond" class="ml-2 block text-sm text-gray-700">Phản hồi</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input id="edit-perm-create" name="edit-permissions" type="checkbox" class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded">
+                                <label for="edit-perm-create" class="ml-2 block text-sm text-gray-700">Tạo sự kiện</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input id="edit-perm-admin" name="edit-permissions" type="checkbox" class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded">
+                                <label for="edit-perm-admin" class="ml-2 block text-sm text-gray-700">Quản trị</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex justify-end space-x-4 pt-4">
+                        <button type="button" id="cancel-edit-key-btn" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition">
+                            Hủy bỏ
+                        </button>
+                        <button type="submit" class="btn-primary text-white px-6 py-3 rounded-xl font-medium flex items-center">
+                            <i class="fas fa-save mr-2"></i>
+                            Cập nhật Key
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Management Modal -->
+    <div id="user-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 modal">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full">
+            <div class="p-8">
+                <div class="flex justify-between items-center mb-8">
+                    <h3 id="user-modal-title" class="text-2xl font-bold text-gray-900">Thêm Người dùng mới</h3>
+                    <button id="close-user-modal" class="text-gray-400 hover:text-gray-500 p-2 rounded-full hover:bg-gray-100">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <form id="user-form" class="space-y-6">
+                    <input type="hidden" id="user-id" value="">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="user-username" class="block text-sm font-medium text-gray-700 mb-2">Tên đăng nhập *</label>
+                            <input type="text" id="user-username" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                        </div>
+                        <div>
+                            <label for="user-password" class="block text-sm font-medium text-gray-700 mb-2">Mật khẩu *</label>
+                            <input type="password" id="user-password" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="user-fullname" class="block text-sm font-medium text-gray-700 mb-2">Họ và tên *</label>
+                            <input type="text" id="user-fullname" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                        </div>
+                        <div>
+                            <label for="user-email" class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                            <input type="email" id="user-email" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="user-role" class="block text-sm font-medium text-gray-700 mb-2">Vai trò *</label>
+                            <select id="user-role" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                                <option value="">Chọn vai trò</option>
+                                <option value="admin">Quản trị viên</option>
+                                <option value="moderator">Điều phối viên</option>
+                                <option value="rescuer">Nhân viên cứu hộ</option>
+                                <option value="viewer">Người xem</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="user-status" class="block text-sm font-medium text-gray-700 mb-2">Trạng thái</label>
+                            <select id="user-status" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                                <option value="active">Hoạt động</option>
+                                <option value="inactive">Đã khóa</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Quyền hạn</label>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="flex items-center">
+                                <input id="user-perm-news" name="user-permissions" type="checkbox" class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded">
+                                <label for="user-perm-news" class="ml-2 block text-sm text-gray-700">Quản lý bản tin</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input id="user-perm-reports" name="user-permissions" type="checkbox" class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded">
+                                <label for="user-perm-reports" class="ml-2 block text-sm text-gray-700">Xem báo cáo</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input id="user-perm-respond" name="user-permissions" type="checkbox" class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded">
+                                <label for="user-perm-respond" class="ml-2 block text-sm text-gray-700">Phản hồi sự cố</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input id="user-perm-users" name="user-permissions" type="checkbox" class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded">
+                                <label for="user-perm-users" class="ml-2 block text-sm text-gray-700">Quản lý người dùng</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex justify-end space-x-4 pt-4">
+                        <button type="button" id="cancel-user-btn" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition">
+                            Hủy bỏ
+                        </button>
+                        <button type="submit" class="btn-primary text-white px-6 py-3 rounded-xl font-medium flex items-center">
+                            <i class="fas fa-save mr-2"></i>
+                            Lưu Người dùng
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Generated Key Modal -->
+    <div id="generated-key-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 modal">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full">
+            <div class="p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-gray-900">Key ID đã được tạo</h3>
+                    <button id="close-generated-key-modal" class="text-gray-400 hover:text-gray-500">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <div class="bg-gray-50 p-4 rounded-xl mb-6">
+                    <p class="text-sm text-gray-600 mb-2">Key ID mới của bạn:</p>
+                    <p id="new-key-value" class="font-mono text-lg font-bold text-red-600 break-all">RESCUE-KEY-XXXX-XXXX-XXXX</p>
+                </div>
+                
+                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r mb-6">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-exclamation-triangle text-yellow-400 text-xl"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-yellow-700">Hãy lưu lại Key ID này ngay bây giờ. Bạn sẽ không thể xem lại nó sau khi đóng cửa sổ này.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-between">
+                    <button id="copy-key-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-medium transition flex items-center">
+                        <i class="fas fa-copy mr-2"></i>
+                        Sao chép
+                    </button>
+                    <button id="close-and-save-modal" class="border border-gray-300 text-gray-700 hover:bg-gray-50 px-4 py-2 rounded-xl font-medium transition">
+                        Đã lưu, đóng cửa sổ
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data Management System với đồng bộ dữ liệu hai chiều
+        const DataManager = {
+            // Load data from localStorage hoặc khởi tạo với dữ liệu mẫu đầy đủ
+            loadData: function() {
+                return {
+                    news: JSON.parse(localStorage.getItem('newsData')) || [
+                        {
+                            id: 1,
+                            title: "Đà Nẵng: Chủ động ứng phó thiên tai những tháng cuối năm",
+                            date: "2025-10-21",
+                            type: "thien-tai",
+                            location: "da-nang,mien-trung",
+                            img: "https://media.daidoanket.vn/w1280/uploaded/images/2025/10/18/8898fcf6-b66a-433c-908c-72eb18bbdeb1.jpg",
+                            content: `<p><strong>Tình hình:</strong> TP. Đà Nẵng đang hứng chịu thời tiết cực đoan, mưa lớn kéo dài gây sạt lở nghiêm trọng tại nhiều khu vực. Đáng chú ý, bờ biển phường Hội An Tây bị sóng đánh mạnh, sạt lở dài hơn 200m với vách đứng cao 5-6m, cây chắn sóng bật gốc, công trình ven biển nguy cơ sụp đổ. Tuyến đường ĐT606 (Km23+480) bị sụt lún sâu 18-30cm, dài 43m, vết nứt cắt ngang, taluy cao 50m có dấu hiệu trượt, đe dọa chia cắt giao thông miền núi.</p>
+<p><strong>Thiệt hại ước tính:</strong> Chưa có con số thiệt hại cụ thể về người và tài sản. Các khu vực bị ảnh hưởng bao gồm sạt lở bờ biển sát khu dân cư và du lịch, đất cát cuốn trôi lớn, công trình nguy cơ sụp đổ, giao thông huyết mạch có nguy cơ đứt gãy hoàn toàn.</p>
+<p><strong>Hành động ứng phó:</strong> UBND TP. Đà Nẵng ban hành Công điện số 07/CĐ-UBND, kích hoạt phương án ứng phó toàn diện trong 10 ngày tới và những tháng cuối năm 2025. Các biện pháp: theo dõi thời tiết, củng cố cảnh báo sớm, bố trí lực lượng canh gác, chốt chặn khu vực nguy cơ; chuẩn bị phương tiện cứu hộ theo phương châm "4 tại chỗ"; sơ tán dân vùng trũng thấp, ven biển; kiểm tra, vận hành hồ chứa, trạm bơm chống ngập; lực lượng vũ trang sẵn sàng hỗ trợ; tuyên truyền kỹ năng phòng tránh; kiểm tra công trình thi công và hệ thống thủy lợi, đê điều.</p>
+<p><strong>Khuyến cáo:</strong> Người dân theo dõi bản tin dự báo, hạn chế di chuyển khi mưa lớn, di dời tài sản đến nơi cao ráo, đảm bảo an toàn tính mạng và tài sản. Chính quyền địa phương chuẩn bị phương án ứng phó, kiểm tra hệ thống tiêu thoát nước, cảnh giới khu vực sạt lở, hỗ trợ dân khi ngập lụt. Tăng cường tuyên truyền nâng cao nhận thức cộng đồng về phòng tránh thiên tai.</p>
+<a href='https://thiennhienmoitruong.vn/da-nang-chu-dong-ung-pho-thien-tai-nhung-thang-cuoi-nam.html' target='_blank'>Nguồn gốc</a>`,
+                            status: "published"
+                        },
+                        {
+                            id: 2,
+                            title: "Vai trò y tế cơ sở trong chăm sóc sức khỏe tinh thần cho cộng đồng sau thiên tai",
+                            date: "2025-10-21",
+                            type: "cuu-ho",
+                            location: "lao-cai,thai-nguyen,mien-bac",
+                            img: "https://benhvientamthanhanoi.com/wp-content/uploads/2025/10/image.jpeg",
+                            content: `<p><strong>Tình hình:</strong> Sau thiên tai như bão lũ năm 2024 tại Lào Cai và Thái Nguyên, người dân đối mặt với nỗi ám ảnh tinh thần kéo dài, bao gồm rối loạn stress sau sang chấn, lo âu, trầm cảm và 'lo âu khí hậu' ở giới trẻ. Theo WHO, tỷ lệ rối loạn tâm thần tăng đáng kể sau thiên tai, đặc biệt sau bão số 3 Yagi, với tác động lâu dài về mất mát tài sản, người thân và kế sinh nhai. Người dân thường âm thầm chịu đựng, thiếu thói quen tìm kiếm hỗ trợ tâm lý.</p>
+<p><strong>Thiệt hại ước tính:</strong> Thiệt hại tinh thần không thể đo lường bằng con số cụ thể, nhưng nghiên cứu nhỏ của WHO sau bão Yagi cho thấy tác động đáng kể đến sức khỏe tâm thần, bao gồm lo âu và trầm cảm phổ biến. Tại Việt Nam, số lượng chuyên gia tâm thần ít so với dân số, dẫn đến dịch vụ chưa đáp ứng nhu cầu, với sự kỳ thị xã hội làm tăng thách thức.</p>
+<p><strong>Hành động ứng phó:</strong> Y tế cơ sở đóng vai trò quan trọng trong chăm sóc sức khỏe tâm thần, với bác sĩ đa khoa và điều dưỡng có thể điều trị rối loạn phổ biến nếu được đào tạo. WHO khuyến nghị tích hợp đánh giá sức khỏe tâm thần vào ứng phó khẩn cấp, bao gồm đội phản ứng nhanh và dịch vụ hỗ trợ xã hội. Tình nguyện viên như CLB ca nô tại Lào Cai tham gia cứu hộ, vượt qua nỗi sợ để hỗ trợ cộng đồng.</p>
+<p><strong>Khuyến cáo:</strong> Theo TS Angela Pratt (WHO), cần coi hỗ trợ tâm lý là phần không thể tách rời của ứng phó và phục hồi thiên tai, không chỉ sau khi đáp ứng nhu cầu vật chất. Đào tạo y tế cơ sở về nhận biết và hỗ trợ trầm cảm, lo âu; nâng cao năng lực tuyến huyện; tăng chuyên gia tâm thần để xây dựng hệ thống bền vững. Giảm kỳ thị xã hội và nghiên cứu sâu hơn về tác động tại Việt Nam.</p>
+<a href='https://vov2.vov.vn/suc-khoe/vai-tro-y-te-co-so-trong-cham-soc-suc-khoe-tinh-than-cho-cong-dong-sau-thien-tai-55411' target='_blank'>Nguồn gốc</a>`,
+                            status: "published"
+                        }
+                    ],
+                    reports: JSON.parse(localStorage.getItem('emergencyReports')) || [
+                        {
+                            id: 1,
+                            type: "fire",
+                            location: "Quận 1, TP.HCM",
+                            severity: "critical",
+                            people: 5,
+                            description: "Hỏa hoạn tại chung cư cao tầng",
+                            status: "active",
+                            timestamp: new Date().toISOString()
+                        },
+                        {
+                            id: 2,
+                            type: "traffic",
+                            location: "Đường cao tốc Hà Nội",
+                            severity: "high",
+                            people: 3,
+                            description: "Tai nạn giao thông nghiêm trọng",
+                            status: "pending",
+                            timestamp: new Date(Date.now() - 3600000).toISOString()
+                        }
+                    ],
+                    keys: JSON.parse(localStorage.getItem('rescueKeys')) || [
+                        {
+                            id: "RESCUE-KEY-7892",
+                            type: "fire",
+                            owner: "Đội PCCC Quận 1",
+                            created: "2023-06-15",
+                            expiry: "2024-06-15",
+                            status: "active",
+                            permissions: ["reports", "respond"]
+                        },
+                        {
+                            id: "RESCUE-KEY-4561",
+                            type: "medical",
+                            owner: "Bệnh viện Chợ Rẫy",
+                            created: "2023-06-10",
+                            expiry: "2024-06-10",
+                            status: "active",
+                            permissions: ["reports", "respond", "create"]
+                        }
+                    ],
+                    users: JSON.parse(localStorage.getItem('systemUsers')) || [
+                        {
+                            id: 1,
+                            username: "admin",
+                            password: "admin123",
+                            fullname: "Nguyễn Văn Admin",
+                            email: "admin@cuuhocquocgia.vn",
+                            role: "admin",
+                            status: "active",
+                            permissions: ["news", "reports", "respond", "users"],
+                            created: "2023-01-15"
+                        },
+                        {
+                            id: 2,
+                            username: "moderator1",
+                            password: "mod123",
+                            fullname: "Trần Thị Điều phối",
+                            email: "moderator@cuuhocquocgia.vn",
+                            role: "moderator",
+                            status: "active",
+                            permissions: ["news", "reports", "respond"],
+                            created: "2023-02-20"
+                        }
+                    ],
+                    settings: JSON.parse(localStorage.getItem('systemSettings')) || {}
+                };
+            },
+
+            // Save data to localStorage với đồng bộ hai chiều
+            saveData: function(data) {
+                localStorage.setItem('newsData', JSON.stringify(data.news));
+                localStorage.setItem('emergencyReports', JSON.stringify(data.reports));
+                localStorage.setItem('rescueKeys', JSON.stringify(data.keys));
+                localStorage.setItem('systemUsers', JSON.stringify(data.users));
+                localStorage.setItem('systemSettings', JSON.stringify(data.settings));
+                
+                // Đồng bộ với trang tin tức
+                this.syncWithNewsPage();
+                this.showSyncStatus('success', 'Dữ liệu đã đồng bộ');
+            },
+
+            // Đồng bộ với trang tin tức - CẢI THIỆN: Đồng bộ hai chiều
+            syncWithNewsPage: function() {
+                const systemData = this.loadData();
+                
+                // Cập nhật localStorage của trang news với dữ liệu mới nhất từ admin
+                localStorage.setItem('newsData', JSON.stringify(systemData.news));
+                
+                console.log('Đã đồng bộ dữ liệu với trang tin tức');
+            },
+
+            // Đồng bộ toàn bộ dữ liệu từ trang tin tức - CẢI THIỆN: Đồng bộ hai chiều
+            syncAllWithNewsPage: function() {
+                const systemData = this.loadData();
+                const newsPageData = localStorage.getItem('newsData');
+                
+                if (newsPageData) {
+                    const newsFromPage = JSON.parse(newsPageData);
+                    
+                    // Cập nhật ID để tránh trùng lặp
+                    let maxId = Math.max(...systemData.news.map(n => n.id), 0);
+                    
+                    let hasNewData = false;
+                    
+                    newsFromPage.forEach(news => {
+                        // Kiểm tra xem bản tin đã tồn tại chưa
+                        const existingNewsIndex = systemData.news.findIndex(n => 
+                            n.id === news.id
+                        );
+                        
+                        if (existingNewsIndex !== -1) {
+                            // CẢI THIỆN: Cập nhật bản tin đã tồn tại
+                            systemData.news[existingNewsIndex] = news;
+                            hasNewData = true;
+                        } else {
+                            // Thêm bản tin mới
+                            maxId++;
+                            systemData.news.push({
+                                ...news,
+                                id: maxId,
+                                status: 'published'
+                            });
+                            hasNewData = true;
+                        }
+                    });
+                    
+                    // CẢI THIỆN: Đồng bộ ngược lại các bản tin từ admin mà không có trong trang tin tức
+                    systemData.news.forEach(news => {
+                        const existsInPage = newsFromPage.some(n => n.id === news.id);
+                        if (!existsInPage) {
+                            newsFromPage.push(news);
+                        }
+                    });
+                    
+                    // CẢI THIỆN: Cập nhật lại localStorage của trang tin tức với dữ liệu đầy đủ
+                    localStorage.setItem('newsData', JSON.stringify(newsFromPage));
+                    
+                    if (hasNewData) {
+                        this.saveData(systemData);
+                    }
+                    
+                    return true;
+                }
+                return false;
+            },
+
+            // CẢI THIỆN: Đồng bộ dữ liệu hai chiều khi chỉnh sửa bản tin
+            syncNewsEdit: function(updatedNews) {
+                const systemData = this.loadData();
+                const newsPageData = localStorage.getItem('newsData');
+                
+                if (newsPageData) {
+                    const newsFromPage = JSON.parse(newsPageData);
+                    
+                    // Cập nhật bản tin trong cả hệ thống admin và trang tin tức
+                    const systemIndex = systemData.news.findIndex(n => n.id === updatedNews.id);
+                    if (systemIndex !== -1) {
+                        systemData.news[systemIndex] = updatedNews;
+                    }
+                    
+                    const pageIndex = newsFromPage.findIndex(n => n.id === updatedNews.id);
+                    if (pageIndex !== -1) {
+                        newsFromPage[pageIndex] = updatedNews;
+                    } else {
+                        // Nếu bản tin chưa có trong trang tin tức, thêm vào
+                        newsFromPage.push(updatedNews);
+                    }
+                    
+                    // Lưu cả hai bên
+                    localStorage.setItem('newsData', JSON.stringify(newsFromPage));
+                    this.saveData(systemData);
+                    
+                    return true;
+                }
+                return false;
+            },
+
+            // Show sync status
+            showSyncStatus: function(type, message) {
+                const statusEl = document.getElementById('sync-status');
+                statusEl.className = `data-sync-status sync-${type}`;
+                statusEl.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'sync'} mr-2"></i><span>${message}</span>`;
+                statusEl.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    statusEl.classList.add('hidden');
+                }, 3000);
+            },
+
+            // Export data
+            exportData: function(type) {
+                const data = this.loadData();
+                let exportData, filename;
+                
+                switch(type) {
+                    case 'news':
+                        exportData = data.news;
+                        filename = 'ban-tin-khan-cap.csv';
+                        break;
+                    case 'reports':
+                        exportData = data.reports;
+                        filename = 'bao-cao-khan-cap.csv';
+                        break;
+                    case 'keys':
+                        exportData = data.keys;
+                        filename = 'key-id-he-thong.csv';
+                        break;
+                    case 'users':
+                        exportData = data.users;
+                        filename = 'tai-khoan-nguoi-dung.csv';
+                        break;
+                    default:
+                        return;
+                }
+                
+                // Convert to CSV (simplified)
+                const csv = this.convertToCSV(exportData);
+                this.downloadCSV(csv, filename);
+            },
+
+            // Convert data to CSV
+            convertToCSV: function(data) {
+                if (data.length === 0) return '';
+                
+                const headers = Object.keys(data[0]);
+                const csvRows = [headers.join(',')];
+                
+                for (const row of data) {
+                    const values = headers.map(header => {
+                        const escaped = ('' + row[header]).replace(/"/g, '""');
+                        return `"${escaped}"`;
+                    });
+                    csvRows.push(values.join(','));
+                }
+                
+                return csvRows.join('\n');
+            },
+
+            // Download CSV file
+            downloadCSV: function(csv, filename) {
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.setAttribute('hidden', '');
+                a.setAttribute('href', url);
+                a.setAttribute('download', filename);
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
+        };
+
+        // Initialize the admin dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            const dataManager = DataManager;
+            let systemData = dataManager.loadData();
+            
+            // Tự động đồng bộ với trang tin tức khi khởi động
+            dataManager.syncAllWithNewsPage();
+            systemData = dataManager.loadData(); // Load lại data sau khi đồng bộ
+            
+            // Initialize charts
+            initCharts();
+            
+            // Render all data
+            renderNewsTable(systemData.news);
+            renderReportsTable(systemData.reports);
+            renderKeysTable(systemData.keys);
+            renderUsersTable(systemData.users);
+            updateDashboardStats(systemData);
+            
+            // Sidebar toggle
+            document.getElementById('sidebar-toggle').addEventListener('click', function() {
+                const sidebar = document.querySelector('.sidebar');
+                const mainContent = document.querySelector('.main-content');
+                
+                sidebar.classList.toggle('collapsed');
+                if (sidebar.classList.contains('collapsed')) {
+                    mainContent.classList.remove('ml-0');
+                    mainContent.classList.add('ml-20');
+                } else {
+                    mainContent.classList.remove('ml-20');
+                    mainContent.classList.add('ml-0');
+                }
+            });
+
+            // Tab navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Remove active class from all items
+                    document.querySelectorAll('.nav-item').forEach(i => {
+                        i.classList.remove('active');
+                        i.classList.remove('text-white');
+                        i.classList.add('text-gray-300');
+                    });
+                    
+                    // Add active class to clicked item
+                    this.classList.add('active');
+                    this.classList.add('text-white');
+                    this.classList.remove('text-gray-300');
+                    
+                    // Hide all tab contents
+                    document.querySelectorAll('.tab-content').forEach(tab => {
+                        tab.classList.remove('active');
+                    });
+                    
+                    // Show selected tab content
+                    const tabId = this.getAttribute('data-tab');
+                    document.getElementById(tabId).classList.add('active');
+                    
+                    // Update page title and description
+                    updatePageTitle(tabId);
+                });
+            });
+
+            // Quick action buttons
+            document.querySelectorAll('.quick-action-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const action = this.getAttribute('data-action');
+                    handleQuickAction(action);
+                });
+            });
+
+            // News modal handlers
+            document.getElementById('add-news-btn').addEventListener('click', function() {
+                openNewsModal();
+            });
+
+            document.getElementById('close-news-modal').addEventListener('click', function() {
+                closeNewsModal();
+            });
+            
+            document.getElementById('cancel-news-btn').addEventListener('click', function() {
+                closeNewsModal();
+            });
+
+            // News form submission - CẢI THIỆN: Đồng bộ khi lưu bản tin
+            document.getElementById('news-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const id = document.getElementById('news-id').value;
+                const newNews = {
+                    id: id ? parseInt(id) : systemData.news.length + 1,
+                    title: document.getElementById('news-title').value,
+                    date: document.getElementById('news-date').value,
+                    type: document.getElementById('news-type').value,
+                    location: document.getElementById('news-location').value,
+                    img: document.getElementById('news-img').value,
+                    content: document.getElementById('news-content').value,
+                    status: document.getElementById('news-status').value
+                };
+
+                if (id) {
+                    // Edit existing news - CẢI THIỆN: Đồng bộ với trang tin tức
+                    const index = systemData.news.findIndex(n => n.id === parseInt(id));
+                    if (index !== -1) {
+                        systemData.news[index] = newNews;
+                        // Đồng bộ với trang tin tức
+                        DataManager.syncNewsEdit(newNews);
+                    }
+                } else {
+                    // Add new news
+                    systemData.news.push(newNews);
+                    dataManager.saveData(systemData);
+                }
+
+                renderNewsTable(systemData.news);
+                updateDashboardStats(systemData);
+                closeNewsModal();
+            });
+
+            // Thêm sự kiện cho input hình ảnh để xem trước
+            document.getElementById('news-img').addEventListener('input', function() {
+                updateImagePreview(this.value);
+            });
+
+            // Key modal handlers
+            document.getElementById('add-key-btn').addEventListener('click', function() {
+                openKeyModal();
+            });
+
+            document.getElementById('close-key-modal').addEventListener('click', function() {
+                closeKeyModal();
+            });
+            
+            document.getElementById('cancel-key-btn').addEventListener('click', function() {
+                closeKeyModal();
+            });
+
+            // Key form submission
+            document.getElementById('key-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const randomKey = 'RESCUE-KEY-' + Math.random().toString(36).substring(2, 10).toUpperCase() + 
+                                 '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
+                
+                const newKey = {
+                    id: randomKey,
+                    type: document.getElementById('key-type').value,
+                    owner: document.getElementById('key-owner').value,
+                    created: new Date().toISOString().split('T')[0],
+                    expiry: calculateExpiryDate(parseInt(document.getElementById('key-expiry').value)),
+                    status: "active",
+                    permissions: getSelectedPermissions()
+                };
+
+                systemData.keys.push(newKey);
+                dataManager.saveData(systemData);
+                renderKeysTable(systemData.keys);
+                updateDashboardStats(systemData);
+                
+                // Show generated key
+                document.getElementById('new-key-value').textContent = randomKey;
+                document.getElementById('generated-key-modal').classList.remove('hidden');
+                closeKeyModal();
+            });
+
+            // Edit key modal handlers
+            document.getElementById('close-edit-key-modal').addEventListener('click', function() {
+                closeEditKeyModal();
+            });
+            
+            document.getElementById('cancel-edit-key-btn').addEventListener('click', function() {
+                closeEditKeyModal();
+            });
+
+            // Edit key form submission
+            document.getElementById('edit-key-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const keyId = document.getElementById('edit-key-id').value;
+                const updatedKey = {
+                    id: keyId,
+                    type: document.getElementById('edit-key-type').value,
+                    owner: document.getElementById('edit-key-owner').value,
+                    created: document.getElementById('edit-key-created').value,
+                    expiry: document.getElementById('edit-key-expiry').value,
+                    status: document.getElementById('edit-key-status').value,
+                    permissions: getSelectedEditPermissions()
+                };
+
+                // Update key in system data
+                const index = systemData.keys.findIndex(k => k.id === keyId);
+                if (index !== -1) {
+                    systemData.keys[index] = updatedKey;
+                    dataManager.saveData(systemData);
+                    renderKeysTable(systemData.keys);
+                    updateDashboardStats(systemData);
+                    closeEditKeyModal();
+                }
+            });
+
+            // User modal handlers
+            document.getElementById('add-user-btn').addEventListener('click', function() {
+                openUserModal();
+            });
+
+            document.getElementById('close-user-modal').addEventListener('click', function() {
+                closeUserModal();
+            });
+            
+            document.getElementById('cancel-user-btn').addEventListener('click', function() {
+                closeUserModal();
+            });
+
+            // User form submission
+            document.getElementById('user-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const id = document.getElementById('user-id').value;
+                const newUser = {
+                    id: id ? parseInt(id) : systemData.users.length + 1,
+                    username: document.getElementById('user-username').value,
+                    password: document.getElementById('user-password').value,
+                    fullname: document.getElementById('user-fullname').value,
+                    email: document.getElementById('user-email').value,
+                    role: document.getElementById('user-role').value,
+                    status: document.getElementById('user-status').value,
+                    permissions: getSelectedUserPermissions(),
+                    created: new Date().toISOString().split('T')[0]
+                };
+
+                if (id) {
+                    // Edit existing user
+                    const index = systemData.users.findIndex(u => u.id === parseInt(id));
+                    if (index !== -1) systemData.users[index] = newUser;
+                } else {
+                    // Add new user
+                    systemData.users.push(newUser);
+                }
+
+                dataManager.saveData(systemData);
+                renderUsersTable(systemData.users);
+                updateDashboardStats(systemData);
+                closeUserModal();
+            });
+
+            // Generated key modal handlers
+            document.getElementById('close-generated-key-modal').addEventListener('click', function() {
+                document.getElementById('generated-key-modal').classList.add('hidden');
+            });
+
+            document.getElementById('close-and-save-modal').addEventListener('click', function() {
+                document.getElementById('generated-key-modal').classList.add('hidden');
+            });
+
+            document.getElementById('copy-key-btn').addEventListener('click', function() {
+                const keyText = document.getElementById('new-key-value').textContent;
+                navigator.clipboard.writeText(keyText)
+                    .then(() => {
+                        const btn = this;
+                        btn.innerHTML = '<i class="fas fa-check mr-2"></i> Đã sao chép';
+                        
+                        setTimeout(() => {
+                            btn.innerHTML = '<i class="fas fa-copy mr-2"></i> Sao chép';
+                        }, 2000);
+                    });
+            });
+
+            // Export buttons
+            document.getElementById('export-news-btn').addEventListener('click', function() {
+                dataManager.exportData('news');
+            });
+
+            document.getElementById('export-reports-btn').addEventListener('click', function() {
+                dataManager.exportData('reports');
+            });
+
+            // Sync data button - CẢI THIỆN: Đồng bộ hai chiều
+            document.getElementById('sync-data-btn').addEventListener('click', function() {
+                dataManager.showSyncStatus('pending', 'Đang đồng bộ dữ liệu...');
+                setTimeout(() => {
+                    if (DataManager.syncAllWithNewsPage()) {
+                        const systemData = DataManager.loadData();
+                        renderNewsTable(systemData.news);
+                        updateDashboardStats(systemData);
+                        dataManager.showSyncStatus('success', 'Đã đồng bộ dữ liệu hai chiều');
+                    } else {
+                        dataManager.showSyncStatus('error', 'Không thể đồng bộ dữ liệu');
+                    }
+                }, 1500);
+            });
+
+            // Quick action button
+            document.getElementById('quick-action-btn').addEventListener('click', function() {
+                openNewsModal();
+            });
+
+            // Sync news buttons - CẢI THIỆN: Đồng bộ hai chiều
+            document.getElementById('sync-news-btn').addEventListener('click', function() {
+                if (DataManager.syncAllWithNewsPage()) {
+                    const systemData = DataManager.loadData();
+                    renderNewsTable(systemData.news);
+                    updateDashboardStats(systemData);
+                    alert('Đã đồng bộ thành công dữ liệu hai chiều với trang tin tức!');
+                } else {
+                    alert('Không tìm thấy dữ liệu từ trang tin tức để đồng bộ.');
+                }
+            });
+
+            // News detail modal handlers
+            document.getElementById('close-news-detail-modal').addEventListener('click', function() {
+                document.getElementById('news-detail-modal').classList.add('hidden');
+            });
+
+            document.getElementById('close-detail-modal').addEventListener('click', function() {
+                document.getElementById('news-detail-modal').classList.add('hidden');
+            });
+
+            document.getElementById('edit-from-detail-btn').addEventListener('click', function() {
+                const id = parseInt(this.getAttribute('data-id'));
+                const systemData = DataManager.loadData();
+                const news = systemData.news.find(n => n.id === id);
+                
+                if (news) {
+                    document.getElementById('news-detail-modal').classList.add('hidden');
+                    openNewsModal(news);
+                }
+            });
+
+            // Initialize page title
+            updatePageTitle('dashboard');
+        });
+
+        function initCharts() {
+            // Activity Chart
+            const ctx = document.getElementById('activityChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'CN'],
+                    datasets: [{
+                        label: 'Sự cố mới',
+                        data: [12, 19, 8, 15, 14, 16, 10],
+                        borderColor: '#ef4444',
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }, {
+                        label: 'Sự cố đã giải quyết',
+                        data: [8, 12, 6, 10, 11, 14, 9],
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderNewsTable(newsData) {
+            const tbody = document.getElementById('news-table-body');
+            tbody.innerHTML = '';
+            
+            newsData.forEach(news => {
+                const typeNames = {
+                    'thien-tai': 'Thiên tai',
+                    'tai-nan': 'Tai nạn',
+                    'cuu-ho': 'Cứu hộ',
+                    'canh-bao': 'Cảnh báo'
+                };
+                
+                const statusBadge = news.status === 'published' 
+                    ? '<span class="badge badge-success">Đã đăng</span>'
+                    : '<span class="badge badge-warning">Bản nháp</span>';
+                
+                const typeBadge = news.type === 'thien-tai' 
+                    ? '<span class="badge badge-info">Thiên tai</span>'
+                    : news.type === 'tai-nan'
+                    ? '<span class="badge badge-danger">Tai nạn</span>'
+                    : news.type === 'cuu-ho'
+                    ? '<span class="badge badge-success">Cứu hộ</span>'
+                    : '<span class="badge badge-warning">Cảnh báo</span>';
+                
+                // Rút gọn tiêu đề nếu quá dài
+                const shortTitle = news.title.length > 60 
+                    ? news.title.substring(0, 60) + '...' 
+                    : news.title;
+                
+                // Hiển thị địa điểm
+                const locations = news.location.split(',').map(loc => {
+                    const locationNames = {
+                        'ha-noi': 'Hà Nội',
+                        'tp-hcm': 'TP.HCM',
+                        'da-nang': 'Đà Nẵng',
+                        'mien-bac': 'Miền Bắc',
+                        'mien-trung': 'Miền Trung',
+                        'tay-nguyen': 'Tây Nguyên',
+                        'dak-lak': 'Đắk Lắk',
+                        'binh-dinh': 'Bình Định',
+                        'thai-nguyen': 'Thái Nguyên',
+                        'lao-cai': 'Lào Cai',
+                        'toan-quoc': 'Toàn quốc'
+                    };
+                    return locationNames[loc] || loc;
+                }).join(', ');
+                
+                const tr = document.createElement('tr');
+                tr.className = 'table-row';
+                tr.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${news.id}</td>
+                    <td class="px-6 py-4 text-sm text-gray-900 max-w-xs">
+                        <div class="font-medium">${shortTitle}</div>
+                        <div class="text-xs text-gray-500 mt-1">${locations}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${news.date}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">${typeBadge}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">${statusBadge}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button class="text-blue-600 hover:text-blue-900 mr-3 edit-news" data-id="${news.id}" title="Sửa">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="text-green-600 hover:text-green-900 mr-3 view-news" data-id="${news.id}" title="Xem chi tiết">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="text-red-600 hover:text-red-900 delete-news" data-id="${news.id}" title="Xóa">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            
+            // Thêm sự kiện cho nút xem chi tiết
+            document.querySelectorAll('.view-news').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = parseInt(this.getAttribute('data-id'));
+                    const systemData = DataManager.loadData();
+                    const news = systemData.news.find(n => n.id === id);
+                    
+                    if (news) {
+                        openNewsDetailModal(news);
+                    }
+                });
+            });
+            
+            // SỬA LỖI: Thêm sự kiện cho nút sửa bản tin
+            document.querySelectorAll('.edit-news').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = parseInt(this.getAttribute('data-id'));
+                    const systemData = DataManager.loadData();
+                    const news = systemData.news.find(n => n.id === id);
+                    
+                    if (news) {
+                        openNewsModal(news);
+                    }
+                });
+            });
+            
+            document.querySelectorAll('.delete-news').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = parseInt(this.getAttribute('data-id'));
+                    if (confirm('Bạn có chắc muốn xóa bản tin này?')) {
+                        const systemData = DataManager.loadData();
+                        systemData.news = systemData.news.filter(n => n.id !== id);
+                        DataManager.saveData(systemData);
+                        renderNewsTable(systemData.news);
+                        updateDashboardStats(systemData);
+                    }
+                });
+            });
+        }
+
+        function renderReportsTable(reportsData) {
+            const tbody = document.getElementById('reports-table-body');
+            tbody.innerHTML = '';
+            
+            reportsData.forEach(report => {
+                const severityBadge = report.severity === 'critical' 
+                    ? '<span class="badge badge-danger">Khẩn cấp</span>'
+                    : report.severity === 'high'
+                    ? '<span class="badge badge-warning">Cao</span>'
+                    : '<span class="badge badge-info">Trung bình</span>';
+                
+                const statusBadge = report.status === 'active' 
+                    ? '<span class="badge badge-warning">Đang xử lý</span>'
+                    : report.status === 'resolved'
+                    ? '<span class="badge badge-success">Đã giải quyết</span>'
+                    : '<span class="badge badge-info">Đã tiếp nhận</span>';
+                
+                const typeNames = {
+                    'fire': 'Hỏa hoạn',
+                    'flood': 'Ngập lụt',
+                    'traffic': 'Tai nạn GT',
+                    'medical': 'Y tế',
+                    'disaster': 'Thiên tai'
+                };
+                
+                const tr = document.createElement('tr');
+                tr.className = 'table-row';
+                tr.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${report.id}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${typeNames[report.type] || report.type}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">${report.location}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">${severityBadge}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${new Date(report.timestamp).toLocaleTimeString()}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">${statusBadge}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button class="text-blue-600 hover:text-blue-900 mr-4 view-report" data-id="${report.id}">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="text-green-600 hover:text-green-900 mr-4 resolve-report" data-id="${report.id}">
+                            <i class="fas fa-check"></i>
+                        </button>
+                        <button class="text-red-600 hover:text-red-900 delete-report" data-id="${report.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            
+            // Update reports count in sidebar
+            document.getElementById('reports-count').textContent = reportsData.filter(r => r.status === 'active' || r.status === 'pending').length;
+            
+            // Add event listeners for report actions
+            document.querySelectorAll('.resolve-report').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = parseInt(this.getAttribute('data-id'));
+                    const systemData = DataManager.loadData();
+                    const report = systemData.reports.find(r => r.id === id);
+                    
+                    if (report) {
+                        report.status = 'resolved';
+                        DataManager.saveData(systemData);
+                        renderReportsTable(systemData.reports);
+                        updateDashboardStats(systemData);
+                    }
+                });
+            });
+            
+            document.querySelectorAll('.delete-report').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = parseInt(this.getAttribute('data-id'));
+                    if (confirm('Bạn có chắc muốn xóa báo cáo này?')) {
+                        const systemData = DataManager.loadData();
+                        systemData.reports = systemData.reports.filter(r => r.id !== id);
+                        DataManager.saveData(systemData);
+                        renderReportsTable(systemData.reports);
+                        updateDashboardStats(systemData);
+                    }
+                });
+            });
+        }
+
+        function renderKeysTable(keysData) {
+            const tbody = document.getElementById('keys-table-body');
+            tbody.innerHTML = '';
+            
+            keysData.forEach(key => {
+                const statusBadge = key.status === 'active' 
+                    ? '<span class="badge badge-success">Hoạt động</span>'
+                    : '<span class="badge badge-danger">Đã khóa</span>';
+                
+                const typeNames = {
+                    'fire': 'Cứu hỏa',
+                    'police': 'Công an',
+                    'medical': 'Y tế',
+                    'rescuer': 'Cứu hộ',
+                    'admin': 'Quản trị'
+                };
+                
+                const tr = document.createElement('tr');
+                tr.className = 'table-row';
+                tr.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 font-mono">${key.id}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${typeNames[key.type] || key.type}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">${key.owner}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${key.created}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${key.expiry}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">${statusBadge}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button class="text-blue-600 hover:text-blue-900 mr-4 edit-key" data-id="${key.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="text-blue-600 hover:text-blue-900 mr-4 copy-key" data-id="${key.id}">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <button class="text-red-600 hover:text-red-900 delete-key" data-id="${key.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            
+            // Add event listeners for key actions
+            document.querySelectorAll('.edit-key').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    const systemData = DataManager.loadData();
+                    const key = systemData.keys.find(k => k.id === id);
+                    
+                    if (key) {
+                        openEditKeyModal(key);
+                    }
+                });
+            });
+            
+            document.querySelectorAll('.copy-key').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    navigator.clipboard.writeText(id)
+                        .then(() => {
+                            alert('Key ID đã được sao chép: ' + id);
+                        });
+                });
+            });
+            
+            document.querySelectorAll('.delete-key').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    if (confirm('Bạn có chắc muốn xóa Key ID này?')) {
+                        const systemData = DataManager.loadData();
+                        systemData.keys = systemData.keys.filter(k => k.id !== id);
+                        DataManager.saveData(systemData);
+                        renderKeysTable(systemData.keys);
+                        updateDashboardStats(systemData);
+                    }
+                });
+            });
+        }
+
+        function renderUsersTable(usersData) {
+            const tbody = document.getElementById('users-table-body');
+            tbody.innerHTML = '';
+            
+            usersData.forEach(user => {
+                const statusBadge = user.status === 'active' 
+                    ? '<span class="badge badge-success">Hoạt động</span>'
+                    : '<span class="badge badge-danger">Đã khóa</span>';
+                
+                const roleNames = {
+                    'admin': 'Quản trị viên',
+                    'moderator': 'Điều phối viên',
+                    'rescuer': 'Nhân viên cứu hộ',
+                    'viewer': 'Người xem'
+                };
+                
+                const roleBadge = user.role === 'admin' 
+                    ? '<span class="badge badge-danger">Quản trị viên</span>'
+                    : user.role === 'moderator'
+                    ? '<span class="badge badge-warning">Điều phối viên</span>'
+                    : user.role === 'rescuer'
+                    ? '<span class="badge badge-info">Nhân viên cứu hộ</span>'
+                    : '<span class="badge badge-secondary">Người xem</span>';
+                
+                const tr = document.createElement('tr');
+                tr.className = 'table-row';
+                tr.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${user.id}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${user.username}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">${user.fullname}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${user.email}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">${roleBadge}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">${statusBadge}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button class="text-blue-600 hover:text-blue-900 mr-4 edit-user" data-id="${user.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="text-red-600 hover:text-red-900 delete-user" data-id="${user.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            
+            // Add event listeners for user actions
+            document.querySelectorAll('.edit-user').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = parseInt(this.getAttribute('data-id'));
+                    const systemData = DataManager.loadData();
+                    const user = systemData.users.find(u => u.id === id);
+                    
+                    if (user) {
+                        openUserModal(user);
+                    }
+                });
+            });
+            
+            document.querySelectorAll('.delete-user').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = parseInt(this.getAttribute('data-id'));
+                    if (confirm('Bạn có chắc muốn xóa người dùng này?')) {
+                        const systemData = DataManager.loadData();
+                        systemData.users = systemData.users.filter(u => u.id !== id);
+                        DataManager.saveData(systemData);
+                        renderUsersTable(systemData.users);
+                        updateDashboardStats(systemData);
+                    }
+                });
+            });
+        }
+
+        function updateDashboardStats(systemData) {
+            // Update stats cards
+            document.getElementById('active-incidents').textContent = 
+                systemData.reports.filter(r => r.status === 'active').length;
+            document.getElementById('total-news').textContent = systemData.news.length;
+            document.getElementById('active-users').textContent = systemData.users.filter(u => u.status === 'active').length;
+            document.getElementById('active-keys').textContent = 
+                systemData.keys.filter(k => k.status === 'active').length;
+            
+            document.getElementById('today-incidents').textContent = 
+                systemData.reports.filter(r => {
+                    const reportDate = new Date(r.timestamp).toDateString();
+                    const today = new Date().toDateString();
+                    return reportDate === today;
+                }).length;
+            
+            document.getElementById('resolved-incidents').textContent = 
+                systemData.reports.filter(r => r.status === 'resolved').length;
+            
+            // Update recent reports
+            const recentReportsContainer = document.getElementById('recent-reports');
+            recentReportsContainer.innerHTML = '';
+            
+            const recentReports = systemData.reports
+                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+                .slice(0, 4);
+            
+            recentReports.forEach(report => {
+                const typeIcons = {
+                    'fire': 'fire',
+                    'flood': 'tint',
+                    'traffic': 'car-crash',
+                    'medical': 'user-injured',
+                    'disaster': 'mountain'
+                };
+                
+                const severityColors = {
+                    'critical': 'red',
+                    'high': 'yellow',
+                    'medium': 'blue'
+                };
+                
+                const reportEl = document.createElement('div');
+                reportEl.className = `flex items-start p-4 bg-${severityColors[report.severity]}-50 rounded-xl border-l-4 border-${severityColors[report.severity]}-500`;
+                reportEl.innerHTML = `
+                    <div class="w-12 h-12 bg-${severityColors[report.severity]}-500 rounded-xl flex items-center justify-center text-white mr-4 flex-shrink-0">
+                        <i class="fas fa-${typeIcons[report.type]}"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="font-semibold text-gray-800">${report.type === 'fire' ? 'Hỏa hoạn' : report.type === 'traffic' ? 'Tai nạn giao thông' : report.type === 'flood' ? 'Ngập lụt' : 'Sự cố'} tại ${report.location}</p>
+                        <p class="text-sm text-gray-600 mt-1">${report.location} • ${new Date(report.timestamp).toLocaleTimeString()}</p>
+                        <div class="flex items-center mt-2">
+                            <span class="badge badge-${report.severity === 'critical' ? 'danger' : report.severity === 'high' ? 'warning' : 'info'}">${report.severity === 'critical' ? 'Khẩn cấp' : report.severity === 'high' ? 'Cao' : 'Trung bình'}</span>
+                            <span class="text-xs text-gray-500 ml-2">${report.status === 'active' ? 'Đang xử lý' : report.status === 'resolved' ? 'Đã giải quyết' : 'Đã tiếp nhận'}</span>
+                        </div>
+                    </div>
+                `;
+                recentReportsContainer.appendChild(reportEl);
+            });
+        }
+
+        function openNewsModal(news = null) {
+            if (news) {
+                document.getElementById('news-modal-title').textContent = 'Sửa Bản tin';
+                document.getElementById('news-id').value = news.id;
+                document.getElementById('news-title').value = news.title;
+                document.getElementById('news-date').value = news.date;
+                document.getElementById('news-type').value = news.type;
+                document.getElementById('news-location').value = news.location;
+                document.getElementById('news-img').value = news.img;
+                document.getElementById('news-content').value = news.content;
+                document.getElementById('news-status').value = news.status;
+                
+                // Thêm xem trước hình ảnh
+                updateImagePreview(news.img);
+            } else {
+                document.getElementById('news-modal-title').textContent = 'Thêm Bản tin mới';
+                document.getElementById('news-form').reset();
+                document.getElementById('news-id').value = '';
+                document.getElementById('news-status').value = 'published';
+                document.getElementById('news-date').value = new Date().toISOString().split('T')[0];
+                document.getElementById('image-preview').innerHTML = '';
+            }
+            document.getElementById('news-modal').classList.remove('hidden');
+        }
+
+        function closeNewsModal() {
+            document.getElementById('news-modal').classList.add('hidden');
+        }
+
+        function openNewsDetailModal(news) {
+            document.getElementById('detail-news-img').src = news.img;
+            document.getElementById('detail-news-title').textContent = news.title;
+            document.getElementById('detail-news-date').textContent = news.date;
+            
+            const typeNames = {
+                'thien-tai': 'Thiên tai',
+                'tai-nan': 'Tai nạn',
+                'cuu-ho': 'Cứu hộ',
+                'canh-bao': 'Cảnh báo'
+            };
+            document.getElementById('detail-news-type').textContent = typeNames[news.type] || news.type;
+            
+            // Định dạng địa điểm
+            const locations = news.location.split(',').map(loc => {
+                const locationNames = {
+                    'ha-noi': 'Hà Nội',
+                    'tp-hcm': 'TP.HCM',
+                    'da-nang': 'Đà Nẵng',
+                    'mien-bac': 'Miền Bắc',
+                    'mien-trung': 'Miền Trung',
+                    'tay-nguyen': 'Tây Nguyên',
+                    'dak-lak': 'Đắk Lắk',
+                    'binh-dinh': 'Bình Định',
+                    'thai-nguyen': 'Thái Nguyên',
+                    'lao-cai': 'Lào Cai',
+                    'toan-quoc': 'Toàn quốc'
+                };
+                return locationNames[loc] || loc;
+            }).join(', ');
+            document.getElementById('detail-news-location').textContent = locations;
+            
+            document.getElementById('detail-news-status').textContent = news.status === 'published' ? 'Đã đăng' : 'Bản nháp';
+            document.getElementById('detail-news-content').innerHTML = news.content;
+            
+            // Lưu ID của bản tin đang xem để sửa
+            document.getElementById('edit-from-detail-btn').setAttribute('data-id', news.id);
+            
+            document.getElementById('news-detail-modal').classList.remove('hidden');
+        }
+
+        function updateImagePreview(imgUrl) {
+            const previewContainer = document.getElementById('image-preview');
+            if (imgUrl) {
+                previewContainer.innerHTML = `
+                    <div class="mt-2">
+                        <p class="text-sm text-gray-600 mb-2">Xem trước hình ảnh:</p>
+                        <img src="${imgUrl}" alt="Preview" class="max-w-full h-48 object-cover rounded-lg border">
+                    </div>
+                `;
+            } else {
+                previewContainer.innerHTML = '';
+            }
+        }
+
+        function openKeyModal() {
+            document.getElementById('key-form').reset();
+            document.getElementById('key-modal').classList.remove('hidden');
+        }
+
+        function closeKeyModal() {
+            document.getElementById('key-modal').classList.add('hidden');
+        }
+
+        function openEditKeyModal(key) {
+            document.getElementById('edit-key-id').value = key.id;
+            document.getElementById('edit-key-type').value = key.type;
+            document.getElementById('edit-key-owner').value = key.owner;
+            document.getElementById('edit-key-created').value = key.created;
+            document.getElementById('edit-key-expiry').value = key.expiry;
+            document.getElementById('edit-key-status').value = key.status;
+            
+            // Set permissions checkboxes
+            document.getElementById('edit-perm-reports').checked = key.permissions.includes('reports');
+            document.getElementById('edit-perm-respond').checked = key.permissions.includes('respond');
+            document.getElementById('edit-perm-create').checked = key.permissions.includes('create');
+            document.getElementById('edit-perm-admin').checked = key.permissions.includes('admin');
+            
+            document.getElementById('edit-key-modal').classList.remove('hidden');
+        }
+
+        function closeEditKeyModal() {
+            document.getElementById('edit-key-modal').classList.add('hidden');
+        }
+
+        function openUserModal(user = null) {
+            if (user) {
+                document.getElementById('user-modal-title').textContent = 'Sửa Người dùng';
+                document.getElementById('user-id').value = user.id;
+                document.getElementById('user-username').value = user.username;
+                document.getElementById('user-password').value = user.password;
+                document.getElementById('user-fullname').value = user.fullname;
+                document.getElementById('user-email').value = user.email;
+                document.getElementById('user-role').value = user.role;
+                document.getElementById('user-status').value = user.status;
+                
+                // Set permissions checkboxes
+                document.getElementById('user-perm-news').checked = user.permissions.includes('news');
+                document.getElementById('user-perm-reports').checked = user.permissions.includes('reports');
+                document.getElementById('user-perm-respond').checked = user.permissions.includes('respond');
+                document.getElementById('user-perm-users').checked = user.permissions.includes('users');
+            } else {
+                document.getElementById('user-modal-title').textContent = 'Thêm Người dùng mới';
+                document.getElementById('user-form').reset();
+                document.getElementById('user-id').value = '';
+                document.getElementById('user-status').value = 'active';
+            }
+            document.getElementById('user-modal').classList.remove('hidden');
+        }
+
+        function closeUserModal() {
+            document.getElementById('user-modal').classList.add('hidden');
+        }
+
+        function handleQuickAction(action) {
+            switch(action) {
+                case 'add-news':
+                    openNewsModal();
+                    break;
+                case 'add-key':
+                    openKeyModal();
+                    break;
+                case 'add-user':
+                    openUserModal();
+                    break;
+                case 'view-reports':
+                    document.querySelector('[data-tab="reports"]').click();
+                    break;
+            }
+        }
+
+        function calculateExpiryDate(days) {
+            if (days === 0) return 'Vĩnh viễn';
+            const date = new Date();
+            date.setDate(date.getDate() + days);
+            return date.toISOString().split('T')[0];
+        }
+
+        function getSelectedPermissions() {
+            const permissions = [];
+            if (document.getElementById('perm-reports').checked) permissions.push('reports');
+            if (document.getElementById('perm-respond').checked) permissions.push('respond');
+            if (document.getElementById('perm-create').checked) permissions.push('create');
+            if (document.getElementById('perm-admin').checked) permissions.push('admin');
+            return permissions;
+        }
+
+        function getSelectedEditPermissions() {
+            const permissions = [];
+            if (document.getElementById('edit-perm-reports').checked) permissions.push('reports');
+            if (document.getElementById('edit-perm-respond').checked) permissions.push('respond');
+            if (document.getElementById('edit-perm-create').checked) permissions.push('create');
+            if (document.getElementById('edit-perm-admin').checked) permissions.push('admin');
+            return permissions;
+        }
+
+        function getSelectedUserPermissions() {
+            const permissions = [];
+            if (document.getElementById('user-perm-news').checked) permissions.push('news');
+            if (document.getElementById('user-perm-reports').checked) permissions.push('reports');
+            if (document.getElementById('user-perm-respond').checked) permissions.push('respond');
+            if (document.getElementById('user-perm-users').checked) permissions.push('users');
+            return permissions;
+        }
+
+        function updatePageTitle(tabId) {
+            const titles = {
+                'dashboard': { 
+                    title: 'Tổng quan hệ thống', 
+                    desc: 'Thống kê và phân tích toàn bộ hệ thống cứu hộ quốc gia' 
+                },
+                'news': { 
+                    title: 'Quản lý Bản tin', 
+                    desc: 'Thêm, sửa, xóa và quản lý các bản tin khẩn cấp' 
+                },
+                'reports': { 
+                    title: 'Báo cáo khẩn cấp', 
+                    desc: 'Xem và xử lý các báo cáo khẩn cấp từ người dùng' 
+                },
+                'keys': { 
+                    title: 'Quản lý Key ID', 
+                    desc: 'Tạo và quản lý các Key ID cho đơn vị cứu hộ' 
+                },
+                'users': { 
+                    title: 'Quản lý Người dùng', 
+                    desc: 'Quản lý tài khoản người dùng và phân quyền' 
+                }, 
+                'settings': { 
+                    title: 'Cài đặt hệ thống', 
+                    desc: 'Cấu hình các thông số hệ thống' 
+                }
+            };
+            
+            document.getElementById('page-title').textContent = titles[tabId].title;
+            document.getElementById('page-description').textContent = titles[tabId].desc;
+        }
+
+        // Auto-save functionality
+        setInterval(() => {
+            const systemData = DataManager.loadData();
+            DataManager.saveData(systemData);
+        }, 30000); // Auto-save every 30 seconds
+    </script>
 </body>
 </html>

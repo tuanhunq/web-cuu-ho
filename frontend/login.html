@@ -1,22 +1,1278 @@
-<!-- public/login.html -->
-<!doctype html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Đăng nhập - Cứu Hộ</title>
-  <link rel="stylesheet" href="assets/css/style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Nhập - Hệ Thống Cứu Hộ Quốc Gia</title>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap');
+        :root {
+            --primary: #ef4444;
+            --primary-light: #fee2e2;
+            --dark: #1e293b;
+            --light: #f8fafc;
+        }
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: var(--dark);
+            scroll-behavior: smooth;
+            min-height: 100vh;
+        }
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .login-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 480px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        .login-card.wide {
+            max-width: 520px;
+        }
+        .login-header {
+            background: linear-gradient(135deg, var(--primary) 0%, #f97316 100%);
+            padding: 40px;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+        .login-logo {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            backdrop-filter: blur(10px);
+        }
+        .login-body {
+            padding: 40px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+            font-size: 14px;
+        }
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+            background: white;
+        }
+        .form-input.error {
+            border-color: #dc2626;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+        }
+        .form-input.success {
+            border-color: #16a34a;
+            box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+        }
+        .error-message {
+            color: #dc2626;
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
+        }
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--primary) 0%, #f97316 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+        }
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
+        }
+        .btn-login:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .btn-secondary {
+            width: 100%;
+            padding: 14px;
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: white;
+        }
+        .login-footer {
+            text-align: center;
+            margin-top: 24px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+        .alert {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+            border-left: 4px solid;
+            align-items: center;
+        }
+        .alert-error {
+            background: #fef2f2;
+            border-color: #dc2626;
+            color: #dc2626;
+        }
+        .alert-success {
+            background: #f0fdf4;
+            border-color: #16a34a;
+            color: #16a34a;
+        }
+        .nav-link {
+            position: relative;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        .form-tabs {
+            display: flex;
+            margin-bottom: 30px;
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 4px;
+        }
+        .form-tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: #6b7280;
+        }
+        .form-tab.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .form-content {
+            display: none;
+        }
+        .form-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .password-container {
+            position: relative;
+        }
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #6b7280;
+        }
+        .password-strength {
+            margin-top: 8px;
+            height: 6px;
+            background: #e5e7eb;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .password-strength-bar {
+            height: 100%;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+            width: 0%;
+        }
+        .strength-weak { 
+            background: #ef4444; 
+            width: 25%; 
+        }
+        .strength-medium { 
+            background: #f59e0b; 
+            width: 50%; 
+        }
+        .strength-strong { 
+            background: #10b981; 
+            width: 75%; 
+        }
+        .strength-very-strong { 
+            background: #059669; 
+            width: 100%; 
+        }
+        .password-requirements {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #6b7280;
+        }
+        .requirement {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2px;
+        }
+        .requirement i {
+            margin-right: 4px;
+            font-size: 10px;
+        }
+        .requirement.met {
+            color: #10b981;
+        }
+        .requirement.unmet {
+            color: #6b7280;
+        }
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 8px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
-  <main class="auth">
-    <h2>Đăng nhập</h2>
-    <form id="loginForm">
-      <input placeholder="Email" type="email" id="email" required />
-      <input placeholder="Mật khẩu" type="password" id="password" required />
-      <button class="btn" type="submit">Đăng nhập</button>
-    </form>
-    <p>Chưa có tài khoản? <a href="register.html">Đăng ký</a></p>
-  </main>
-  <script src="assets/js/auth.js"></script>
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md sticky top-0 z-50 backdrop-blur-sm bg-opacity-80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex items-center space-x-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                    <span class="text-2xl font-bold bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">CỨU HỘ QUỐC GIA</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Trang chủ</a>
+                    <a href="emergency_map.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Bản đồ cứu hộ</a>
+                    <a href="news.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Bản tin</a>
+                    <a href="post.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Báo tin</a>
+                    
+                    <div class="flex space-x-4">
+                        <a href="admin.html" class="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-lg font-medium transition-all shadow hover:shadow-lg">Admin</a>
+                        <a href="login.html" class="bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-all shadow hover:shadow-lg">Đăng nhập</a>
+                    </div>
+                </div>
+                <div class="md:hidden flex items-center">
+                    <button id="menu-toggle" class="text-gray-700 hover:text-red-600">
+                        <i data-feather="menu"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white py-2 px-4 shadow-lg">
+            <a href="index.html" class="block py-2 text-gray-700 hover:text-red-600 transition">Trang chủ</a>
+            <a href="emergency_map.html" class="block py-2 text-gray-700 hover:text-red-600 transition">Bản đồ cứu hộ</a>
+            <a href="news.html" class="block py-2 text-gray-700 hover:text-red-600 transition">Bản tin</a>
+            <a href="post.html" class="block py-2 text-gray-700 hover:text-red-600 transition">Báo tin</a>
+            <a href="admin.html" class="block py-2 text-white bg-gray-800 rounded-md text-center">Admin</a>
+            <a href="login.html" class="block py-2 text-white bg-red-600 rounded-md text-center mt-2">Đăng nhập</a>
+        </div>
+    </nav>
+
+    <!-- Emergency Alert Banner -->
+    <div class="bg-gradient-to-r from-red-500 to-orange-500 text-white py-3 px-4 text-center animate-pulse">
+        <div class="max-w-7xl mx-auto flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <span class="font-medium tracking-wide">HỆ THỐNG QUẢN TRỊ CỨU HỘ QUỐC GIA - ĐĂNG NHẬP ĐỂ TRUY CẬP</span>
+        </div>
+    </div>
+
+    <!-- Login Page -->
+    <div class="login-container">
+        <div class="login-card wide">
+            <div class="login-header">
+                <div class="login-logo">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                </div>
+                <h1 class="text-3xl font-bold">CỨU HỘ QUỐC GIA</h1>
+                <p class="mt-2 opacity-90">Trung tâm điều hành</p>
+            </div>
+            
+            <div class="login-body">
+                <!-- Tabs -->
+                <div class="form-tabs">
+                    <div class="form-tab active" data-tab="login">Đăng Nhập</div>
+                    <div class="form-tab" data-tab="register">Đăng Ký</div>
+                </div>
+
+                <!-- Alert Message -->
+                <div id="login-alert" class="alert alert-error">
+                    <i data-feather="alert-circle" class="mr-2 w-5 h-5"></i>
+                    <span id="alert-message">Tên đăng nhập hoặc mật khẩu không đúng</span>
+                </div>
+                
+                <!-- Login Form -->
+                <form id="login-form" class="form-content active">
+                    <div class="form-group">
+                        <label for="username" class="form-label">Tên đăng nhập</label>
+                        <div class="relative">
+                            <i data-feather="user" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"></i>
+                            <input type="text" id="username" class="form-input pl-12" placeholder="Nhập tên đăng nhập" required>
+                        </div>
+                        <div class="error-message" id="username-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password" class="form-label">Mật khẩu</label>
+                        <div class="relative password-container">
+                            <i data-feather="lock" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"></i>
+                            <input type="password" id="password" class="form-input pl-12 pr-10" placeholder="Nhập mật khẩu" required>
+                            <button type="button" class="toggle-password" data-target="password">
+                                <i data-feather="eye"></i>
+                            </button>
+                        </div>
+                        <div class="error-message" id="password-error"></div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between mb-6">
+                        <label class="flex items-center">
+                            <input type="checkbox" id="remember-me" class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded">
+                            <span class="ml-2 text-sm text-gray-600">Ghi nhớ đăng nhập</span>
+                        </label>
+                        <a href="#" class="text-sm text-red-600 hover:text-red-800 font-medium">Quên mật khẩu?</a>
+                    </div>
+                    
+                    <button type="submit" class="btn-login mb-4" id="login-btn">
+                        <div class="loading-spinner" id="login-spinner"></div>
+                        <i data-feather="log-in" class="mr-2 w-5 h-5"></i>
+                        <span id="login-text">Đăng Nhập</span>
+                    </button>
+
+                    <div class="text-center">
+                        <p class="text-sm text-gray-600">
+                            Chưa có tài khoản? 
+                            <a href="#" class="text-red-600 hover:text-red-800 font-medium switch-to-register">Đăng ký ngay</a>
+                        </p>
+                    </div>
+                </form>
+
+                <!-- Register Form -->
+                <form id="register-form" class="form-content">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="form-group">
+                            <label for="reg-fullname" class="form-label">Họ và tên *</label>
+                            <div class="relative">
+                                <i data-feather="user" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"></i>
+                                <input type="text" id="reg-fullname" class="form-input pl-12" placeholder="Nguyễn Văn A" required>
+                            </div>
+                            <div class="error-message" id="reg-fullname-error"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="reg-username" class="form-label">Tên đăng nhập *</label>
+                            <div class="relative">
+                                <i data-feather="at-sign" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"></i>
+                                <input type="text" id="reg-username" class="form-input pl-12" placeholder="username" required>
+                            </div>
+                            <div class="error-message" id="reg-username-error"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reg-email" class="form-label">Email *</label>
+                        <div class="relative">
+                            <i data-feather="mail" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"></i>
+                            <input type="email" id="reg-email" class="form-input pl-12" placeholder="email@example.com" required>
+                        </div>
+                        <div class="error-message" id="reg-email-error"></div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="form-group">
+                            <label for="reg-password" class="form-label">Mật khẩu *</label>
+                            <div class="relative password-container">
+                                <i data-feather="lock" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"></i>
+                                <input type="password" id="reg-password" class="form-input pl-12 pr-10" placeholder="Mật khẩu" required>
+                                <button type="button" class="toggle-password" data-target="reg-password">
+                                    <i data-feather="eye"></i>
+                                </button>
+                            </div>
+                            <div class="password-strength">
+                                <div class="password-strength-bar" id="password-strength-bar"></div>
+                            </div>
+                            <div class="password-requirements">
+                                <div class="requirement unmet" id="req-length">
+                                    <i data-feather="circle"></i> Ít nhất 8 ký tự
+                                </div>
+                                <div class="requirement unmet" id="req-lowercase">
+                                    <i data-feather="circle"></i> Chữ thường
+                                </div>
+                                <div class="requirement unmet" id="req-uppercase">
+                                    <i data-feather="circle"></i> Chữ hoa
+                                </div>
+                                <div class="requirement unmet" id="req-number">
+                                    <i data-feather="circle"></i> Số
+                                </div>
+                                <div class="requirement unmet" id="req-special">
+                                    <i data-feather="circle"></i> Ký tự đặc biệt
+                                </div>
+                            </div>
+                            <div class="error-message" id="reg-password-error"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="reg-confirm-password" class="form-label">Xác nhận mật khẩu *</label>
+                            <div class="relative password-container">
+                                <i data-feather="lock" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"></i>
+                                <input type="password" id="reg-confirm-password" class="form-input pl-12 pr-10" placeholder="Xác nhận mật khẩu" required>
+                                <button type="button" class="toggle-password" data-target="reg-confirm-password">
+                                    <i data-feather="eye"></i>
+                                </button>
+                            </div>
+                            <div class="error-message" id="reg-confirm-password-error"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reg-role" class="form-label">Vai trò *</label>
+                        <select id="reg-role" class="form-input" required>
+                            <option value="">Chọn vai trò</option>
+                            <option value="rescuer">Nhân viên cứu hộ</option>
+                            <option value="moderator">Điều phối viên</option>
+                            <option value="viewer">Người xem</option>
+                        </select>
+                        <div class="error-message" id="reg-role-error"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reg-organization" class="form-label">Tổ chức/Đơn vị</label>
+                        <input type="text" id="reg-organization" class="form-input" placeholder="Tên tổ chức (nếu có)">
+                    </div>
+
+                    <div class="flex items-center mb-6">
+                        <input type="checkbox" id="accept-terms" class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded" required>
+                        <label for="accept-terms" class="ml-2 text-sm text-gray-600">
+                            Tôi đồng ý với <a href="#" class="text-red-600 hover:text-red-800">Điều khoản dịch vụ</a> và <a href="#" class="text-red-600 hover:text-red-800">Chính sách bảo mật</a>
+                        </label>
+                    </div>
+                    <div class="error-message" id="accept-terms-error"></div>
+                    
+                    <button type="submit" class="btn-login mb-4" id="register-btn">
+                        <div class="loading-spinner" id="register-spinner"></div>
+                        <i data-feather="user-plus" class="mr-2 w-5 h-5"></i>
+                        <span id="register-text">Đăng Ký Tài Khoản</span>
+                    </button>
+
+                    <div class="text-center">
+                        <p class="text-sm text-gray-600">
+                            Đã có tài khoản? 
+                            <a href="#" class="text-red-600 hover:text-red-800 font-medium switch-to-login">Đăng nhập ngay</a>
+                        </p>
+                    </div>
+                </form>
+                
+                <div class="login-footer">
+                    <p>Hệ thống quản trị cứu hộ quốc gia</p>
+                    <p class="mt-1">Phiên bản 2.4.1</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                        <span class="text-2xl font-bold bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">CỨU HỘ QUỐC GIA</span>
+                    </div>
+                    <p class="text-gray-400 leading-relaxed">Kết nối người dân với lực lượng cứu hộ trong các tình huống khẩn cấp.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Dịch Vụ</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Cứu hỏa</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Cứu hộ giao thông</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Y tế khẩn cấp</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Ứng phó thiên tai</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Liên Kết</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Bộ Công An</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Bộ Y Tế</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Ban Chỉ Đạo PCTT</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Cục Cứu Hộ Cứu Nạn</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Hỗ Trợ</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Câu hỏi thường gặp</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Hướng dẫn sử dụng</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Chính sách bảo mật</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Điều khoản dịch vụ</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-12 pt-8 text-center text-gray-400">
+                <p>© 2023 Hệ Thống Cứu Hộ Quốc Gia. Bản quyền thuộc về Bộ Công An.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Enhanced Password Security and Validation System
+        const SecurityManager = {
+            // Hash password (simplified version - in production use proper hashing)
+            hashPassword: function(password) {
+                // This is a simplified version. In production, use proper hashing like bcrypt
+                let hash = 0;
+                for (let i = 0; i < password.length; i++) {
+                    const char = password.charCodeAt(i);
+                    hash = ((hash << 5) - hash) + char;
+                    hash = hash & hash;
+                }
+                return Math.abs(hash).toString(36) + password.length;
+            },
+
+            // Validate password strength
+            validatePassword: function(password) {
+                const requirements = {
+                    length: password.length >= 8,
+                    lowercase: /[a-z]/.test(password),
+                    uppercase: /[A-Z]/.test(password),
+                    number: /[0-9]/.test(password),
+                    special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+                };
+
+                const strength = Object.values(requirements).filter(Boolean).length;
+                return { requirements, strength };
+            },
+
+            // Validate email format
+            validateEmail: function(email) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailRegex.test(email);
+            },
+
+            // Validate username format
+            validateUsername: function(username) {
+                const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
+                return usernameRegex.test(username);
+            },
+
+            // Validate fullname format
+            validateFullname: function(fullname) {
+                return fullname.length >= 2 && fullname.length <= 50;
+            }
+        };
+
+        // Enhanced User Management System
+        const UserManager = {
+            // Initialize default users if not exists
+            initUsers: function() {
+                if (!localStorage.getItem('systemUsers')) {
+                    const defaultUsers = [
+                        {
+                            id: 1,
+                            username: "admin",
+                            password: this.hashPassword("admin123"),
+                            fullname: "Nguyễn Văn Admin",
+                            email: "admin@cuuhocquocgia.vn",
+                            role: "admin",
+                            status: "active",
+                            permissions: ["news", "reports", "respond", "users"],
+                            created: new Date().toISOString().split('T')[0],
+                            lastLogin: null,
+                            loginAttempts: 0,
+                            lockedUntil: null
+                        },
+                        {
+                            id: 2,
+                            username: "moderator",
+                            password: this.hashPassword("mod123"),
+                            fullname: "Trần Thị Điều phối",
+                            email: "moderator@cuuhocquocgia.vn",
+                            role: "moderator",
+                            status: "active",
+                            permissions: ["news", "reports", "respond"],
+                            created: new Date().toISOString().split('T')[0],
+                            lastLogin: null,
+                            loginAttempts: 0,
+                            lockedUntil: null
+                        },
+                        {
+                            id: 3,
+                            username: "user",
+                            password: this.hashPassword("user123"),
+                            fullname: "Lê Văn Người dùng",
+                            email: "user@cuuhocquocgia.vn",
+                            role: "rescuer",
+                            status: "active",
+                            permissions: ["reports"],
+                            created: new Date().toISOString().split('T')[0],
+                            lastLogin: null,
+                            loginAttempts: 0,
+                            lockedUntil: null
+                        }
+                    ];
+                    localStorage.setItem('systemUsers', JSON.stringify(defaultUsers));
+                }
+            },
+
+            // Get all users
+            getUsers: function() {
+                return JSON.parse(localStorage.getItem('systemUsers')) || [];
+            },
+
+            // Check if username exists
+            usernameExists: function(username) {
+                const users = this.getUsers();
+                return users.some(u => u.username === username);
+            },
+
+            // Check if email exists
+            emailExists: function(email) {
+                const users = this.getUsers();
+                return users.some(u => u.email === email);
+            },
+
+            // Register new user
+            registerUser: function(userData) {
+                const users = this.getUsers();
+                const newUser = {
+                    id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
+                    username: userData.username,
+                    password: this.hashPassword(userData.password),
+                    fullname: userData.fullname,
+                    email: userData.email,
+                    role: userData.role,
+                    organization: userData.organization || '',
+                    status: "active",
+                    permissions: this.getDefaultPermissions(userData.role),
+                    created: new Date().toISOString().split('T')[0],
+                    lastLogin: null,
+                    loginAttempts: 0,
+                    lockedUntil: null
+                };
+                
+                users.push(newUser);
+                localStorage.setItem('systemUsers', JSON.stringify(users));
+                return newUser;
+            },
+
+            // Get default permissions based on role
+            getDefaultPermissions: function(role) {
+                const permissions = {
+                    'admin': ["news", "reports", "respond", "users"],
+                    'moderator': ["news", "reports", "respond"],
+                    'rescuer': ["reports", "respond"],
+                    'viewer': ["reports"]
+                };
+                return permissions[role] || ["reports"];
+            },
+
+            // Authenticate user with security features
+            authenticate: function(username, password) {
+                const users = this.getUsers();
+                const user = users.find(u => u.username === username && u.status === 'active');
+                
+                if (!user) {
+                    return { success: false, message: "Tên đăng nhập không tồn tại" };
+                }
+
+                // Check if account is locked
+                if (user.lockedUntil && new Date() < new Date(user.lockedUntil)) {
+                    const lockTime = Math.ceil((new Date(user.lockedUntil) - new Date()) / 60000);
+                    return { 
+                        success: false, 
+                        message: `Tài khoản bị khóa tạm thời. Vui lòng thử lại sau ${lockTime} phút.` 
+                    };
+                }
+
+                // Verify password
+                if (user.password === this.hashPassword(password)) {
+                    // Reset login attempts and update last login
+                    user.loginAttempts = 0;
+                    user.lockedUntil = null;
+                    user.lastLogin = new Date().toISOString();
+                    localStorage.setItem('systemUsers', JSON.stringify(users));
+                    
+                    // Store current user session
+                    localStorage.setItem('currentUser', JSON.stringify(user));
+                    return { success: true, user: user };
+                } else {
+                    // Increment login attempts
+                    user.loginAttempts = (user.loginAttempts || 0) + 1;
+                    
+                    // Lock account after 5 failed attempts for 30 minutes
+                    if (user.loginAttempts >= 5) {
+                        user.lockedUntil = new Date(Date.now() + 30 * 60 * 1000).toISOString();
+                    }
+                    
+                    localStorage.setItem('systemUsers', JSON.stringify(users));
+                    
+                    const attemptsLeft = 5 - user.loginAttempts;
+                    if (attemptsLeft > 0) {
+                        return { 
+                            success: false, 
+                            message: `Mật khẩu không đúng. Còn ${attemptsLeft} lần thử.` 
+                        };
+                    } else {
+                        return { 
+                            success: false, 
+                            message: "Tài khoản đã bị khóa tạm thời do quá nhiều lần đăng nhập thất bại." 
+                        };
+                    }
+                }
+            },
+
+            // Get current user
+            getCurrentUser: function() {
+                return JSON.parse(localStorage.getItem('currentUser'));
+            },
+
+            // Logout user
+            logout: function() {
+                localStorage.removeItem('currentUser');
+            },
+
+            // Check if user is logged in
+            isLoggedIn: function() {
+                return localStorage.getItem('currentUser') !== null;
+            }
+        };
+
+        // Enhanced password strength checker
+        function checkPasswordStrength(password) {
+            const validation = SecurityManager.validatePassword(password);
+            return validation.strength;
+        }
+
+        // Update password strength indicator with requirements
+        function updatePasswordStrength(password) {
+            const validation = SecurityManager.validatePassword(password);
+            const bar = document.getElementById('password-strength-bar');
+            const strength = validation.strength;
+            
+            // Reset bar
+            bar.className = 'password-strength-bar';
+            
+            if (password.length === 0) {
+                bar.style.width = '0%';
+                // Reset all requirements to unmet
+                document.querySelectorAll('.requirement').forEach(req => {
+                    req.className = 'requirement unmet';
+                    req.querySelector('i').setAttribute('data-feather', 'circle');
+                });
+                feather.replace();
+                return;
+            }
+            
+            // Update strength bar
+            switch(strength) {
+                case 1:
+                    bar.classList.add('strength-weak');
+                    break;
+                case 2:
+                case 3:
+                    bar.classList.add('strength-medium');
+                    break;
+                case 4:
+                    bar.classList.add('strength-strong');
+                    break;
+                case 5:
+                    bar.classList.add('strength-very-strong');
+                    break;
+            }
+            
+            // Update requirement indicators
+            const requirements = validation.requirements;
+            document.getElementById('req-length').className = requirements.length ? 'requirement met' : 'requirement unmet';
+            document.getElementById('req-lowercase').className = requirements.lowercase ? 'requirement met' : 'requirement unmet';
+            document.getElementById('req-uppercase').className = requirements.uppercase ? 'requirement met' : 'requirement unmet';
+            document.getElementById('req-number').className = requirements.number ? 'requirement met' : 'requirement unmet';
+            document.getElementById('req-special').className = requirements.special ? 'requirement met' : 'requirement unmet';
+            
+            // Update icons
+            document.querySelectorAll('.requirement.met i').forEach(icon => {
+                icon.setAttribute('data-feather', 'check-circle');
+            });
+            document.querySelectorAll('.requirement.unmet i').forEach(icon => {
+                icon.setAttribute('data-feather', 'circle');
+            });
+            feather.replace();
+        }
+
+        // Form validation functions
+        function validateField(field, value) {
+            let isValid = true;
+            let errorMessage = '';
+
+            switch(field) {
+                case 'reg-fullname':
+                    if (!value.trim()) {
+                        errorMessage = 'Họ và tên không được để trống';
+                        isValid = false;
+                    } else if (!SecurityManager.validateFullname(value)) {
+                        errorMessage = 'Họ và tên phải từ 2 đến 50 ký tự';
+                        isValid = false;
+                    }
+                    break;
+                    
+                case 'reg-username':
+                    if (!value.trim()) {
+                        errorMessage = 'Tên đăng nhập không được để trống';
+                        isValid = false;
+                    } else if (!SecurityManager.validateUsername(value)) {
+                        errorMessage = 'Tên đăng nhập phải từ 3-20 ký tự và chỉ chứa chữ cái, số và dấu gạch dưới';
+                        isValid = false;
+                    } else if (UserManager.usernameExists(value)) {
+                        errorMessage = 'Tên đăng nhập đã tồn tại';
+                        isValid = false;
+                    }
+                    break;
+                    
+                case 'reg-email':
+                    if (!value.trim()) {
+                        errorMessage = 'Email không được để trống';
+                        isValid = false;
+                    } else if (!SecurityManager.validateEmail(value)) {
+                        errorMessage = 'Email không hợp lệ';
+                        isValid = false;
+                    } else if (UserManager.emailExists(value)) {
+                        errorMessage = 'Email đã được sử dụng';
+                        isValid = false;
+                    }
+                    break;
+                    
+                case 'reg-password':
+                    if (!value) {
+                        errorMessage = 'Mật khẩu không được để trống';
+                        isValid = false;
+                    } else if (value.length < 8) {
+                        errorMessage = 'Mật khẩu phải có ít nhất 8 ký tự';
+                        isValid = false;
+                    } else {
+                        const validation = SecurityManager.validatePassword(value);
+                        if (validation.strength < 3) {
+                            errorMessage = 'Mật khẩu không đủ mạnh';
+                            isValid = false;
+                        }
+                    }
+                    break;
+                    
+                case 'reg-confirm-password':
+                    const password = document.getElementById('reg-password').value;
+                    if (!value) {
+                        errorMessage = 'Vui lòng xác nhận mật khẩu';
+                        isValid = false;
+                    } else if (value !== password) {
+                        errorMessage = 'Mật khẩu xác nhận không khớp';
+                        isValid = false;
+                    }
+                    break;
+                    
+                case 'reg-role':
+                    if (!value) {
+                        errorMessage = 'Vui lòng chọn vai trò';
+                        isValid = false;
+                    }
+                    break;
+            }
+
+            return { isValid, errorMessage };
+        }
+
+        // DOM Elements
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        const loginAlert = document.getElementById('login-alert');
+        const alertMessage = document.getElementById('alert-message');
+        const formTabs = document.querySelectorAll('.form-tab');
+        const formContents = document.querySelectorAll('.form-content');
+        const switchToRegister = document.querySelector('.switch-to-register');
+        const switchToLogin = document.querySelector('.switch-to-login');
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize default users
+            UserManager.initUsers();
+            
+            // Check if user is already logged in
+            if (UserManager.isLoggedIn()) {
+                // Redirect to admin page if already logged in
+                window.location.href = 'admin.html';
+            }
+            
+            // Initialize feather icons
+            feather.replace();
+            
+            // Tab switching
+            formTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabName = this.getAttribute('data-tab');
+                    
+                    // Update active tab
+                    formTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Update active form
+                    formContents.forEach(content => {
+                        content.classList.remove('active');
+                        if (content.id === `${tabName}-form`) {
+                            content.classList.add('active');
+                        }
+                    });
+                    
+                    // Reset alerts and forms
+                    hideAlert();
+                    resetFormValidation();
+                });
+            });
+
+            // Switch between login and register
+            switchToRegister.addEventListener('click', function(e) {
+                e.preventDefault();
+                formTabs[1].click();
+            });
+
+            switchToLogin.addEventListener('click', function(e) {
+                e.preventDefault();
+                formTabs[0].click();
+            });
+
+            // Password strength indicator
+            document.getElementById('reg-password').addEventListener('input', function() {
+                updatePasswordStrength(this.value);
+                validateField('reg-password', this.value);
+            });
+
+            // Real-time validation for form fields
+            const registerFields = ['reg-fullname', 'reg-username', 'reg-email', 'reg-password', 'reg-confirm-password', 'reg-role'];
+            registerFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.addEventListener('blur', function() {
+                        const validation = validateField(fieldId, this.value);
+                        showFieldError(fieldId, validation.errorMessage, validation.isValid);
+                    });
+                    
+                    field.addEventListener('input', function() {
+                        // Clear error on input
+                        if (this.value.trim()) {
+                            hideFieldError(fieldId);
+                        }
+                    });
+                }
+            });
+
+            // Toggle password visibility
+            document.querySelectorAll('.toggle-password').forEach(button => {
+                button.addEventListener('click', function() {
+                    const targetId = this.getAttribute('data-target');
+                    const passwordInput = document.getElementById(targetId);
+                    const icon = this.querySelector('i');
+                    
+                    if (passwordInput.type === 'password') {
+                        passwordInput.type = 'text';
+                        icon.setAttribute('data-feather', 'eye-off');
+                    } else {
+                        passwordInput.type = 'password';
+                        icon.setAttribute('data-feather', 'eye');
+                    }
+                    feather.replace();
+                });
+            });
+
+            // Login form submission
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                
+                // Basic validation
+                if (!username || !password) {
+                    showAlert('Vui lòng điền đầy đủ thông tin đăng nhập', 'error');
+                    return;
+                }
+                
+                // Show loading state
+                setLoadingState('login', true);
+                
+                // Simulate API call delay
+                setTimeout(() => {
+                    const authResult = UserManager.authenticate(username, password);
+                    
+                    if (authResult.success) {
+                        // Show success message
+                        showAlert('Đăng nhập thành công! Đang chuyển hướng...', 'success');
+                        
+                        // Redirect to admin page after 1 second
+                        setTimeout(() => {
+                            window.location.href = 'admin.html';
+                        }, 1000);
+                    } else {
+                        showAlert(authResult.message, 'error');
+                        setLoadingState('login', false);
+                    }
+                }, 1000);
+            });
+
+            // Register form submission
+            registerForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const fullname = document.getElementById('reg-fullname').value;
+                const username = document.getElementById('reg-username').value;
+                const email = document.getElementById('reg-email').value;
+                const password = document.getElementById('reg-password').value;
+                const confirmPassword = document.getElementById('reg-confirm-password').value;
+                const role = document.getElementById('reg-role').value;
+                const organization = document.getElementById('reg-organization').value;
+                const acceptTerms = document.getElementById('accept-terms').checked;
+                
+                // Validate all fields
+                let isValid = true;
+                const fields = [
+                    { id: 'reg-fullname', value: fullname },
+                    { id: 'reg-username', value: username },
+                    { id: 'reg-email', value: email },
+                    { id: 'reg-password', value: password },
+                    { id: 'reg-confirm-password', value: confirmPassword },
+                    { id: 'reg-role', value: role }
+                ];
+                
+                fields.forEach(field => {
+                    const validation = validateField(field.id, field.value);
+                    if (!validation.isValid) {
+                        showFieldError(field.id, validation.errorMessage, false);
+                        isValid = false;
+                    } else {
+                        hideFieldError(field.id);
+                    }
+                });
+                
+                // Validate terms acceptance
+                if (!acceptTerms) {
+                    showFieldError('accept-terms', 'Vui lòng đồng ý với Điều khoản dịch vụ và Chính sách bảo mật', false);
+                    isValid = false;
+                } else {
+                    hideFieldError('accept-terms');
+                }
+                
+                if (!isValid) {
+                    showAlert('Vui lòng kiểm tra lại thông tin đăng ký', 'error');
+                    return;
+                }
+                
+                // Show loading state
+                setLoadingState('register', true);
+                
+                // Simulate API call delay
+                setTimeout(() => {
+                    // Register new user
+                    const newUser = UserManager.registerUser({
+                        fullname,
+                        username,
+                        email,
+                        password,
+                        role,
+                        organization
+                    });
+                    
+                    showAlert('Đăng ký thành công! Vui lòng đăng nhập.', 'success');
+                    setLoadingState('register', false);
+                    
+                    // Switch to login form after 2 seconds
+                    setTimeout(() => {
+                        formTabs[0].click();
+                        loginForm.reset();
+                        registerForm.reset();
+                        document.getElementById('password-strength-bar').style.width = '0%';
+                        resetFormValidation();
+                    }, 2000);
+                }, 1000);
+            });
+
+            // Mobile menu toggle
+            document.getElementById('menu-toggle').addEventListener('click', function() {
+                const menu = document.getElementById('mobile-menu');
+                menu.classList.toggle('hidden');
+                
+                // Change icon based on state
+                const isHidden = menu.classList.contains('hidden');
+                this.innerHTML = isHidden ? feather.icons.menu.toSvg() : feather.icons.x.toSvg();
+                feather.replace();
+            });
+        });
+
+        // Show alert message
+        function showAlert(message, type) {
+            alertMessage.textContent = message;
+            loginAlert.className = `alert alert-${type}`;
+            loginAlert.style.display = 'flex';
+            
+            // Update icon based on alert type
+            const icon = loginAlert.querySelector('i');
+            if (type === 'error') {
+                icon.setAttribute('data-feather', 'alert-circle');
+            } else {
+                icon.setAttribute('data-feather', 'check-circle');
+            }
+            feather.replace();
+        }
+
+        // Hide alert
+        function hideAlert() {
+            loginAlert.style.display = 'none';
+        }
+
+        // Show field error
+        function showFieldError(fieldId, message, isValid) {
+            const errorElement = document.getElementById(`${fieldId}-error`);
+            const inputElement = document.getElementById(fieldId);
+            
+            if (errorElement && inputElement) {
+                if (!isValid && message) {
+                    errorElement.textContent = message;
+                    errorElement.style.display = 'block';
+                    inputElement.classList.add('error');
+                    inputElement.classList.remove('success');
+                } else {
+                    errorElement.style.display = 'none';
+                    inputElement.classList.remove('error');
+                    inputElement.classList.add('success');
+                }
+            }
+        }
+
+        // Hide field error
+        function hideFieldError(fieldId) {
+            const errorElement = document.getElementById(`${fieldId}-error`);
+            const inputElement = document.getElementById(fieldId);
+            
+            if (errorElement && inputElement) {
+                errorElement.style.display = 'none';
+                inputElement.classList.remove('error', 'success');
+            }
+        }
+
+        // Reset form validation
+        function resetFormValidation() {
+            const errorElements = document.querySelectorAll('.error-message');
+            const inputElements = document.querySelectorAll('.form-input');
+            
+            errorElements.forEach(el => el.style.display = 'none');
+            inputElements.forEach(el => el.classList.remove('error', 'success'));
+        }
+
+        // Set loading state
+        function setLoadingState(formType, isLoading) {
+            const btn = document.getElementById(`${formType}-btn`);
+            const spinner = document.getElementById(`${formType}-spinner`);
+            const text = document.getElementById(`${formType}-text`);
+            const icon = btn.querySelector('i[data-feather]');
+            
+            if (isLoading) {
+                spinner.style.display = 'block';
+                icon.style.display = 'none';
+                text.textContent = 'Đang xử lý...';
+                btn.disabled = true;
+            } else {
+                spinner.style.display = 'none';
+                icon.style.display = 'inline-block';
+                text.textContent = formType === 'login' ? 'Đăng Nhập' : 'Đăng Ký Tài Khoản';
+                btn.disabled = false;
+                feather.replace();
+            }
+        }
+
+        // Auto-logout after 30 minutes of inactivity
+        let inactivityTimer;
+        function resetInactivityTimer() {
+            clearTimeout(inactivityTimer);
+            inactivityTimer = setTimeout(() => {
+                if (UserManager.isLoggedIn()) {
+                    UserManager.logout();
+                    showAlert('Phiên đăng nhập đã hết hạn do không hoạt động', 'error');
+                }
+            }, 30 * 60 * 1000); // 30 minutes
+        }
+
+        // Reset timer on user activity
+        document.addEventListener('mousemove', resetInactivityTimer);
+        document.addEventListener('keypress', resetInactivityTimer);
+        document.addEventListener('click', resetInactivityTimer);
+
+        // Initialize timer
+        resetInactivityTimer();
+    </script>
 </body>
 </html>

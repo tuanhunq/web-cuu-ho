@@ -1,539 +1,438 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Cứu Hộ Toàn Quốc - Demo UI</title>
-
-  <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-sA+e2k8GQGkqS5wFfX6M0s3qQ0kQ4m5h4gq6Q6X0k8A=" crossorigin=""/>
-
-  <style>
-    :root{
-      --primary:#007BFF;
-      --success:#00A36C;
-      --danger:#FF4C4C;
-      --bg:#F6F8FA;
-      --card:#FFFFFF;
-      --muted:#6b7280;
-      --shadow: 0 6px 18px rgba(31,41,55,0.08);
-      font-family: Inter, system-ui, Arial, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
-    }
-
-    *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:#111827;font-size:15px;line-height:1.4}
-
-    /* Header */
-    header{background:linear-gradient(90deg,#0d6efd22, #00a36c11);padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px}
-    .brand{display:flex;align-items:center;gap:12px}
-    .logo{width:48px;height:48px;border-radius:10px;background:var(--primary);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;box-shadow:var(--shadow)}
-    nav a{margin-left:12px;color:var(--primary);text-decoration:none;font-weight:600}
-    .actions{display:flex;gap:8px;align-items:center}
-
-    /* Layout */
-    .container{max-width:1200px;margin:18px auto;padding:0 16px}
-    .grid{display:grid;gap:16px}
-    .cols-3{grid-template-columns:1fr 350px}
-    @media (max-width:900px){ .cols-3{grid-template-columns:1fr} .side-card{order:2} }
-
-    /* Hero */
-    .hero{background:linear-gradient(180deg,rgba(255,255,255,0.9),rgba(255,255,255,0.8));padding:22px;border-radius:12px;display:flex;gap:18px;align-items:center;box-shadow:var(--shadow)}
-    .hero .left{flex:1}
-    .hero h1{margin:0 0 8px;font-size:1.5rem}
-    .hero p{margin:0;color:var(--muted)}
-    .btn{padding:10px 14px;border-radius:8px;border:0;cursor:pointer;font-weight:700}
-    .btn-primary{background:var(--primary);color:white}
-    .btn-danger{background:var(--danger);color:white}
-    .btn-outline{background:transparent;border:1px solid #e6e9ef;color:var(--primary)}
-
-    /* Cards */
-    .card{background:var(--card);padding:12px;border-radius:10px;box-shadow:var(--shadow)}
-    .side-card .row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px dashed #eef2f7}
-    .small{font-size:13px;color:var(--muted)}
-
-    /* Map */
-    #miniMap{height:200px;border-radius:8px}
-    #fullMap{height:420px;border-radius:8px}
-
-    /* Request form (modal-like) */
-    .modal{position:fixed;inset:0;background:rgba(2,6,23,0.5);display:flex;align-items:center;justify-content:center;z-index:60;display:none}
-    .modal.open{display:flex}
-    .modal-content{width:100%;max-width:720px;background:var(--card);padding:18px;border-radius:10px;box-shadow:var(--shadow)}
-    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
-    .form-row.full{grid-template-columns:1fr}
-    input,select,textarea{padding:10px;border-radius:8px;border:1px solid #e6e9ef;width:100%;font-size:14px}
-    label{font-weight:600;font-size:13px;margin-bottom:6px;display:block}
-
-    /* Tracking widget */
-    .tracking{display:flex;gap:12px;align-items:center}
-    .progress{height:10px;border-radius:10px;background:#e6eefc;flex:1;overflow:hidden}
-    .progress > i{display:block;height:100%;background:linear-gradient(90deg,var(--primary),var(--success));width:30%}
-
-    /* Tabs (simulate multi UI) */
-    .tabs{display:flex;gap:8px;margin-bottom:12px}
-    .tab{padding:8px 12px;border-radius:8px;background:#fff;border:1px solid #eef2f7;cursor:pointer}
-    .tab.active{background:linear-gradient(90deg,var(--primary),var(--success));color:white;border:0}
-
-    /* Dashboard lists */
-    .list{max-height:300px;overflow:auto}
-    .list .item{padding:10px;border-radius:8px;background:#fbfdff;border:1px solid #eef6ff;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
-
-    footer{padding:18px;text-align:center;color:var(--muted);font-size:13px;margin-top:24px}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Cứu Hộ Quốc Gia</title>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <!-- Thêm Leaflet CSS và JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoYehvS5fV/2kJZO6e0H2Zm1r2a4rG6qF0l7Z6A=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body>
-
-  <header>
-    <div class="brand">
-      <div class="logo">CH</div>
-      <div>
-        <div style="font-weight:800">Cứu Hộ Toàn Quốc</div>
-        <div style="font-size:12px;color:var(--muted)">Mạng lưới cứu hộ & trợ giúp 24/7</div>
-      </div>
-    </div>
-
-    <nav>
-      <a href="index.html" data-nav="home">Trang chủ</a>
-      <a href="index.html#fullMap" data-nav="map">Bản đồ</a>
-      <a href="tracking.html" data-nav="tracking">Theo dõi</a>
-      <a href="index.html#view-team" data-nav="team">Đội cứu hộ</a>
-      <a href="admin.html" data-nav="admin">Admin</a>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md sticky top-0 z-50 backdrop-blur-sm bg-opacity-80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex items-center space-x-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                    <span class="text-2xl font-bold bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">CỨU HỘ QUỐC GIA</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#home" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Trang chủ</a>
+                    <a href="emergency_map.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Bản đồ cứu hộ</a>
+                    <a href="news.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Bản tin</a>
+                    <a href="post.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Báo tin</a>
+                    <div class="flex space-x-4">
+                        <a href="admin.html" class="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-lg font-medium transition-all shadow hover:shadow-lg">Admin</a>
+                        <a href="login.html" class="bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-all shadow hover:shadow-lg">Đăng nhập</a>
+                    </div>
+                </div>
+                <div class="md:hidden flex items-center">
+                    <button id="menu-toggle" class="text-gray-700 hover:text-red-600">
+                        <i data-feather="menu"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white py-2 px-4 shadow-lg">
+            <a href="#home" class="block py-2 text-gray-700 hover:text-red-600 transition">Trang chủ</a>
+            <a href="emergency_map.html" class="block py-2 text-gray-700 hover:text-red-600 transition">Bản đồ cứu hộ</a>
+            <a href="news.html" class="block py-2 text-gray-700 hover:text-red-600 transition">Bản tin</a>
+            <a href="post.html" class="block py-2 text-gray-700 hover:text-red-600 transition">Báo tin</a>
+            <a href="admin.html" class="block py-2 text-white bg-gray-800 rounded-md text-center">Admin</a>
+            <a href="login.html" class="block py-2 text-white bg-red-600 rounded-md text-center mt-2">Đăng nhập</a>
+        </div>
     </nav>
 
-    <div class="actions">
-  <a class="btn btn-outline" href="login.html" id="btn-login">Đăng nhập</a>
-      <button class="btn btn-primary" id="btn-sos">🆘 Gửi yêu cầu cứu hộ</button>
-      <a class="btn btn-primary" href="request.html" style="margin-left:8px">📝 Trang gửi yêu cầu</a>
-    </div>
-  </header>
-
-  <main class="container">
-    <!-- Main grid -->
-    <div class="grid cols-3">
-
-      <!-- Left / main content -->
-      <section id="view-home" class="card">
-        <!-- Hero -->
-        <div class="hero">
-          <div class="left">
-            <h1>Gặp sự cố giữa đường? Một chạm — cứu hộ tới ngay.</h1>
-            <p>Hệ thống kết nối người dân với đội cứu hộ gần nhất — hỗ trợ xe máy, ô tô, cứu trợ thiên tai và y tế khẩn cấp.</p>
-
-            <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
-              <button class="btn btn-danger" id="hero-sos">🆘 Gửi cứu hộ ngay</button>
-              <a class="btn btn-danger" href="request.html">📝 Gửi yêu cầu (trang)</a>
-              <button class="btn btn-primary" id="hero-track">Theo dõi yêu cầu</button>
-              <a class="btn btn-primary" href="tracking.html">📍 Theo dõi (trang)</a>
-              <button class="btn btn-outline" id="hero-info">Tra cứu trung tâm</button>
-            </div>
-          </div>
-
-          <div style="width:360px">
-            <div class="card" style="padding:10px">
-              <div style="display:flex;align-items:center;justify-content:space-between">
-                <div>
-                  <div style="font-weight:700">Cứu hộ 24/7</div>
-                  <div class="small">Đã hỗ trợ <strong id="stat-count">1,234</strong> ca</div>
-                </div>
-                <div style="text-align:right">
-                  <div class="small">Thời gian phản hồi TB</div>
-                  <div style="font-weight:800">28 phút</div>
-                </div>
-              </div>
-
-              <div style="margin-top:10px">
-                <div id="miniMap"></div>
-              </div>
-            </div>
-          </div>
+    <!-- Emergency Alert Banner -->
+    <div class="bg-gradient-to-r from-red-500 to-orange-500 text-white py-3 px-4 text-center animate-pulse">
+        <div class="max-w-7xl mx-auto flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <span class="font-medium tracking-wide">CẢNH BÁO THIÊN TAI: Mưa lớn diện rộng tại miền Trung - Cập nhật lúc 14:30 15/06/2023</span>
         </div>
-
-        <!-- Quick categories -->
-        <div style="display:flex;gap:12px;margin-top:14px;flex-wrap:wrap">
-          <div class="card" style="flex:1;min-width:220px">
-            <h3 style="margin:0 0 8px">Chọn loại cứu hộ</h3>
-            <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <button class="btn btn-outline">🚗 Cứu hộ ô tô</button>
-              <button class="btn btn-outline">🏍️ Cứu hộ xe máy</button>
-              <button class="btn btn-outline">🌧️ Cứu trợ thiên tai</button>
-              <button class="btn btn-outline">🧑‍⚕️ Cứu hộ y tế</button>
-              <button class="btn btn-outline">🐾 Cứu hộ động vật</button>
-            </div>
-          </div>
-
-          <div class="card" style="min-width:280px">
-            <h3 style="margin:0 0 8px">Tra cứu trung tâm cứu hộ</h3>
-            <input placeholder="Nhập tỉnh / thành" id="search-region" />
-            <div class="small" style="margin-top:8px">Gợi ý: Hà Nội, Hồ Chí Minh, Đà Nẵng...</div>
-          </div>
-        </div>
-
-        <!-- full map -->
-        <div style="margin-top:14px" class="card">
-          <h3 style="margin:0 0 8px">Bản đồ cứu hộ toàn quốc</h3>
-          <div id="fullMap"></div>
-        </div>
-      </section>
-
-      <!-- Right / side -->
-      <aside class="side-card">
-        <div class="card" style="margin-bottom:12px">
-          <div style="display:flex;align-items:center;justify-content:space-between">
-            <div>
-              <div style="font-weight:800">Yêu cầu gần đây</div>
-              <div class="small">Các trường hợp vừa được tiếp nhận</div>
-            </div>
-            <div style="text-align:right"><div style="font-weight:700;color:var(--primary)">24</div><div class="small">trong 24h</div></div>
-          </div>
-
-            <div class="list" style="margin-top:10px">
-            <div class="item">
-              <div>
-                <div style="font-weight:700">Xe máy hết điện</div>
-                <div class="small">Hà Nội · 12 phút trước</div>
-              </div>
-              <div><a class="btn btn-outline" href="tracking.html#REQ-001">Theo dõi</a></div>
-            </div>
-            <div class="item">
-              <div>
-                <div style="font-weight:700">Ô tô gặp tai nạn nhẹ</div>
-                <div class="small">Nghệ An · 20 phút trước</div>
-              </div>
-              <div><a class="btn btn-outline" href="tracking.html#REQ-002">Theo dõi</a></div>
-            </div>
-            <div class="item">
-              <div>
-                <div style="font-weight:700">Cứu trợ vùng lũ</div>
-                <div class="small">Quảng Bình · 1 giờ trước</div>
-              </div>
-              <div><a class="btn btn-outline" href="tracking.html#REQ-003">Chi tiết</a></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div>
-              <div style="font-weight:800">Đội cứu hộ gần bạn</div>
-              <div class="small">Sẵn sàng 24/7</div>
-            </div>
-            <div style="text-align:right"><div style="font-weight:700">12 đội</div><div class="small">trong khu vực</div></div>
-          </div>
-
-          <div style="margin-top:12px">
-            <div style="display:flex;flex-direction:column;gap:8px">
-              <div style="display:flex;align-items:center;justify-content:space-between">
-                <div>
-                  <div style="font-weight:700">Đội HN-01</div>
-                  <div class="small">Hà Nội · 5 phút</div>
-                </div>
-                <div><button class="btn btn-primary" onclick="assignDemo('HN-01')">Gọi</button></div>
-              </div>
-              <div style="display:flex;align-items:center;justify-content:space-between">
-                <div>
-                  <div style="font-weight:700">Đội HCM-05</div>
-                  <div class="small">Hồ Chí Minh · 12 phút</div>
-                </div>
-                <div><button class="btn btn-primary" onclick="assignDemo('HCM-05')">Gọi</button></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </aside>
-
     </div>
 
-    <!-- Tracking / Team / Admin Views (hidden by default) -->
-    <section id="view-tracking" class="card" style="margin-top:18px;display:none">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <h3 style="margin:0">Theo dõi yêu cầu cứu hộ</h3>
-        <div class="small">Mã yêu cầu: <strong id="tracking-id">—</strong></div>
-      </div>
+    <!-- Hero Section -->
+    <section id="home" class="hero-section py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 mb-10 md:mb-0">
+                    <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-6">
+                        <span class="bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">Hệ Thống Cứu Hộ</span> <br>
+                        <span class="text-gray-800">Ứng Phó Khẩn Cấp Quốc Gia</span>
+                    </h1>
+                    <p class="text-lg text-gray-600 mb-8 max-w-lg leading-relaxed">
+                        Kết nối người dân với lực lượng cứu hộ trong các tình huống khẩn cấp như thiên tai, hỏa hoạn, tai nạn giao thông và các sự cố đe dọa tính mạng.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="post.html" class="emergency-btn bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white px-6 py-3 rounded-lg font-medium transition-all shadow-lg flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                            BÁO KHẨN CẤP
+                        </a>
+                        <a href="emergency_map.html" class="border-2 border-red-500 text-red-500 hover:bg-red-50 px-6 py-3 rounded-lg font-medium transition-all shadow flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            XEM BẢN ĐỒ
+                        </a>
+                    </div>
+                </div>
+                <div class="md:w-1/2 flex justify-center">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1583324113626-70df0f4deaab?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Emergency rescue team" class="rounded-2xl shadow-2xl w-full max-w-md transform rotate-1">
+                        <div class="absolute -bottom-4 -right-4 bg-white p-3 rounded-lg shadow-lg">
+                            <div class="flex items-center">
+                                <div class="h-3 w-3 bg-red-500 rounded-full mr-2 animate-pulse"></div>
+                                <span class="text-sm font-medium">Đang hoạt động 24/7</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-      <div style="margin-top:12px;display:flex;gap:12px;flex-wrap:wrap">
-        <div style="flex:1;min-width:280px">
-          <div class="card">
-            <h4 style="margin-top:0">Trạng thái</h4>
-            <div class="tracking">
-              <div style="width:180px">
-                <div class="small">Tiến độ</div>
-                <div class="progress" style="margin-top:6px"><i id="prog-bar"></i></div>
-              </div>
-              <div>
-                <div style="font-weight:800" id="prog-text">Đang điều phối</div>
-                <div class="small">Đội cứu hộ: <span id="prog-team">—</span></div>
-              </div>
+    <!-- Services Section -->
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold mb-4 bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">Dịch Vụ Cứu Hộ</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto text-lg">Các dịch vụ cứu hộ khẩn cấp luôn sẵn sàng hỗ trợ 24/7</p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="service-card bg-white border border-gray-100 p-8 shadow-sm">
+                    <div class="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mb-6">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-xl mb-3 text-gray-800">Thiên Tai</h3>
+                    <p class="text-gray-600 leading-relaxed">Bão lụt, động đất, sạt lở đất và các hiện tượng thiên tai khác</p>
+                </div>
+                <div class="service-card bg-white border border-gray-100 p-8 shadow-sm">
+                    <div class="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mb-6">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z" />
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-xl mb-3 text-gray-800">Hỏa Hoạn</h3>
+                    <p class="text-gray-600 leading-relaxed">Cứu hỏa, ứng cứu các vụ cháy nổ, sự cố công nghiệp</p>
+                </div>
+                <div class="service-card bg-white border border-gray-100 p-8 shadow-sm">
+                    <div class="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mb-6">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-xl mb-3 text-gray-800">Giao Thông</h3>
+                    <p class="text-gray-600 leading-relaxed">Tai nạn đường bộ, hàng không, hàng hải và đường sắt</p>
+                </div>
+                <div class="service-card bg-white border border-gray-100 p-8 shadow-sm">
+                    <div class="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mb-6">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-xl mb-3 text-gray-800">Y Tế</h3>
+                    <p class="text-gray-600 leading-relaxed">Cấp cứu y tế, tai nạn lao động, sự cố sức khỏe</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Section -->
+    <section id="map-section" class="py-20 bg-gradient-to-b from-gray-50 to-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold mb-4 bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">
+                    Bản Đồ Cứu Hộ
+                </h2>
+                <p class="text-gray-600 max-w-2xl mx-auto text-lg">
+                    Theo dõi các điểm cứu hộ, sự cố và lực lượng ứng phó trong thời gian thực
+                </p>
             </div>
 
-            <div style="margin-top:12px">
-              <button class="btn btn-primary" onclick="simulateProgress()">Cập nhật tiến độ (demo)</button>
-              <button class="btn btn-outline" onclick="backToHome()">Quay về</button>
+            <!-- Bộ lọc và tìm kiếm -->
+            <div class="mb-6 bg-white rounded-2xl shadow-lg p-6">
+                <div class="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+                    <!-- Tìm kiếm -->
+                    <div class="flex-1 w-full lg:w-auto">
+                        <div class="relative">
+                            <i data-feather="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"></i>
+                            <input 
+                                type="text" 
+                                id="search-incidents" 
+                                placeholder="Tìm kiếm sự cố, địa điểm..." 
+                                class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Bộ lọc tỉnh thành -->
+                    <div class="w-full lg:w-64">
+                        <select id="province-filter" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                            <option value="all">Tất cả tỉnh thành</option>
+                            <option value="hanoi">Hà Nội</option>
+                            <option value="hcm">TP.Hồ Chí Minh</option>
+                            <option value="danang">Đà Nẵng</option>
+                            <option value="hue">Thừa Thiên Huế</option>
+                            <option value="nghean">Nghệ An</option>
+                            <option value="thanhhoa">Thanh Hóa</option>
+                            <option value="haiphong">Hải Phòng</option>
+                            <option value="cantho">Cần Thơ</option>
+                        </select>
+                    </div>
+
+                    <!-- Bộ lọc loại sự cố -->
+                    <div class="w-full lg:w-64">
+                        <select id="type-filter" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                            <option value="all">Tất cả loại sự cố</option>
+                            <option value="fire">Hỏa hoạn</option>
+                            <option value="flood">Ngập lụt</option>
+                            <option value="accident">Tai nạn giao thông</option>
+                            <option value="disaster">Thiên tai</option>
+                        </select>
+                    </div>
+
+                    <!-- Nút reset -->
+                    <button id="reset-filters" class="px-6 py-3 border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-xl transition flex items-center whitespace-nowrap">
+                        <i data-feather="refresh-cw" class="mr-2 w-4 h-4"></i> Đặt lại
+                    </button>
+                </div>
             </div>
-          </div>
-        </div>
 
-        <div style="flex:1;min-width:320px">
-          <div class="card">
-            <h4 style="margin-top:0">Bản đồ & vị trí</h4>
-            <div id="trackMap" style="height:320px;border-radius:8px"></div>
-          </div>
+            <div class="flex flex-col lg:flex-row gap-8">
+                <!-- 🗺️ Bản đồ -->
+                <div class="lg:w-2/3">
+                    <div id="map" class="h-[600px] w-full rounded-2xl shadow-xl border border-gray-200"></div>
+
+                    <!-- Controls -->
+                    <div class="mt-4 flex flex-wrap gap-3 items-center justify-between">
+                        <div class="flex flex-wrap gap-2">
+                            <button id="locate-btn" class="bg-white border border-gray-300 px-4 py-2 rounded-lg flex items-center hover:bg-gray-50 transition shadow-sm">
+                                <i data-feather="map-pin" class="mr-2 w-4 h-4"></i> Vị trí của tôi
+                            </button>
+                            <button id="zoom-in-btn" class="bg-white border border-gray-300 px-4 py-2 rounded-lg flex items-center hover:bg-gray-50 transition shadow-sm">
+                                <i data-feather="zoom-in" class="mr-2 w-4 h-4"></i> Phóng to
+                            </button>
+                            <button id="zoom-out-btn" class="bg-white border border-gray-300 px-4 py-2 rounded-lg flex items-center hover:bg-gray-50 transition shadow-sm">
+                                <i data-feather="zoom-out" class="mr-2 w-4 h-4"></i> Thu nhỏ
+                            </button>
+                        </div>
+                        
+                        <div class="flex items-center text-sm text-gray-600">
+                            <div class="flex items-center mr-4">
+                                <div class="w-3 h-3 bg-red-500 rounded-full mr-2 animate-pulse"></div>
+                                <span>Đang xử lý</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
+                                <span>Đã giải quyết</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 🔥 Panel thông tin -->
+                <div class="lg:w-1/3">
+                    <div class="bg-white rounded-2xl shadow-xl overflow-hidden sticky top-4">
+                        <!-- Header -->
+                        <div class="bg-gradient-to-r from-red-500 to-orange-500 p-6 text-white">
+                            <h3 class="text-xl font-bold mb-2 flex items-center">
+                                <i data-feather="activity" class="mr-2 w-5 h-5"></i>
+                                Thống Kê Sự Cố
+                            </h3>
+                            <p class="text-red-100 text-sm">Cập nhật lúc: <span id="last-update">--:--:--</span></p>
+                        </div>
+
+                        <!-- Thống kê -->
+                        <div class="p-6 border-b border-gray-200">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="text-center p-4 bg-red-50 rounded-xl">
+                                    <div class="text-2xl font-bold text-red-600" id="active-incidents">0</div>
+                                    <div class="text-sm text-red-700 font-medium">Đang xử lý</div>
+                                </div>
+                                <div class="text-center p-4 bg-green-50 rounded-xl">
+                                    <div class="text-2xl font-bold text-green-600" id="resolved-incidents">0</div>
+                                    <div class="text-sm text-green-700 font-medium">Đã giải quyết</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Chú thích -->
+                        <div class="p-6">
+                            <h4 class="font-bold mb-4 text-gray-800 flex items-center">
+                                <i data-feather="map" class="text-red-500 mr-2 w-4 h-4"></i>
+                                Chú Thích Bản Đồ
+                            </h4>
+
+                            <div class="space-y-3">
+                                <!-- Hỏa hoạn -->
+                                <div class="flex items-center p-3 bg-red-50 rounded-lg border border-red-200 hover:bg-red-100 transition cursor-pointer" data-type="fire">
+                                    <div class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center mr-3">
+                                        <i data-feather="flame" class="text-white w-4 h-4"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <span class="font-semibold text-red-700">🔥 Hỏa hoạn</span>
+                                        <p class="text-sm text-red-600">Cháy nhà, cháy rừng, nổ</p>
+                                    </div>
+                                    <div class="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold" id="count-fire">0</div>
+                                </div>
+
+                                <!-- Ngập lụt -->
+                                <div class="flex items-center p-3 bg-blue-50 rounded-lg border border-blue-200 hover:bg-blue-100 transition cursor-pointer" data-type="flood">
+                                    <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center mr-3">
+                                        <i data-feather="droplet" class="text-white w-4 h-4"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <span class="font-semibold text-blue-700">💧 Ngập lụt</span>
+                                        <p class="text-sm text-blue-600">Ngập nước, lũ quét</p>
+                                    </div>
+                                    <div class="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-bold" id="count-flood">0</div>
+                                </div>
+
+                                <!-- Tai nạn giao thông -->
+                                <div class="flex items-center p-3 bg-orange-50 rounded-lg border border-orange-200 hover:bg-orange-100 transition cursor-pointer" data-type="accident">
+                                    <div class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center mr-3">
+                                        <i data-feather="activity" class="text-white w-4 h-4"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <span class="font-semibold text-orange-700">🚗 Tai nạn giao thông</span>
+                                        <p class="text-sm text-orange-600">TNGT đường bộ, đường sắt</p>
+                                    </div>
+                                    <div class="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center text-white text-xs font-bold" id="count-accident">0</div>
+                                </div>
+
+                                <!-- Thiên tai -->
+                                <div class="flex items-center p-3 bg-purple-50 rounded-lg border border-purple-200 hover:bg-purple-100 transition cursor-pointer" data-type="disaster">
+                                    <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center mr-3">
+                                        <i data-feather="alert-octagon" class="text-white w-4 h-4"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <span class="font-semibold text-purple-700">🌪️ Thiên tai</span>
+                                        <p class="text-sm text-purple-600">Bão lụt, sạt lở, động đất</p>
+                                    </div>
+                                    <div class="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center text-white text-xs font-bold" id="count-disaster">0</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
     </section>
 
-    <section id="view-team" class="card" style="margin-top:18px;display:none">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <h3 style="margin:0">Dashboard Đội Cứu Hộ</h3>
-        <div class="small">Tài khoản: <strong>DOI-HN01</strong></div>
-      </div>
-
-      <div style="display:grid;grid-template-columns:1fr 320px;gap:12px;margin-top:12px">
-        <div class="card">
-          <h4>Yêu cầu chờ xử lý</h4>
-          <div class="list">
-            <div class="item"><div><div style="font-weight:700">REQ-028</div><div class="small">Xe chết máy - Bắc Từ Liêm</div></div><div><button class="btn btn-primary">Nhận</button></div></div>
-            <div class="item"><div><div style="font-weight:700">REQ-029</div><div class="small">Lật xe nhẹ - Q. Thanh Xuân</div></div><div><button class="btn btn-primary">Nhận</button></div></div>
-          </div>
+    <!-- News Section -->
+    <section id="news-section" class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold mb-3 bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">Bản Tin Khẩn Cấp</h2>
+                <p class="text-gray-600 max-w-xl mx-auto text-base">Cập nhật thông tin mới nhất về các sự cố, cảnh báo và hoạt động cứu hộ trên toàn quốc.</p>
+            </div>
+            <div id="news-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+            <div class="text-center mt-10">
+                <a href="news.html" class="inline-flex items-center px-6 py-3 border border-red-600 text-red-600 rounded-md hover:bg-red-50 transition font-medium">
+                    Xem tất cả bản tin
+                    <i data-feather="chevron-right" class="ml-2 w-4 h-4"></i>
+                </a>
+            </div>
         </div>
-
-        <div class="card">
-          <h4>Trạng thái đội</h4>
-          <div style="display:flex;flex-direction:column;gap:10px">
-            <div><strong>Trạng thái:</strong> <span id="team-status">Sẵn sàng</span></div>
-            <div><strong>Phương tiện:</strong> Xe cẩu, xe cứu hộ, bộ dụng cụ.</div>
-            <div><button class="btn btn-outline" onclick="toggleTeamStatus()">Chuyển trạng thái</button></div>
-          </div>
-        </div>
-      </div>
     </section>
 
-    <section id="view-admin" class="card" style="margin-top:18px;display:none">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <h3 style="margin:0">Admin Dashboard</h3>
-        <div class="small">Quản trị hệ thống</div>
-      </div>
-
-      <div style="display:grid;grid-template-columns:1fr 320px;gap:12px;margin-top:12px">
-        <div class="card">
-          <h4>Số liệu</h4>
-          <div style="display:flex;gap:12px;flex-wrap:wrap">
-            <div style="flex:1;min-width:140px" class="card"><div style="font-weight:800">1,234</div><div class="small">Yêu cầu / tháng</div></div>
-            <div style="flex:1;min-width:140px" class="card"><div style="font-weight:800">28 phút</div><div class="small">TB phản hồi</div></div>
-            <div style="flex:1;min-width:140px" class="card"><div style="font-weight:800">94%</div><div class="small">Mức hài lòng</div></div>
-          </div>
-
-          <h4 style="margin-top:12px">Báo cáo gần đây</h4>
-          <div class="list">
-            <div class="item"><div><div style="font-weight:700">Báo cáo tuần 42</div><div class="small">Tăng 12% ca cứu trợ</div></div><div><button class="btn btn-outline">Xuất</button></div></div>
-            <div class="item"><div><div style="font-weight:700">Sự cố cầu Lạng</div><div class="small">Cần hỗ trợ liên tỉnh</div></div><div><button class="btn btn-outline">Chi tiết</button></div></div>
-          </div>
+    <!-- Modal for news details -->
+    <div id="news-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 p-4 modal">
+        <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-screen overflow-y-auto p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h3 id="modal-title" class="text-2xl font-bold"></h3>
+                <button id="close-modal" class="text-gray-400 hover:text-gray-500">
+                    <i data-feather="x"></i>
+                </button>
+            </div>
+            <div id="modal-content" class="space-y-4"></div>
+            <div class="mt-6 border-t pt-4 flex space-x-4">
+                <a id="map-link" href="#" class="text-blue-600 hover:text-blue-800 flex items-center">
+                    <i data-feather="map-pin" class="mr-2 w-4 h-4"></i> Xem trên bản đồ
+                </a>
+                <a href="post.html" class="text-orange-600 hover:text-orange-700 flex items-center">
+                    <i data-feather="alert-triangle" class="mr-2 w-4 h-4"></i> Báo tin bổ sung
+                </a>
+                <button id="share-news" class="text-green-600 hover:text-green-700 flex items-center">
+                    <i data-feather="share-2" class="mr-2 w-4 h-4"></i> Chia sẻ
+                </button>
+            </div>
+            <div id="related-news" class="mt-6 border-t pt-4">
+                <h4 class="font-bold mb-4">Tin liên quan</h4>
+                <div class="space-y-2"></div>
+            </div>
         </div>
-
-        <div class="card">
-          <h4>Quản lý</h4>
-          <div style="display:flex;flex-direction:column;gap:8px">
-            <button class="btn btn-primary">Quản lý tài khoản</button>
-            <button class="btn btn-outline">Cấu hình API bản đồ</button>
-            <button class="btn btn-outline">Thông báo & cảnh báo</button>
-            <button class="btn btn-outline">Xuất báo cáo (Excel / PDF)</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- Modal: Send Request -->
-  <div class="modal" id="modal-request" aria-hidden="true">
-    <div class="modal-content">
-      <h3 style="margin-top:0">Gửi yêu cầu cứu hộ</h3>
-      <form id="form-request">
-        <div class="form-row full">
-          <div>
-            <label>Loại cứu hộ</label>
-            <select id="req-type">
-              <option value="xe-may">Xe máy</option>
-              <option value="oto">Ô tô</option>
-              <option value="thientai">Thiên tai / Lũ</option>
-              <option value="yte">Cứu hộ y tế</option>
-              <option value="dongvat">Cứu hộ động vật</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div>
-            <label>Số điện thoại liên hệ</label>
-            <input id="req-phone" placeholder="Số điện thoại" required />
-          </div>
-          <div>
-            <label>Vị trí (tự động)</label>
-            <input id="req-location" placeholder="Kinh độ, Vĩ độ hoặc địa chỉ" />
-          </div>
-        </div>
-
-        <div class="form-row full">
-          <div>
-            <label>Mô tả tình huống</label>
-            <textarea id="req-desc" rows="4" placeholder="Mô tả ngắn gọn (ví dụ: hết điện, lủng lốp, bị tai nạn...)"></textarea>
-          </div>
-        </div>
-
-        <div style="display:flex;gap:8px;justify-content:flex-end">
-          <button type="button" class="btn btn-outline" onclick="closeModal()">Hủy</button>
-          <button type="submit" class="btn btn-primary">Gửi yêu cầu</button>
-        </div>
-      </form>
     </div>
-  </div>
 
-  <footer>
-    © <strong>Cứu Hộ Toàn Quốc</strong> — Demo giao diện. Liên hệ: info@cuuho.toanquoc
-  </footer>
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                        <span class="text-2xl font-bold bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">CỨU HỘ QUỐC GIA</span>
+                    </div>
+                    <p class="text-gray-400 leading-relaxed">Kết nối người dân với lực lượng cứu hộ trong các tình huống khẩn cấp.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Dịch Vụ</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Cứu hỏa</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Cứu hộ giao thông</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Y tế khẩn cấp</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Ứng phó thiên tai</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Liên Kết</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Bộ Công An</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Bộ Y Tế</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Ban Chỉ Đạo PCTT</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Cục Cứu Hộ Cứu Nạn</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Hỗ Trợ</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Câu hỏi thường gặp</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Hướng dẫn sử dụng</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Chính sách bảo mật</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Điều khoản dịch vụ</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-12 pt-8 text-center text-gray-400">
+                <p>© 2023 Hệ Thống Cứu Hộ Quốc Gia. Bản quyền thuộc về Bộ Công An.</p>
+            </div>
+        </div>
+    </footer>
 
-  <!-- Leaflet + simple JS -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-o9N1j8X6VQ2CkXar1gYQmW0k0ZQ5Y1qj6bG6hQkz2yM=" crossorigin=""></script>
-
-  <script>
-    // Simple view navigation
-    const navLinks = document.querySelectorAll('nav a[data-nav]');
-    const views = {
-      home: document.getElementById('view-home'),
-      tracking: document.getElementById('view-tracking'),
-      team: document.getElementById('view-team'),
-      admin: document.getElementById('view-admin'),
-      map: document.getElementById('view-home') // map in home
-    };
-    navLinks.forEach(a=>{
-      a.addEventListener('click', (e)=>{
-        e.preventDefault();
-        const key = a.dataset.nav;
-        for(const v in views) views[v].style.display = 'none';
-        if(views[key]) views[key].style.display = 'block';
-        // show home by default if missing
-        if(!views[key]) views.home.style.display = 'block';
-        window.scrollTo({top:0,behavior:'smooth'});
-      });
-    });
-
-    // Modal handling
-    const modal = document.getElementById('modal-request');
-    document.getElementById('btn-sos').addEventListener('click', ()=>openModal());
-    document.getElementById('hero-sos').addEventListener('click', ()=>openModal());
-    function openModal(){
-      modal.classList.add('open');
-      // try to get geolocation
-      if(navigator.geolocation){
-        navigator.geolocation.getCurrentPosition(pos=>{
-          const lat = pos.coords.latitude.toFixed(6);
-          const lon = pos.coords.longitude.toFixed(6);
-          document.getElementById('req-location').value = lat + ',' + lon;
-        }, ()=>{/* ignore */});
-      }
-    }
-    function closeModal(){ modal.classList.remove('open'); }
-    document.getElementById('form-request').addEventListener('submit', function(e){
-      e.preventDefault();
-      // simple demo: close modal & show tracking with fake id
-      closeModal();
-      openTracking('REQ-' + Math.floor(Math.random()*900+100));
-    });
-
-    // Simple "tracking" behavior
-    function openTracking(id){
-      // switch view
-      for(const v in views) views[v].style.display = 'none';
-      views.tracking.style.display = 'block';
-      document.getElementById('tracking-id').innerText = id;
-      // reset progress
-      document.getElementById('prog-bar').style.width = '20%';
-      document.getElementById('prog-text').innerText = 'Đang điều phối';
-      document.getElementById('prog-team').innerText = '—';
-      // set map marker moving demo
-      startTrackingDemo();
-    }
-    function backToHome(){ for(const v in views) views[v].style.display = 'none'; views.home.style.display = 'block' }
-
-    // Demo progress
-    function simulateProgress(){
-      const bar = document.getElementById('prog-bar');
-      const text = document.getElementById('prog-text');
-      const team = document.getElementById('prog-team');
-      let w = parseInt(bar.style.width) || 20;
-      w += 25;
-      if(w >= 100){ w = 100; text.innerText = 'Hoàn thành'; team.innerText = 'HN-01'; }
-      else if(w >= 75){ text.innerText = 'Đã đến gần'; team.innerText = 'HN-01'; }
-      else if(w >= 50){ text.innerText = 'Đang di chuyển'; team.innerText = 'HN-01'; }
-      else { text.innerText = 'Đang điều phối'; team.innerText = '—'; }
-      bar.style.width = w + '%';
-    }
-
-    // Demo assign
-    function assignDemo(teamId){
-      alert('Gọi đội ' + teamId + ' (demo).');
-    }
-    function toggleTeamStatus(){
-      const el = document.getElementById('team-status');
-      el.innerText = el.innerText === 'Sẵn sàng' ? 'Đang làm nhiệm vụ' : 'Sẵn sàng';
-    }
-
-    // Leaflet maps init
-    const miniMap = L.map('miniMap', {zoomControl:false, attributionControl:false}).setView([21.0285,105.8542], 11);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(miniMap);
-    L.marker([21.0285,105.8542]).addTo(miniMap).bindPopup('Vị trí demo: Hà Nội');
-
-    const fullMap = L.map('fullMap').setView([16,106], 5);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18}).addTo(fullMap);
-    // add sample markers for major cities (demo)
-    const samplePoints = [
-      {pos:[21.0285,105.8542],title:'Hà Nội'},
-      {pos:[10.8231,106.6297],title:'Hồ Chí Minh'},
-      {pos:[16.0544,108.2022],title:'Đà Nẵng'},
-      {pos:[14.0583,108.2772],title:'Quảng Nam'},
-    ];
-    samplePoints.forEach(p=>L.marker(p.pos).addTo(fullMap).bindPopup(p.title));
-
-    // Track map for tracking view
-    const trackMap = L.map('trackMap', {zoomControl:false}).setView([21.0285,105.8542], 12);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(trackMap);
-    let trackMarker = L.marker([21.0285,105.8542]).addTo(trackMap).bindPopup('Đội cứu hộ');
-
-    // Demo moving marker
-    let moving = false;
-    function startTrackingDemo(){
-      if(moving) return;
-      moving = true;
-      let lat = 21.0285, lon = 105.8542;
-      let i = 0;
-      const path = [
-        [21.0285,105.8542],
-        [21.0330,105.8600],
-        [21.0360,105.8710],
-        [21.0400,105.8800]
-      ];
-      trackMarker.setLatLng(path[0]);
-      trackMap.setView(path[0],13);
-      const iv = setInterval(()=>{
-        i++;
-        if(i >= path.length){ clearInterval(iv); moving=false; return; }
-        trackMarker.setLatLng(path[i]);
-        trackMap.panTo(path[i]);
-        // increase prog bar a bit
-        const bar = document.getElementById('prog-bar');
-        let w = parseInt(bar.style.width) || 20;
-        if(w < 90) bar.style.width = (w + 20) + '%';
-      }, 2200);
-    }
-
-    // Init: show home
-    backToHome();
-
-    // small helpers
-    document.getElementById('hero-track').addEventListener('click', ()=>openTracking('REQ-DEMO-001'));
-    document.getElementById('btn-login').addEventListener('click', ()=>alert('Chức năng đăng nhập demo'));
-  </script>
+    <script src="assets/js/map.js"></script>
+    <script src="assets/js/news.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script>
+        // Khởi tạo Feather Icons
+        feather.replace();
+    </script>
 </body>
 </html>

@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bản Đồ Cứu Hộ - Hệ Thống Cứu Hộ Quốc Gia</title>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap');
+        :root {
+            --primary: #ef4444;
+            --primary-light: #fee2e2;
+            --dark: #1e293b;
+            --light: #f8fafc;
+        }
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            scroll-behavior: smooth;
+        }
+        .nav-link {
+            position: relative;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        .custom-marker {
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+        .leaflet-popup-content {
+            margin: 8px 12px;
+        }
+        .leaflet-popup-content-wrapper {
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        .stats-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .emergency-card {
+            transition: all 0.3s ease;
+            border-left: 4px solid;
+        }
+        .emergency-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        .emergency-detail-modal {
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .priority-high {
+            background-color: #fee2e2;
+            color: #dc2626;
+        }
+        .priority-medium {
+            background-color: #fef3c7;
+            color: #d97706;
+        }
+        .priority-low {
+            background-color: #d1fae5;
+            color: #059669;
+        }
+        
+        /* FIX: Đảm bảo header luôn hiển thị trên bản đồ */
+        nav {
+            z-index: 1000;
+            position: relative;
+        }
+        
+        #map {
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Đảm bảo mobile menu hiển thị trên map */
+        #mobile-menu {
+            z-index: 1001;
+            position: relative;
+        }
+        
+        /* Đảm bảo modal hiển thị trên tất cả */
+        #emergency-detail-modal {
+            z-index: 1002;
+        }
+        
+        /* Đảm bảo phần thông tin sticky không bị che */
+        .sticky-panel {
+            z-index: 50;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md sticky top-0 z-50 backdrop-blur-sm bg-opacity-80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex items-center space-x-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                    <span class="text-2xl font-bold bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">CỨU HỘ QUỐC GIA</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Trang chủ</a>
+                    <a href="map.html" class="nav-link text-red-500 font-medium transition">Bản đồ cứu hộ</a>
+                    <a href="news.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Bản tin</a>
+                    <a href="post.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Báo tin</a>
+                    <div class="flex space-x-4">
+                        <a href="admin.html" class="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-lg font-medium transition-all shadow hover:shadow-lg">Admin</a>
+                        <a href="login.html" class="bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-all shadow hover:shadow-lg">Đăng nhập</a>
+                    </div>
+                </div>
+                <div class="md:hidden flex items-center">
+                    <button id="menu-toggle" class="text-gray-700 hover:text-red-600">
+                        <i data-feather="menu"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white py-2 px-4 shadow-lg">
+            <a href="index.html" class="block py-2 text-gray-700 hover:text-red-600 transition">Trang chủ</a>
+            <a href="map.html" class="block py-2 text-red-600 font-medium transition">Bản đồ cứu hộ</a>
+            <a href="news.html" class="block py-2 text-gray-700 hover:text-red-600 transition">Bản tin</a>
+            <a href="post.html" class="block py-2 text-gray-700 hover:text-red-600 transition">Báo tin</a>
+            <a href="admin.html" class="block py-2 text-white bg-gray-800 rounded-md text-center">Admin</a>
+            <a href="login.html" class="block py-2 text-white bg-red-600 rounded-md text-center mt-2">Đăng nhập</a>
+        </div>
+    </nav>
+
+    <!-- Emergency Alert Banner -->
+    <div class="bg-gradient-to-r from-red-500 to-orange-500 text-white py-3 px-4 text-center animate-pulse">
+        <div class="max-w-7xl mx-auto flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <span class="font-medium tracking-wide">CẢNH BÁO THIÊN TAI: Mưa lớn diện rộng tại miền Trung - Cập nhật lúc 14:30 15/06/2023</span>
+        </div>
+    </div>
+
+    <!-- Map Section -->
+    <section class="py-8 bg-gradient-to-b from-gray-50 to-white relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Breadcrumb -->
+            <div class="mb-6">
+                <nav class="flex" aria-label="Breadcrumb">
+                    <ol class="flex items-center space-x-2 text-sm">
+                        <li>
+                            <a href="index.html" class="text-gray-500 hover:text-gray-700">Trang chủ</a>
+                        </li>
+                        <li class="flex items-center">
+                            <i data-feather="chevron-right" class="text-gray-400 w-4 h-4"></i>
+                            <span class="ml-2 text-red-600 font-medium">Bản đồ cứu hộ</span>
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+
+            <div class="text-center mb-8">
+                <h1 class="text-4xl font-bold mb-4 bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">
+                    Bản Đồ Cứu Hộ Trực Tuyến
+                </h1>
+                <p class="text-gray-600 max-w-2xl mx-auto text-lg">
+                    Theo dõi các điểm cứu hộ, sự cố và lực lượng ứng phó trong thời gian thực trên toàn quốc
+                </p>
+            </div>
+
+            <!-- Bộ lọc và tìm kiếm -->
+            <div class="mb-6 bg-white rounded-2xl shadow-lg p-6">
+                <div class="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+                    <!-- Tìm kiếm -->
+                    <div class="flex-1 w-full lg:w-auto">
+                        <div class="relative">
+                            <i data-feather="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"></i>
+                            <input 
+                                type="text" 
+                                id="search-incidents" 
+                                placeholder="Tìm kiếm sự cố, địa điểm..." 
+                                class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Bộ lọc tỉnh thành -->
+                    <div class="w-full lg:w-64">
+                        <select id="province-filter" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                            <option value="all">Tất cả tỉnh thành</option>
+                            <option value="hanoi">Hà Nội</option>
+                            <option value="hcm">TP.Hồ Chí Minh</option>
+                            <option value="danang">Đà Nẵng</option>
+                            <option value="hue">Thừa Thiên Huế</option>
+                            <option value="nghean">Nghệ An</option>
+                            <option value="thanhhoa">Thanh Hóa</option>
+                            <option value="haiphong">Hải Phòng</option>
+                            <option value="cantho">Cần Thơ</option>
+                        </select>
+                    </div>
+
+                    <!-- Bộ lọc loại sự cố -->
+                    <div class="w-full lg:w-64">
+                        <select id="type-filter" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                            <option value="all">Tất cả loại sự cố</option>
+                            <option value="fire">Hỏa hoạn</option>
+                            <option value="flood">Ngập lụt</option>
+                            <option value="accident">Tai nạn giao thông</option>
+                            <option value="disaster">Thiên tai</option>
+                            <option value="rescue">Cứu hộ</option>
+                            <option value="warning">Cảnh báo</option>
+                        </select>
+                    </div>
+
+                    <!-- Nút reset -->
+                    <button id="reset-filters" class="px-6 py-3 border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-xl transition flex items-center whitespace-nowrap">
+                        <i data-feather="refresh-cw" class="mr-2 w-4 h-4"></i> Đặt lại
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-8 relative">
+                <!-- 🗺️ Bản đồ -->
+                <div class="lg:w-2/3 relative z-10">
+                    <div id="map" class="h-[600px] w-full rounded-2xl shadow-xl border border-gray-200 relative"></div>
+
+                    <!-- Controls -->
+                    <div class="mt-4 flex flex-wrap gap-3 items-center justify-between">
+                        <div class="flex flex-wrap gap-2">
+                            <button id="locate-btn" class="bg-white border border-gray-300 px-4 py-2 rounded-lg flex items-center hover:bg-gray-50 transition shadow-sm">
+                                <i data-feather="map-pin" class="mr-2 w-4 h-4"></i> Vị trí của tôi
+                            </button>
+                            <button id="zoom-in-btn" class="bg-white border border-gray-300 px-4 py-2 rounded-lg flex items-center hover:bg-gray-50 transition shadow-sm">
+                                <i data-feather="zoom-in" class="mr-2 w-4 h-4"></i> Phóng to
+                            </button>
+                            <button id="zoom-out-btn" class="bg-white border border-gray-300 px-4 py-2 rounded-lg flex items-center hover:bg-gray-50 transition shadow-sm">
+                                <i data-feather="zoom-out" class="mr-2 w-4 h-4"></i> Thu nhỏ
+                            </button>
+                        </div>
+                        
+                        <div class="flex items-center text-sm text-gray-600">
+                            <div class="flex items-center mr-4">
+                                <div class="w-3 h-3 bg-red-500 rounded-full mr-2 animate-pulse"></div>
+                                <span>Đang xử lý</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
+                                <span>Đã giải quyết</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 🔥 Panel thông tin -->
+                <div class="lg:w-1/3 relative z-30">
+                    <div class="bg-white rounded-2xl shadow-xl overflow-hidden sticky-panel sticky top-24">
+                        <!-- Header -->
+                        <div class="bg-gradient-to-r from-red-500 to-orange-500 p-6 text-white">
+                            <h3 class="text-xl font-bold mb-2 flex items-center">
+                                <i data-feather="activity" class="mr-2 w-5 h-5"></i>
+                                Thống Kê Sự Cố
+                            </h3>
+                            <p class="text-red-100 text-sm">Cập nhật lúc: <span id="last-update">--:--:--</span></p>
+                        </div>
+
+                        <!-- Thống kê -->
+                        <div class="p-6 border-b border-gray-200">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="text-center p-4 bg-red-50 rounded-xl">
+                                    <div class="text-2xl font-bold text-red-600" id="active-incidents">0</div>
+                                    <div class="text-sm text-red-700 font-medium">Đang xử lý</div>
+                                </div>
+                                <div class="text-center p-4 bg-green-50 rounded-xl">
+                                    <div class="text-2xl font-bold text-green-600" id="resolved-incidents">0</div>
+                                    <div class="text-sm text-green-700 font-medium">Đã giải quyết</div>
+                                </div>
+                                <div class="text-center p-4 bg-blue-50 rounded-xl">
+                                    <div class="text-2xl font-bold text-blue-600" id="total-incidents">0</div>
+                                    <div class="text-sm text-blue-700 font-medium">Tổng sự cố</div>
+                                </div>
+                                <div class="text-center p-4 bg-purple-50 rounded-xl">
+                                    <div class="text-2xl font-bold text-purple-600" id="response-time">12'</div>
+                                    <div class="text-sm text-purple-700 font-medium">Thời gian đáp ứng</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Chú thích -->
+                        <div class="p-6">
+                            <h4 class="font-bold mb-4 text-gray-800 flex items-center">
+                                <i data-feather="map" class="text-red-500 mr-2 w-4 h-4"></i>
+                                Chú Thích Bản Đồ
+                            </h4>
+
+                            <div class="space-y-3">
+                                <!-- Hỏa hoạn -->
+                                <div class="flex items-center p-3 bg-red-50 rounded-lg border border-red-200 hover:bg-red-100 transition cursor-pointer" data-type="fire">
+                                    <div class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center mr-3">
+                                        <i data-feather="flame" class="text-white w-4 h-4"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <span class="font-semibold text-red-700">🔥 Hỏa hoạn</span>
+                                        <p class="text-sm text-red-600">Cháy nhà, cháy rừng, nổ</p>
+                                    </div>
+                                    <div class="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold" id="count-fire">0</div>
+                                </div>
+
+                                <!-- Ngập lụt -->
+                                <div class="flex items-center p-3 bg-blue-50 rounded-lg border border-blue-200 hover:bg-blue-100 transition cursor-pointer" data-type="flood">
+                                    <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center mr-3">
+                                        <i data-feather="droplet" class="text-white w-4 h-4"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <span class="font-semibold text-blue-700">💧 Ngập lụt</span>
+                                        <p class="text-sm text-blue-600">Ngập nước, lũ quét</p>
+                                    </div>
+                                    <div class="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-bold" id="count-flood">0</div>
+                                </div>
+
+                                <!-- Tai nạn giao thông -->
+                                <div class="flex items-center p-3 bg-orange-50 rounded-lg border border-orange-200 hover:bg-orange-100 transition cursor-pointer" data-type="accident">
+                                    <div class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center mr-3">
+                                        <i data-feather="activity" class="text-white w-4 h-4"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <span class="font-semibold text-orange-700">🚗 Tai nạn giao thông</span>
+                                        <p class="text-sm text-orange-600">TNGT đường bộ, đường sắt</p>
+                                    </div>
+                                    <div class="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center text-white text-xs font-bold" id="count-accident">0</div>
+                                </div>
+
+                                <!-- Thiên tai -->
+                                <div class="flex items-center p-3 bg-purple-50 rounded-lg border border-purple-200 hover:bg-purple-100 transition cursor-pointer" data-type="disaster">
+                                    <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center mr-3">
+                                        <i data-feather="alert-octagon" class="text-white w-4 h-4"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <span class="font-semibold text-purple-700">🌪️ Thiên tai</span>
+                                        <p class="text-sm text-purple-600">Bão lụt, sạt lở, động đất</p>
+                                    </div>
+                                    <div class="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center text-white text-xs font-bold" id="count-disaster">0</div>
+                                </div>
+
+                                <!-- Cứu hộ -->
+                                <div class="flex items-center p-3 bg-green-50 rounded-lg border border-green-200 hover:bg-green-100 transition cursor-pointer" data-type="rescue">
+                                    <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mr-3">
+                                        <i data-feather="users" class="text-white w-4 h-4"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <span class="font-semibold text-green-700">🛟 Cứu hộ</span>
+                                        <p class="text-sm text-green-600">Hoạt động cứu hộ khẩn cấp</p>
+                                    </div>
+                                    <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white text-xs font-bold" id="count-rescue">0</div>
+                                </div>
+
+                                <!-- Cảnh báo -->
+                                <div class="flex items-center p-3 bg-yellow-50 rounded-lg border border-yellow-200 hover:bg-yellow-100 transition cursor-pointer" data-type="warning">
+                                    <div class="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center mr-3">
+                                        <i data-feather="alert-triangle" class="text-white w-4 h-4"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <span class="font-semibold text-yellow-700">⚠️ Cảnh báo</span>
+                                        <p class="text-sm text-yellow-600">Cảnh báo thiên tai, thời tiết</p>
+                                    </div>
+                                    <div class="w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center text-white text-xs font-bold" id="count-warning">0</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Danh sách sự cố gần đây -->
+            <div class="mt-12">
+                <div class="bg-white rounded-2xl shadow-lg p-6">
+                    <h3 class="text-2xl font-bold mb-6 flex items-center text-gray-800">
+                        <i data-feather="alert-triangle" class="text-red-500 mr-2 w-6 h-6"></i>
+                        Sự Cố Gần Đây
+                    </h3>
+                    <div id="recent-incidents" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Sẽ được cập nhật bằng JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal Chi Tiết Sự Cố -->
+    <div id="emergency-detail-modal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 transition-opacity modal-overlay" aria-hidden="true">
+                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+
+            <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full emergency-detail-modal">
+                <div class="bg-white px-6 pt-6 pb-4">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-2xl font-bold text-gray-900" id="modal-title">Chi Tiết Sự Cố</h3>
+                        <button id="close-modal" class="text-gray-400 hover:text-gray-600 transition">
+                            <i data-feather="x" class="w-6 h-6"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Thông tin cơ bản -->
+                        <div class="space-y-4">
+                            <div class="bg-gray-50 rounded-xl p-4">
+                                <h4 class="font-semibold text-lg mb-3 text-gray-800 flex items-center">
+                                    <i data-feather="info" class="text-blue-500 mr-2 w-5 h-5"></i>
+                                    Thông Tin Cơ Bản
+                                </h4>
+                                <div class="space-y-3">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-gray-600">Mã sự cố:</span>
+                                        <span class="font-semibold" id="modal-id">--</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-gray-600">Loại sự cố:</span>
+                                        <span class="font-semibold" id="modal-type">--</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-gray-600">Trạng thái:</span>
+                                        <span class="status-badge" id="modal-status">--</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-gray-600">Mức độ ưu tiên:</span>
+                                        <span class="status-badge" id="modal-priority">--</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-gray-600">Thời gian báo cáo:</span>
+                                        <span class="font-semibold" id="modal-time">--</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Thông tin địa điểm -->
+                            <div class="bg-gray-50 rounded-xl p-4">
+                                <h4 class="font-semibold text-lg mb-3 text-gray-800 flex items-center">
+                                    <i data-feather="map-pin" class="text-green-500 mr-2 w-5 h-5"></i>
+                                    Thông Tin Địa Điểm
+                                </h4>
+                                <div class="space-y-3">
+                                    <div>
+                                        <span class="text-gray-600 block mb-1">Địa chỉ:</span>
+                                        <span class="font-semibold" id="modal-address">--</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-gray-600 block mb-1">Tỉnh/Thành phố:</span>
+                                        <span class="font-semibold" id="modal-province">--</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-gray-600 block mb-1">Tọa độ:</span>
+                                        <span class="font-semibold" id="modal-coords">--</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Thông tin chi tiết -->
+                        <div class="space-y-4">
+                            <!-- Mô tả sự cố -->
+                            <div class="bg-gray-50 rounded-xl p-4">
+                                <h4 class="font-semibold text-lg mb-3 text-gray-800 flex items-center">
+                                    <i data-feather="file-text" class="text-purple-500 mr-2 w-5 h-5"></i>
+                                    Mô Tả Sự Cố
+                                </h4>
+                                <p class="text-gray-700" id="modal-description">--</p>
+                            </div>
+
+                            <!-- Thông tin người báo cáo -->
+                            <div class="bg-gray-50 rounded-xl p-4">
+                                <h4 class="font-semibold text-lg mb-3 text-gray-800 flex items-center">
+                                    <i data-feather="user" class="text-orange-500 mr-2 w-5 h-5"></i>
+                                    Thông Tin Người Báo Cáo
+                                </h4>
+                                <div class="space-y-3">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-gray-600">Họ tên:</span>
+                                        <span class="font-semibold" id="modal-reporter-name">--</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-gray-600">Số điện thoại:</span>
+                                        <span class="font-semibold" id="modal-reporter-phone">--</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-gray-600">Thời gian báo cáo:</span>
+                                        <span class="font-semibold" id="modal-report-time">--</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Lực lượng ứng phó -->
+                            <div class="bg-gray-50 rounded-xl p-4">
+                                <h4 class="font-semibold text-lg mb-3 text-gray-800 flex items-center">
+                                    <i data-feather="users" class="text-red-500 mr-2 w-5 h-5"></i>
+                                    Lực Lượng Ứng Phó
+                                </h4>
+                                <div class="space-y-2" id="modal-response-teams">
+                                    <!-- Sẽ được cập nhật bằng JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tiến trình xử lý -->
+                    <div class="mt-6 bg-gray-50 rounded-xl p-4">
+                        <h4 class="font-semibold text-lg mb-3 text-gray-800 flex items-center">
+                            <i data-feather="clock" class="text-indigo-500 mr-2 w-5 h-5"></i>
+                            Tiến Trình Xử Lý
+                        </h4>
+                        <div class="space-y-3" id="modal-timeline">
+                            <!-- Sẽ được cập nhật bằng JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Nút hành động -->
+                    <div class="mt-6 flex flex-wrap gap-3 justify-end">
+                        <button id="modal-close-btn" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition">
+                            Đóng
+                        </button>
+                        <button id="modal-share-btn" class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition flex items-center">
+                            <i data-feather="share-2" class="mr-2 w-4 h-4"></i>
+                            Chia sẻ
+                        </button>
+                        <button id="modal-navigate-btn" class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition flex items-center">
+                            <i data-feather="navigation" class="mr-2 w-4 h-4"></i>
+                            Chỉ đường
+                        </button>
+                        <button id="modal-report-btn" class="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition flex items-center">
+                            <i data-feather="alert-triangle" class="mr-2 w-4 h-4"></i>
+                            Báo cáo sai
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                        <span class="text-2xl font-bold bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">CỨU HỘ QUỐC GIA</span>
+                    </div>
+                    <p class="text-gray-400 leading-relaxed">Kết nối người dân với lực lượng cứu hộ trong các tình huống khẩn cấp.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Dịch Vụ</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Cứu hỏa</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Cứu hộ giao thông</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Y tế khẩn cấp</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Ứng phó thiên tai</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Liên Kết</h4>
+                    <ul class="space-y-2">
+                        <li><a href="index.html" class="text-gray-400 hover:text-white transition">Trang chủ</a></li>
+                        <li><a href="map.html" class="text-gray-400 hover:text-white transition">Bản đồ cứu hộ</a></li>
+                        <li><a href="news.html" class="text-gray-400 hover:text-white transition">Bản tin</a></li>
+                        <li><a href="post.html" class="text-gray-400 hover:text-white transition">Báo tin</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Hỗ Trợ</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Câu hỏi thường gặp</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Hướng dẫn sử dụng</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Chính sách bảo mật</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Điều khoản dịch vụ</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>© 2023 Hệ Thống Cứu Hộ Quốc Gia. Bản quyền thuộc về Bộ Công An.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        // Khởi tạo Feather Icons
+        feather.replace();
+
+        // Mobile menu toggle
+        document.getElementById('menu-toggle').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+            
+            const isHidden = menu.classList.contains('hidden');
+            this.innerHTML = isHidden ? feather.icons.menu.toSvg() : feather.icons.x.toSvg();
+        });
+
+        // 🔹 Dữ liệu tin tức từ trang news (đồng bộ)
+        const newsData = [
+            {
+                title: "Đà Nẵng: Chủ động ứng phó thiên tai những tháng cuối năm",
+                date: "2025-10-21",
+                type: "thien-tai",
+                location: "da-nang,mien-trung",
+                img: "https://media.daidoanket.vn/w1280/uploaded/images/2025/10/18/8898fcf6-b66a-433c-908c-72eb18bbdeb1.jpg",
+                content: "<p><strong>Tình hình:</strong> TP. Đà Nẵng đang hứng chịu thời tiết cực đoan, mưa lớn kéo dài gây sạt lở nghiêm trọng tại nhiều khu vực. Đáng chú ý, bờ biển phường Hội An Tây bị sóng đánh mạnh, sạt lở dài hơn 200m với vách đứng cao 5-6m, cây chắn sóng bật gốc, công trình ven biển nguy cơ sụp đổ.</p>"
+            },
+            {
+                title: "Tai nạn giao thông mới nhất 19/10/2025: xe cứu hộ gây tai nạn liên hoàn trên quốc lộ 26",
+                date: "2025-10-19",
+                type: "tai-nan",
+                location: "dak-lak,tp-hcm,binh-dinh,tay-nguyen",
+                img: "https://cdnphoto.dantri.com.vn/fT-JEopnjSnsEkgTdgpPSX-an_8=/thumb_w/1020/2025/10/19/z7132063905158f9b65fad4a12b3160200c0a32ca66181-edited-1760843872053.jpg",
+                content: "<p><strong>Tình hình:</strong> Ngày 19/10/2025, xảy ra ba vụ tai nạn giao thông nghiêm trọng: Xe cứu hộ gây tai nạn liên hoàn tại km146+400 quốc lộ 26 (Đắk Lắk), người đàn ông tử vong do mất lái xe máy ở dốc cầu Bình Lợi (TP Hồ Chí Minh), và xe máy va chạm xe tải chở gỗ khiến cô gái tử vong trên tỉnh lộ 639 (Bình Định).</p>"
+            },
+            {
+                title: "Thiên tai đã vượt quá sức chịu đựng của người dân",
+                date: "2025-10-10",
+                type: "thien-tai",
+                location: "thai-nguyen,bac-ninh,cao-bang,lang-son,mien-bac,mien-trung",
+                img: "https://premedia.vneconomy.vn/files/uploads/2025/10/10/c999b83a970f40588b4d060116ebed76-20061.png?w=900",
+                content: "<p><strong>Tình hình:</strong> Năm 2025, Việt Nam xảy ra 20 loại hình thiên tai với diễn biến dồn dập, khốc liệt, bất thường, vượt mức lịch sử, ảnh hưởng rộng lớn đến miền Bắc và miền Trung.</p>"
+            },
+            {
+                title: "Việt Nam kêu gọi quốc tế hỗ trợ khắc phục hậu quả thiên tai",
+                date: "2025-10-09",
+                type: "cuu-ho",
+                location: "ha-noi,mien-bac,mien-trung",
+                img: "https://image.phunuonline.com.vn/fckeditor/upload/2025/20251009/images/lien-hop-quoc-keu-goi-ho-_241760006840.jpg",
+                content: "<p><strong>Tình hình:</strong> Trong hai tháng 9 và 10/2025, Việt Nam liên tiếp hứng chịu bão số 8, 9, 10 và 11 cùng mưa lũ lớn. Bão số 10 đổ bộ vào Nghệ An - Hà Tĩnh đêm 28 và rạng sáng 29/9 với tốc độ nhanh, cường độ mạnh, phạm vi rộng.</p>"
+            },
+            {
+                title: "Lực lượng Công an nhân dân chủ động ứng phó với bão số 12 và nguy cơ mưa lớn",
+                date: "2025-10-20",
+                type: "canh-bao",
+                location: "mien-trung,mien-bac",
+                img: "https://dbnd.1cdn.vn/2025/10/20/dbqgxtnd202510201700-17609581259941101885533.jpg",
+                content: "<p><strong>Tình hình:</strong> Bão số 12 (Fengshen) đi vào Biển Đông chiều 19/10/2025, sức gió cấp 9 giật cấp 11, di chuyển hướng Tây Bắc 25km/h.</p>"
+            }
+        ];
+
+        // 🔹 Hàm chuyển đổi dữ liệu từ news sang emergencies
+        function convertNewsToEmergencies(newsData) {
+            const typeMapping = {
+                'thien-tai': 'disaster',
+                'tai-nan': 'accident', 
+                'cuu-ho': 'rescue',
+                'canh-bao': 'warning'
+            };
+
+            const locationMapping = {
+                'ha-noi': [21.0278, 105.8342],
+                'tp-hcm': [10.8231, 106.6297],
+                'da-nang': [16.0544, 108.2022],
+                'mien-bac': [21.5, 105.5],
+                'mien-trung': [16.0, 108.0],
+                'tay-nguyen': [12.0, 108.0],
+                'dak-lak': [12.6667, 108.05],
+                'binh-dinh': [14.1667, 109.0],
+                'thai-nguyen': [21.6, 105.85],
+                'toan-quoc': [16.0, 108.0]
+            };
+
+            return newsData.map((news, index) => {
+                const primaryLocation = news.location.split(',')[0];
+                const coords = locationMapping[primaryLocation] || [16.0, 108.0];
+                
+                // Tạo mô tả ngắn từ content
+                const shortDescription = news.content.replace(/<[^>]+>/g, '').substring(0, 150) + '...';
+                
+                return {
+                    id: 1000 + index, // ID bắt đầu từ 1000 để phân biệt
+                    name: news.title,
+                    address: getAddressFromNews(news),
+                    coords: coords,
+                    type: typeMapping[news.type] || 'disaster',
+                    province: primaryLocation,
+                    status: 'active',
+                    time: timeAgo(news.date),
+                    description: shortDescription,
+                    priority: getPriorityFromNews(news),
+                    reporter: {
+                        name: 'Hệ thống',
+                        phone: 'N/A',
+                        reportTime: formatDate(news.date)
+                    },
+                    responseTeams: [
+                        { name: "Lực lượng cứu hộ địa phương", status: "Sẵn sàng", eta: "Đang điều phối" }
+                    ],
+                    timeline: [
+                        { time: formatTime(news.date), event: "Tiếp nhận báo cáo tin tức", status: "completed" },
+                        { time: "Đang cập nhật", event: "Điều phối lực lượng ứng phó", status: "in-progress" }
+                    ],
+                    newsData: news // Giữ nguyên dữ liệu gốc để sử dụng sau
+                };
+            });
+        }
+
+        // 🔹 Hàm hỗ trợ chuyển đổi
+        function getAddressFromNews(news) {
+            const locationNames = {
+                'ha-noi': 'Hà Nội',
+                'tp-hcm': 'Thành phố Hồ Chí Minh', 
+                'da-nang': 'Đà Nẵng',
+                'mien-bac': 'Miền Bắc',
+                'mien-trung': 'Miền Trung',
+                'tay-nguyen': 'Tây Nguyên',
+                'dak-lak': 'Đắk Lắk',
+                'binh-dinh': 'Bình Định',
+                'thai-nguyen': 'Thái Nguyên',
+                'toan-quoc': 'Toàn quốc'
+            };
+            
+            const primaryLocation = news.location.split(',')[0];
+            return locationNames[primaryLocation] || 'Việt Nam';
+        }
+
+        function getPriorityFromNews(news) {
+            const priorityMap = {
+                'thien-tai': 'high',
+                'tai-nan': 'medium',
+                'cuu-ho': 'medium', 
+                'canh-bao': 'high'
+            };
+            return priorityMap[news.type] || 'medium';
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('vi-VN') + ' ' + date.toLocaleTimeString('vi-VN', {hour: '2-digit', minute:'2-digit'});
+        }
+
+        function formatTime(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleTimeString('vi-VN', {hour: '2-digit', minute:'2-digit'});
+        }
+
+        // 🔹 Hàm timeAgo (đồng bộ với news.html)
+        function timeAgo(dateString) {
+            const now = new Date();
+            const date = new Date(dateString);
+            const seconds = Math.floor((now - date) / 1000);
+            
+            let interval = Math.floor(seconds / 31536000);
+            if (interval > 1) return `${interval} năm trước`;
+            interval = Math.floor(seconds / 2592000);
+            if (interval > 1) return `${interval} tháng trước`;
+            interval = Math.floor(seconds / 86400);
+            if (interval > 1) return `${interval} ngày trước`;
+            interval = Math.floor(seconds / 3600);
+            if (interval > 1) return `${interval} giờ trước`;
+            interval = Math.floor(seconds / 60);
+            if (interval > 1) return `${interval} phút trước`;
+            return "Vừa xong";
+        }
+
+        // 🔹 Tọa độ trung tâm các tỉnh thành
+        const provinceCoordinates = {
+            'hanoi': [21.0278, 105.8342],
+            'hcm': [10.8231, 106.6297],
+            'danang': [16.0544, 108.2022],
+            'hue': [16.4637, 107.5909],
+            'nghean': [18.6796, 105.6813],
+            'thanhhoa': [19.8076, 105.7766],
+            'haiphong': [20.8449, 106.6881],
+            'cantho': [10.0452, 105.7469],
+            'sonla': [21.3257, 103.9160],
+            'ninhbinh': [20.2506, 105.9745]
+        };
+
+        // 🔹 Dữ liệu sự cố mẫu với thông tin chi tiết
+        const emergencies = [
+            { 
+                id: 1, 
+                name: "Cháy nhà dân", 
+                address: "Số 35 Trần Hưng Đạo, Hoàn Kiếm, Hà Nội", 
+                coords: [21.027, 105.85], 
+                type: "fire", 
+                province: "hanoi", 
+                status: "active", 
+                time: "10 phút trước", 
+                description: "Cháy bùng phát tại tòa nhà 5 tầng, đang có người mắc kẹt bên trong. Lửa bắt đầu từ tầng 2 và đang lan nhanh lên các tầng trên.",
+                priority: "high",
+                reporter: {
+                    name: "Nguyễn Văn A",
+                    phone: "0912345678",
+                    reportTime: "14:20 15/06/2023"
+                },
+                responseTeams: [
+                    { name: "Đội PCCC Quận Hoàn Kiếm", status: "Đang di chuyển", eta: "5 phút" },
+                    { name: "Xe cứu thương Bệnh viện Bạch Mai", status: "Sẵn sàng", eta: "8 phút" }
+                ],
+                timeline: [
+                    { time: "14:20", event: "Tiếp nhận báo cáo sự cố", status: "completed" },
+                    { time: "14:22", event: "Điều phối lực lượng ứng phó", status: "completed" },
+                    { time: "14:25", event: "Lực lượng đầu tiên đến hiện trường", status: "in-progress" }
+                ]
+            },
+            { 
+                id: 2, 
+                name: "Ngập lụt khu dân cư", 
+                address: "Khu vực Định Công, Hoàng Mai, Hà Nội", 
+                coords: [20.98, 105.84], 
+                type: "flood", 
+                province: "hanoi", 
+                status: "active", 
+                time: "25 phút trước", 
+                description: "Ngập sâu 0.5-0.7m do mưa lớn kéo dài kết hợp với triều cường. Nhiều phương tiện bị chết máy, người dân không thể di chuyển.",
+                priority: "medium",
+                reporter: {
+                    name: "Trần Thị B",
+                    phone: "0923456789",
+                    reportTime: "14:05 15/06/2023"
+                },
+                responseTeams: [
+                    { name: "Đội cứu hộ Quận Hoàng Mai", status: "Có mặt tại hiện trường", eta: "0 phút" }
+                ],
+                timeline: [
+                    { time: "14:05", event: "Tiếp nhận báo cáo sự cố", status: "completed" },
+                    { time: "14:10", event: "Điều phối lực lượng ứng phó", status: "completed" },
+                    { time: "14:20", event: "Lực lượng đầu tiên đến hiện trường", status: "completed" }
+                ]
+            }
+        ];
+
+        // 🔹 Khởi tạo dữ liệu từ news
+        const newsEmergencies = convertNewsToEmergencies(newsData);
+
+        // 🗺️ Khởi tạo bản đồ
+        const map = L.map("map").setView([16.0471, 108.2068], 6);
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            maxZoom: 19,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
+        }).addTo(map);
+
+        let currentMarkers = [];
+        let currentFilters = { type: 'all', province: 'all', search: '' };
+
+        // 🔹 Hàm hiển thị modal chi tiết
+        function showEmergencyDetail(id) {
+            let emergency;
+            
+            // Tìm trong emergencies gốc
+            emergency = emergencies.find(e => e.id === id);
+            
+            // Nếu không tìm thấy, tìm trong emergencies từ news
+            if (!emergency) {
+                emergency = newsEmergencies.find(e => e.id === id);
+            }
+            
+            if (!emergency) return;
+
+            // Cập nhật modal
+            document.getElementById('modal-id').textContent = `#${emergency.id}`;
+            document.getElementById('modal-title').textContent = emergency.name;
+            document.getElementById('modal-type').textContent = getTypeName(emergency.type);
+            document.getElementById('modal-status').textContent = emergency.status === 'active' ? 'Đang xử lý' : 'Đã giải quyết';
+            document.getElementById('modal-status').className = `status-badge ${emergency.status === 'active' ? 'priority-high' : 'priority-low'}`;
+            document.getElementById('modal-priority').textContent = getPriorityName(emergency.priority);
+            document.getElementById('modal-priority').className = `status-badge priority-${emergency.priority}`;
+            document.getElementById('modal-time').textContent = emergency.time;
+            document.getElementById('modal-address').textContent = emergency.address;
+            document.getElementById('modal-province').textContent = getProvinceName(emergency.province);
+            document.getElementById('modal-coords').textContent = `${emergency.coords[0].toFixed(4)}, ${emergency.coords[1].toFixed(4)}`;
+            document.getElementById('modal-description').textContent = emergency.description;
+            document.getElementById('modal-reporter-name').textContent = emergency.reporter.name;
+            document.getElementById('modal-reporter-phone').textContent = emergency.reporter.phone;
+            document.getElementById('modal-report-time').textContent = emergency.reporter.reportTime;
+
+            // Thêm nguồn tin nếu là từ news
+            if (emergency.newsData) {
+                const descriptionEl = document.getElementById('modal-description');
+                const cleanContent = emergency.newsData.content.replace(/<[^>]+>/g, '');
+                descriptionEl.innerHTML = emergency.description + `<br><br><strong>Nguồn tin:</strong> ${cleanContent.substring(0, 300)}...`;
+            }
+
+            // Cập nhật lực lượng ứng phó
+            const responseTeamsContainer = document.getElementById('modal-response-teams');
+            responseTeamsContainer.innerHTML = emergency.responseTeams.map(team => `
+                <div class="flex justify-between items-center p-2 bg-white rounded border">
+                    <div>
+                        <div class="font-medium">${team.name}</div>
+                        <div class="text-sm text-gray-600">${team.status}</div>
+                    </div>
+                    <div class="text-sm font-semibold ${team.eta === '0 phút' || team.eta === 'Đang điều phối' ? 'text-orange-600' : 'text-green-600'}">
+                        ${team.eta}
+                    </div>
+                </div>
+            `).join('');
+
+            // Cập nhật timeline
+            const timelineContainer = document.getElementById('modal-timeline');
+            timelineContainer.innerHTML = emergency.timeline.map(item => `
+                <div class="flex items-center space-x-3">
+                    <div class="flex-shrink-0 w-3 h-3 rounded-full ${
+                        item.status === 'completed' ? 'bg-green-500' :
+                        item.status === 'in-progress' ? 'bg-yellow-500 animate-pulse' : 'bg-gray-300'
+                    }"></div>
+                    <div class="flex-1">
+                        <div class="flex justify-between">
+                            <span class="font-medium">${item.event}</span>
+                            <span class="text-sm text-gray-500">${item.time}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Hiển thị modal
+            document.getElementById('emergency-detail-modal').classList.remove('hidden');
+            feather.replace();
+        }
+
+        // 🔹 Hàm đóng modal
+        function closeEmergencyDetail() {
+            document.getElementById('emergency-detail-modal').classList.add('hidden');
+        }
+
+        // 🔹 Event listeners cho modal
+        document.getElementById('close-modal').addEventListener('click', closeEmergencyDetail);
+        document.getElementById('modal-close-btn').addEventListener('click', closeEmergencyDetail);
+        document.getElementById('modal-share-btn').addEventListener('click', () => {
+            const emergencyId = document.getElementById('modal-id').textContent;
+            shareEmergency(parseInt(emergencyId.replace('#', '')));
+        });
+        document.getElementById('modal-navigate-btn').addEventListener('click', () => {
+            const emergencyId = document.getElementById('modal-id').textContent;
+            viewEmergencyOnMap(parseInt(emergencyId.replace('#', '')));
+            closeEmergencyDetail();
+        });
+        document.getElementById('modal-report-btn').addEventListener('click', () => {
+            alert('Cảm ơn bạn đã báo cáo. Chúng tôi sẽ kiểm tra thông tin này.');
+        });
+
+        // Đóng modal khi click bên ngoài
+        document.getElementById('emergency-detail-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'emergency-detail-modal') {
+                closeEmergencyDetail();
+            }
+        });
+
+        // 🔹 Hàm cập nhật thống kê
+        function updateStatistics() {
+            const allEmergencies = [...emergencies, ...newsEmergencies];
+            const active = allEmergencies.filter(e => e.status === 'active').length;
+            const resolved = allEmergencies.filter(e => e.status === 'resolved').length;
+            const total = allEmergencies.length;
+            
+            document.getElementById('active-incidents').textContent = active;
+            document.getElementById('resolved-incidents').textContent = resolved;
+            document.getElementById('total-incidents').textContent = total;
+            
+            // Cập nhật số lượng theo loại
+            const typeCounts = {
+                fire: 0, flood: 0, accident: 0, disaster: 0, rescue: 0, warning: 0
+            };
+            
+            allEmergencies.forEach(emg => {
+                if (typeCounts.hasOwnProperty(emg.type)) {
+                    typeCounts[emg.type]++;
+                }
+            });
+            
+            Object.keys(typeCounts).forEach(type => {
+                const element = document.getElementById(`count-${type}`);
+                if (element) {
+                    element.textContent = typeCounts[type];
+                }
+            });
+
+            // Cập nhật thời gian
+            document.getElementById('last-update').textContent = new Date().toLocaleTimeString('vi-VN');
+        }
+
+        // 🔹 Hàm cập nhật danh sách sự cố gần đây
+        function updateRecentIncidents() {
+            const container = document.getElementById('recent-incidents');
+            
+            // Kết hợp emergencies gốc và emergencies từ news (lấy 6 mục mới nhất)
+            const allEmergencies = [...emergencies, ...newsEmergencies]
+                .sort((a, b) => {
+                    // Sắp xếp theo thời gian (mới nhất trước)
+                    const timeA = a.newsData ? new Date(a.newsData.date) : new Date();
+                    const timeB = b.newsData ? new Date(b.newsData.date) : new Date();
+                    return timeB - timeA;
+                })
+                .slice(0, 6); // Chỉ hiển thị 6 mục mới nhất
+            
+            container.innerHTML = allEmergencies.map(emg => {
+                const isFromNews = emg.id >= 1000;
+                const typeClass = getTypeClass(emg.type);
+                const icon = getIconByType(emg.type);
+                
+                return `
+                    <div class="emergency-card bg-white p-4 rounded-lg border-l-4 ${typeClass.border} hover:shadow-md transition-all cursor-pointer" 
+                         onclick="showEmergencyDetail(${emg.id})">
+                        <div class="flex items-start justify-between mb-2">
+                            <div class="flex items-center">
+                                <h4 class="font-bold text-gray-800 mr-2">${emg.name}</h4>
+                                ${isFromNews ? '<span class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded">TIN TỨC</span>' : ''}
+                            </div>
+                            <span class="px-2 py-1 text-xs rounded ${
+                                emg.status === 'active' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'
+                            }">
+                                ${emg.status === 'active' ? 'Đang xử lý' : 'Đã giải quyết'}
+                            </span>
+                        </div>
+                        <div class="flex items-center text-sm text-gray-600 mb-2">
+                            <span class="mr-3">${icon}</span>
+                            <span>${emg.address}</span>
+                        </div>
+                        <p class="text-sm text-gray-500 mb-3 line-clamp-2">${emg.description}</p>
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="text-gray-500">${emg.time}</span>
+                            <button class="text-blue-600 hover:text-blue-800 font-medium flex items-center">
+                                Chi tiết
+                                <i data-feather="arrow-right" class="ml-1 w-3 h-3"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            // Cập nhật icons
+            feather.replace();
+        }
+
+        // 🔹 Hàm lọc sự cố
+        function filterEmergencies() {
+            const allEmergencies = [...emergencies, ...newsEmergencies];
+            return allEmergencies.filter(emg => {
+                const typeMatch = currentFilters.type === 'all' || emg.type === currentFilters.type;
+                const provinceMatch = currentFilters.province === 'all' || emg.province === currentFilters.province;
+                const searchMatch = currentFilters.search === '' || 
+                    emg.name.toLowerCase().includes(currentFilters.search.toLowerCase()) ||
+                    emg.address.toLowerCase().includes(currentFilters.search.toLowerCase());
+                
+                return typeMatch && provinceMatch && searchMatch;
+            });
+        }
+
+        // 🔹 Hàm chuyển đến tỉnh thành
+        function flyToProvince(provinceCode) {
+            if (provinceCode === 'all') {
+                map.flyTo([16.0471, 108.2068], 6, {
+                    duration: 1.5,
+                    easeLinearity: 0.25
+                });
+            } else if (provinceCoordinates[provinceCode]) {
+                const coords = provinceCoordinates[provinceCode];
+                map.flyTo(coords, 11, {
+                    duration: 1.5,
+                    easeLinearity: 0.25
+                });
+                
+                const provinceMarker = L.marker(coords)
+                    .addTo(map)
+                    .bindPopup(`<b>${getProvinceName(provinceCode)}</b><br>Đang hiển thị sự cố trong khu vực`)
+                    .openPopup();
+                
+                setTimeout(() => {
+                    map.removeLayer(provinceMarker);
+                }, 3000);
+            }
+        }
+
+        // 🔹 Hàm vẽ marker
+        function drawMarkers() {
+            currentMarkers.forEach(marker => map.removeLayer(marker));
+            currentMarkers = [];
+
+            const filteredEmergencies = filterEmergencies();
+            
+            filteredEmergencies.forEach(emg => {
+                const color = getColorByType(emg.type);
+                const icon = getIconByType(emg.type);
+                
+                const marker = L.marker(emg.coords, {
+                    icon: L.divIcon({
+                        html: `
+                            <div class="relative">
+                                <div class="w-10 h-10 bg-${color}-500 rounded-full flex items-center justify-center text-white shadow-lg border-2 border-white transform hover:scale-110 transition-transform cursor-pointer ${emg.status === 'resolved' ? 'opacity-70' : ''}">
+                                    <span class="text-lg">${icon}</span>
+                                </div>
+                                ${emg.status === 'active' ? '<div class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>' : ''}
+                            </div>
+                        `,
+                        className: 'custom-marker',
+                        iconSize: [40, 40],
+                        iconAnchor: [20, 20]
+                    })
+                })
+                .addTo(map)
+                .bindPopup(`
+                    <div class="p-3 min-w-[250px]">
+                        <div class="flex items-center mb-2">
+                            <div class="w-6 h-6 bg-${color}-500 rounded-full flex items-center justify-center mr-2 text-white">
+                                <span>${icon}</span>
+                            </div>
+                            <h4 class="font-bold text-gray-800">${emg.name}</h4>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-2">${emg.address}</p>
+                        <p class="text-sm text-gray-500 mb-3 line-clamp-2">${emg.description}</p>
+                        <div class="flex justify-between items-center text-xs mb-3">
+                            <span class="px-2 py-1 bg-${color}-100 text-${color}-700 rounded">${getTypeName(emg.type)}</span>
+                            <span class="text-gray-500">${emg.time}</span>
+                        </div>
+                        <div class="mt-3 flex gap-2">
+                            <button onclick="showEmergencyDetail(${emg.id})" class="flex-1 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm transition">
+                                Chi tiết
+                            </button>
+                            <button onclick="shareEmergency(${emg.id})" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm transition">
+                                Chia sẻ
+                            </button>
+                        </div>
+                    </div>
+                `);
+
+                currentMarkers.push(marker);
+            });
+
+            updateStatistics();
+            updateRecentIncidents();
+        }
+
+        // 🔹 Hàm hỗ trợ
+        function getColorByType(type) {
+            const colors = {
+                fire: 'red', flood: 'blue', accident: 'orange', 
+                disaster: 'purple', rescue: 'green', warning: 'yellow'
+            };
+            return colors[type] || 'gray';
+        }
+
+        function getIconByType(type) {
+            const icons = {
+                fire: '🔥', flood: '💧', accident: '🚗', 
+                disaster: '🌪️', rescue: '🛟', warning: '⚠️'
+            };
+            return icons[type] || '⚠️';
+        }
+
+        function getTypeClass(type) {
+            const classes = {
+                'fire': { border: 'border-red-500', bg: 'bg-red-500' },
+                'flood': { border: 'border-blue-500', bg: 'bg-blue-500' },
+                'accident': { border: 'border-orange-500', bg: 'bg-orange-500' },
+                'disaster': { border: 'border-purple-500', bg: 'bg-purple-500' },
+                'rescue': { border: 'border-green-500', bg: 'bg-green-500' },
+                'warning': { border: 'border-yellow-500', bg: 'bg-yellow-500' }
+            };
+            return classes[type] || { border: 'border-gray-500', bg: 'bg-gray-500' };
+        }
+
+        function getTypeName(type) {
+            const names = {
+                fire: 'Hỏa hoạn', 
+                flood: 'Ngập lụt', 
+                accident: 'Tai nạn', 
+                disaster: 'Thiên tai',
+                rescue: 'Cứu hộ',
+                warning: 'Cảnh báo'
+            };
+            return names[type] || 'Khác';
+        }
+
+        function getPriorityName(priority) {
+            const names = {
+                high: 'Cao',
+                medium: 'Trung bình',
+                low: 'Thấp'
+            };
+            return names[priority] || priority;
+        }
+
+        function getProvinceName(code) {
+            const names = {
+                'hanoi': 'Hà Nội',
+                'hcm': 'TP. Hồ Chí Minh',
+                'danang': 'Đà Nẵng',
+                'hue': 'Thừa Thiên Huế',
+                'nghean': 'Nghệ An',
+                'thanhhoa': 'Thanh Hóa',
+                'haiphong': 'Hải Phòng',
+                'cantho': 'Cần Thơ',
+                'sonla': 'Sơn La',
+                'ninhbinh': 'Ninh Bình'
+            };
+            return names[code] || code;
+        }
+
+        // 🔹 Event Listeners
+        document.getElementById('type-filter').addEventListener('change', (e) => {
+            currentFilters.type = e.target.value;
+            drawMarkers();
+        });
+
+        document.getElementById('province-filter').addEventListener('change', (e) => {
+            currentFilters.province = e.target.value;
+            flyToProvince(e.target.value);
+            drawMarkers();
+        });
+
+        document.getElementById('search-incidents').addEventListener('input', (e) => {
+            currentFilters.search = e.target.value;
+            drawMarkers();
+        });
+
+        document.getElementById('reset-filters').addEventListener('click', () => {
+            currentFilters = { type: 'all', province: 'all', search: '' };
+            document.getElementById('type-filter').value = 'all';
+            document.getElementById('province-filter').value = 'all';
+            document.getElementById('search-incidents').value = '';
+            flyToProvince('all');
+            drawMarkers();
+        });
+
+        // Click vào chú thích để lọc
+        document.querySelectorAll('[data-type]').forEach(item => {
+            item.addEventListener('click', () => {
+                currentFilters.type = item.dataset.type;
+                document.getElementById('type-filter').value = currentFilters.type;
+                drawMarkers();
+            });
+        });
+
+        // Map controls
+        document.getElementById('locate-btn').addEventListener('click', () => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(pos => {
+                    const lat = pos.coords.latitude;
+                    const lng = pos.coords.longitude;
+                    map.flyTo([lat, lng], 13, {
+                        duration: 1.5
+                    });
+                    L.marker([lat, lng]).addTo(map)
+                        .bindPopup("📍 Vị trí của bạn")
+                        .openPopup();
+                }, () => {
+                    alert("Không thể lấy vị trí của bạn. Vui lòng kiểm tra quyền truy cập vị trí.");
+                });
+            } else {
+                alert("Trình duyệt không hỗ trợ định vị!");
+            }
+        });
+
+        document.getElementById('zoom-in-btn').addEventListener('click', () => {
+            map.zoomIn();
+        });
+
+        document.getElementById('zoom-out-btn').addEventListener('click', () => {
+            map.zoomOut();
+        });
+
+        // 🔹 Khởi tạo
+        function initializeMap() {
+            drawMarkers();
+            updateStatistics();
+            updateRecentIncidents();
+        }
+
+        initializeMap();
+
+        // Cập nhật thời gian thực mỗi 30 giây
+        setInterval(updateStatistics, 30000);
+    </script>
+
+    <!-- Hàm toàn cục để sử dụng trong popup -->
+    <script>
+        function shareEmergency(id) {
+            let emergency;
+            emergency = emergencies.find(e => e.id === id);
+            if (!emergency) {
+                emergency = newsEmergencies.find(e => e.id === id);
+            }
+            
+            if (emergency && navigator.share) {
+                navigator.share({
+                    title: `Sự cố: ${emergency.name}`,
+                    text: `${emergency.name} - ${emergency.address}\n${emergency.description}`,
+                    url: window.location.href
+                });
+            } else {
+                alert('Chức năng chia sẻ không được hỗ trợ trên thiết bị này.');
+            }
+        }
+
+        function viewEmergencyOnMap(id) {
+            let emergency;
+            emergency = emergencies.find(e => e.id === id);
+            if (!emergency) {
+                emergency = newsEmergencies.find(e => e.id === id);
+            }
+            
+            if (emergency) {
+                map.flyTo(emergency.coords, 15, {
+                    duration: 1.5
+                });
+                currentMarkers.forEach(marker => {
+                    const markerCoords = marker.getLatLng();
+                    if (markerCoords.lat === emergency.coords[0] && markerCoords.lng === emergency.coords[1]) {
+                        marker.openPopup();
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html>
