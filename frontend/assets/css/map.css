@@ -1,0 +1,67 @@
+/* Custom CSS for Map Page */
+.custom-marker {
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+.leaflet-popup-content {
+    margin: 8px 12px;
+}
+.leaflet-popup-content-wrapper {
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+.stats-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+.emergency-card {
+    transition: all 0.3s ease;
+    border-left: 4px solid;
+}
+.emergency-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+.modal-overlay {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+.emergency-detail-modal {
+    max-height: 90vh;
+    overflow-y: auto;
+}
+.status-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+.priority-high {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+.priority-medium {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+.priority-low {
+    background-color: #d1fae5;
+    color: #059669;
+}
+
+/* FIX: Đảm bảo z-index cho các lớp */
+nav {
+    z-index: 1000;
+    position: relative;
+}
+#map {
+    position: relative;
+    z-index: 1;
+}
+#mobile-menu {
+    z-index: 1001;
+    position: relative;
+}
+#emergency-detail-modal {
+    z-index: 1002;
+}
+.sticky-panel {
+    z-index: 50;
+}
