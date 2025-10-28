@@ -1,175 +1,201 @@
-/* Custom styles for National Rescue System */
+/* ==========================================
+   🌐 NATIONAL RESCUE SYSTEM - MAIN STYLES
+   ✅ Optimized + Tailwind-compatible (2025)
+========================================== */
 
 /* Smooth scrolling */
 html {
-    scroll-behavior: smooth;
+  scroll-behavior: smooth;
 }
 
-/* Hero section background */
+/* Hero Section */
 .hero-section {
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  transition: background 0.4s ease;
 }
 
-/* Emergency button animation */
+/* Emergency Button */
 .emergency-btn {
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
 }
-
 .emergency-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(239, 68, 68, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(239, 68, 68, 0.3);
 }
-
 .emergency-btn::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-    transition: left 0.5s;
+  content: "";
+  position: absolute;
+  inset: 0;
+  left: -100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  transition: left 0.5s ease;
 }
-
 .emergency-btn:hover::after {
-    left: 100%;
+  left: 100%;
 }
 
-/* Service card hover effects */
+/* Service Card */
 .service-card {
-    transition: all 0.3s ease;
-    border-radius: 1rem;
+  transition: all 0.3s ease;
+  border-radius: 1rem;
+  border: 1px solid #f1f5f9;
 }
-
 .service-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-    border-color: #fecaca;
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  border-color: #fecaca;
 }
 
-/* Map container styling */
-#map {
-    width: 100%;
-    height: 550px;
-    position: relative;
-    z-index: 1;
-    border-radius: 1rem;
-    overflow: hidden; /* Ngăn tràn tile */
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+/* Map Container */
+.map-container {
+  width: 100%;
+  height: 550px;
+  border-radius: 1rem;
+  overflow: hidden;
+  position: relative;
+  z-index: 0;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
 
-/* News card styling */
+/* News Card */
 .news-card {
-    transition: all 0.3s ease;
-    border-radius: 0.75rem;
-    overflow: hidden;
+  transition: all 0.3s ease;
+  border-radius: 0.75rem;
+  overflow: hidden;
 }
-
 .news-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
 }
 
-/* Navigation link hover effect */
+/* Navbar Links */
 .nav-link {
-    position: relative;
+  position: relative;
+  display: inline-block;
 }
-
 .nav-link::after {
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 2px;
-    bottom: -5px;
-    left: 0;
-    background: linear-gradient(to right, #ef4444, #f97316);
-    transition: width 0.3s ease;
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -5px;
+  left: 0;
+  background: linear-gradient(to right, #ef4444, #f97316);
+  transition: width 0.3s ease;
 }
-
 .nav-link:hover::after {
-    width: 100%;
+  width: 100%;
 }
 
-/* Modal animations */
+/* Modal Animations */
 .modal {
-    animation: fadeIn 0.3s ease-out;
+  animation: fadeIn 0.3s ease-out;
+  transition: opacity 0.3s ease;
 }
-
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: scale(0.9);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.modal.hidden {
+  opacity: 0;
+  visibility: hidden;
 }
 
-/* Emergency alert pulse */
-.animate-pulse {
-    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+/* Pulse Animation */
+.rescue-pulse {
+  animation: pulseAnim 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+@keyframes pulseAnim {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
 }
 
-@keyframes pulse {
-    0%, 100% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 0.8;
-    }
-}
-
-/* Responsive adjustments */
+/* Responsive */
 @media (max-width: 768px) {
-    .hero-section {
-        padding-top: 2rem;
-        padding-bottom: 2rem;
-    }
-    
-    #map {
-        height: 400px;
-    }
+  .hero-section {
+    padding: 2rem 0;
+  }
+  #map {
+    height: 400px;
+  }
 }
 
-/* Custom scrollbar */
+/* Scrollbar */
 ::-webkit-scrollbar {
-    width: 6px;
+  width: 6px;
 }
-
 ::-webkit-scrollbar-track {
-    background: #f1f5f9;
+  background: #f1f5f9;
 }
-
 ::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 3px;
+  background: #cbd5e1;
+  border-radius: 3px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
+  background: #94a3b8;
 }
 
-/* Loading states */
+/* Loading */
 .loading {
-    opacity: 0.6;
-    pointer-events: none;
+  opacity: 0.6;
+  pointer-events: none;
 }
 
-/* Status indicators */
+/* Status Tags */
 .status-active {
-    background: linear-gradient(135deg, #ef4444, #f97316);
+  background: linear-gradient(135deg, #ef4444, #f97316);
 }
-
 .status-resolved {
-    background: linear-gradient(135deg, #10b981, #059669);
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+.status-pending {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
 }
 
-.status-pending {
-    background: linear-gradient(135deg, #f59e0b, #d97706);
+@keyframes pulseAnim {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.18); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* =============================
+   🌍 FIX MAP DISPLAY (IMPORTANT)
+============================= */
+#rescue-map,
+.map-container {
+  width: 100%;
+  height: 550px !important; /* Bắt buộc có height */
+  border-radius: 1rem;
+  overflow: hidden;
+  position: relative;
+  z-index: 0;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive cho mobile */
+@media (max-width: 768px) {
+  #rescue-map,
+  .map-container {
+    height: 400px !important;
+  }
 }
 
 

@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "name": "Cháy nhà dân",
+    "address": "Số 35 Trần Hưng Đạo, Hoàn Kiếm, Hà Nội",
+    "coords": [21.027, 105.85],
+    "type": "fire",
+    "province": "hanoi",
+    "status": "active",
+    "time": "10 phút trước"
+  },
+  {
+    "id": 2,
+    "name": "Ngập lụt khu dân cư",
+    "address": "Phường Định Công, Hoàng Mai, Hà Nội",
+    "coords": [20.98, 105.84],
+    "type": "flood",
+    "province": "hanoi",
+    "status": "active",
+    "time": "25 phút trước"
+  },
+  {
+    "id": 3,
+    "name": "Tai nạn giao thông",
+    "address": "QL1A, Tân Tạo, Bình Tân, TP.HCM",
+    "coords": [10.76, 106.62],
+    "type": "accident",
+    "province": "hcm",
+    "status": "resolved",
+    "time": "1 giờ trước"
+  }
+]

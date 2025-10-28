@@ -1,23 +1,41 @@
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ Thống Cứu Hộ Quốc Gia</title>
-    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/feather-icons"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoYehvS5fV/2kJZO6e0H2Zm1r2a4rG6qF0l7Z6A=" crossorigin="" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <link rel="stylesheet" href="assets/css/styles.css">
-</head>
-<body class="bg-gray-50">
-    <!-- Navigation -->
-    <div id="navbar-container"></div>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hệ Thống Cứu Hộ Quốc Gia</title>
 
-    <!-- Emergency Alert Banner -->
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+
+  <!-- Tailwind & Feather -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+
+  <!-- Leaflet (bản ổn định) -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoYehvS5fV/2kJZO6e0H2Zm1r2a4rG6qF0l7Z6A="
+    crossorigin=""
+  />
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+
+<body class="bg-gray-50">
+  <!-- Navbar -->
+  <div id="navbar-container"></div>
+
+  <!-- (Giữ nguyên toàn bộ phần nội dung bạn đã viết ở trên) -->
+<!-- Emergency Alert Banner -->
     <div class="bg-gradient-to-r from-red-500 to-orange-500 text-white py-3 px-4 text-center animate-pulse">
         <div class="max-w-7xl mx-auto flex items-center justify-center">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -183,7 +201,7 @@
             <div class="flex flex-col lg:flex-row gap-8">
                 <!-- 🗺️ Bản đồ -->
                 <div class="lg:w-2/3">
-                    <div id="map" class="h-[600px] w-full rounded-2xl shadow-xl border border-gray-200"></div>
+                    <div id="rescue-map" class="h-[600px] w-full rounded-2xl shadow-xl border border-gray-200"></div>
 
                     <!-- Controls -->
                     <div class="mt-4 flex flex-wrap gap-3 items-center justify-between">
@@ -345,29 +363,32 @@
             </div>
         </div>
     </div>
+  <!-- Footer -->
+  <div id="footer-container"></div>
 
-    <!-- Footer -->
-    <div id="footer-container"></div>
+  <!-- JS scripts -->
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/map.js"></script>
+  <script src="assets/js/news.js"></script>
 
-    <script src="assets/js/main.js"></script>
-    <script src="assets/js/emergency_map.js"></script>
-    <script src="assets/js/new.js"></script>
-    <script>
-        // Load components
-        fetch('components/navbar.html')
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('navbar-container').innerHTML = data;
-                feather.replace();
-            });
+  <!-- Load Components -->
+  <script>
+    Promise.all([
+      fetch("components/navbar.html").then((r) => r.text()),
+      fetch("components/footer.html").then((r) => r.text()),
+    ]).then(([navbar, footer]) => {
+      document.getElementById("navbar-container").innerHTML = navbar;
+      document.getElementById("footer-container").innerHTML = footer;
+      feather.replace();
+    });
+  </script>
+  <link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-        fetch('components/footer.html')
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('footer-container').innerHTML = data;
-            });
-            
-        feather.replace();
-    </script>
+<!-- Script bản đồ -->
+<script src="assets/js/map.js" defer></script>
 </body>
 </html>
