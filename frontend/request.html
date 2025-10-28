@@ -1,67 +1,593 @@
-<p class="hide-text">Gửi yêu cầu cứu hộ</p>
-<!-- public/request.html -->
-<!doctype html>
+<!DOCTYPE html>
 <html lang="vi">
-  <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Gửi yêu cầu - Cứu Hộ</title>
-  <link rel="stylesheet" href="assets/css/style.css" />
-  <link rel="stylesheet" href="assets/css/request.css" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bản Tin Khẩn Cấp - Hệ Thống Cứu Hộ Quốc Gia</title>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap');
+        :root {
+            --primary: #ef4444;
+            --primary-light: #fee2e2;
+            --dark: #1e293b;
+            --light: #f8fafc;
+        }
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            scroll-behavior: smooth;
+        }
+        .news-card {
+            transition: all 0.3s ease;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+        .news-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .news-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), #f97316);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .news-card:hover::before {
+            opacity: 1;
+        }
+        .nav-link {
+            position: relative;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        /* Cải thiện responsive */
+        @media (max-width: 768px) {
+            .grid-cols-3 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+        }
+        /* Modal style */
+        .modal {
+            transition: opacity 0.3s ease;
+        }
+        /* Skeleton loading */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+        }
+        @keyframes skeleton-loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+    </style>
 </head>
-<body>
-  <header>
-    <div class="brand">
-      <div class="logo">CH</div>
-      <div>
-        <div style="font-weight:800">Cứu Hộ Toàn Quốc</div>
-        <div style="font-size:12px;color:var(--muted)">Mạng lưới cứu hộ & trợ giúp 24/7</div>
-      </div>
-    </div>
-
-    <nav>
-      <a href="index.html">Trang chủ</a>
-      <a href="index.html#fullMap">Bản đồ</a>
-      <a href="tracking.html">Theo dõi</a>
-      <a href="index.html#view-team">Đội cứu hộ</a>
-      <a href="admin.html">Admin</a>
+<body class="bg-gray-50">
+    <!-- Navigation (giống index, tối ưu link) -->
+    <nav class="bg-white shadow-md sticky top-0 z-50 backdrop-blur-sm bg-opacity-80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex items-center space-x-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                    <span class="text-2xl font-bold bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">CỨU HỘ QUỐC GIA</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="indexx.html#home" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Trang chủ</a>
+                    <a href="map.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Bản đồ cứu hộ</a>
+                    <a href="request.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Bản tin</a>
+                    <a href="post.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Báo tin</a>
+                    <div class="flex space-x-4">
+                        <a href="admin.html" class="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-lg font-medium transition-all shadow hover:shadow-lg">Admin</a>
+                        <a href="login.html" class="bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-all shadow hover:shadow-lg">Đăng nhập</a>
+                    </div>
+                </div>
+                <div class="md:hidden flex items-center">
+                    <button id="menu-toggle" class="text-gray-700 hover:text-red-600" aria-label="Toggle menu">
+                        <i data-feather="menu"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white py-2 px-4 shadow-lg">
+            <a href="indexx.html#home" class="block py-2 text-gray-700 hover:text-red-600 transition">Trang chủ</a>
+            <a href="map.html" class="block py-2 text-gray-700 hover:text-red-600 transition">Bản đồ cứu hộ</a>
+            <a href="request.html" class="block py-2 text-gray-700 hover:text-red-600 transition">Bản tin</a>
+            <a href="post.html" class="block py-2 text-gray-700 hover:text-red-600 transition">Báo tin</a>
+            <a href="admin.html" class="block py-2 text-white bg-gray-800 rounded-md text-center">Admin</a>
+            <a href="login.html" class="block py-2 text-white bg-red-600 rounded-md text-center mt-2">Đăng nhập</a>
+        </div>
     </nav>
 
-    <div class="actions">
-      <a class="btn btn-outline" href="login.html">Đăng nhập</a>
-      <button class="btn btn-primary" id="btn-sos">🆘 Gửi yêu cầu cứu hộ</button>
-      <a class="btn btn-primary" href="request.html" style="margin-left:8px">📝 Trang gửi yêu cầu</a>
+    <!-- Emergency Alert Banner (cập nhật thông báo mới nhất) -->
+    <div class="bg-gradient-to-r from-red-500 to-orange-500 text-white py-3 px-4 text-center animate-pulse">
+        <div class="max-w-7xl mx-auto flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <span class="font-medium tracking-wide">CẢNH BÁO THIÊN TAI: Bão số 12 (Fengshen) sắp đổ bộ miền Trung - Cập nhật lúc 10:00 22/10/2025</span>
+        </div>
     </div>
-  </header>
 
-  <main class="form-page">
-    <h2>Gửi yêu cầu cứu hộ</h2>
-    <form id="reqForm">
-      <label>Loại cứu hộ</label>
-      <select id="type">
-        <option value="xe-may">Xe máy</option>
-        <option value="oto">Ô tô</option>
-        <option value="thientai">Thiên tai</option>
-        <option value="yte">Cứu hộ y tế</option>
-      </select>
+    <!-- News Section (nâng cấp với sort by date, pagination thực, thêm badge location) -->
+    <section id="news-section" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold mb-4 bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">Bản Tin Khẩn Cấp</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto text-lg">Cập nhật thông tin mới nhất về các sự cố, cảnh báo và hoạt động cứu hộ trên toàn quốc. Dữ liệu được cập nhật tự động từ nguồn uy tín.</p>
+            </div>
 
-      <label>Số điện thoại</label>
-      <input id="phone" placeholder="Số điện thoại" required />
+            <!-- Filter and Search (thêm sort by) -->
+            <div class="flex flex-col md:flex-row justify-between mb-8 space-y-4 md:space-y-0 md:space-x-4">
+                <input type="text" id="search-news" placeholder="Tìm kiếm bản tin..." class="w-full md:w-1/3 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+                <select id="filter-type" class="w-full md:w-1/4 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+                    <option value="all">Tất cả loại sự cố</option>
+                    <option value="thien-tai">Thiên tai</option>
+                    <option value="tai-nan">Tai nạn</option>
+                    <option value="cuu-ho">Cứu hộ</option>
+                    <option value="canh-bao">Cảnh báo</option>
+                </select>
+                <select id="filter-location" class="w-full md:w-1/4 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+                    <option value="all">Toàn quốc</option>
+                    <option value="ha-noi">Hà Nội</option>
+                    <option value="tp-hcm">TP.HCM</option>
+                    <option value="da-nang">Đà Nẵng</option>
+                    <option value="mien-bac">Miền Bắc</option>
+                    <option value="mien-trung">Miền Trung</option>
+                    <option value="tay-nguyen">Tây Nguyên</option>
+                    <option value="dak-lak">Đắk Lắk</option>
+                    <option value="binh-dinh">Bình Định</option>
+                    <option value="thai-nguyen">Thái Nguyên</option>
+                </select>
+                <select id="sort-by" class="w-full md:w-1/4 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+                    <option value="newest">Mới nhất</option>
+                    <option value="oldest">Cũ nhất</option>
+                </select>
+                <button id="refresh-news" class="flex items-center px-4 py-3 border border-red-600 text-red-600 rounded-md hover:bg-red-50 transition font-medium">
+                    <i data-feather="refresh-cw" class="mr-2 w-4 h-4"></i> Làm mới tin
+                </button>
+            </div>
 
-      <label>Vị trí (tự động hoặc nhập)</label>
-      <input id="locationText" placeholder="Địa chỉ hoặc toạ độ" />
+            <div id="news-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- News Cards từ dữ liệu thực tế -->
+            </div>
+            
+            <div class="text-center mt-12 flex justify-center space-x-4" id="pagination">
+                <!-- Pagination buttons sẽ được thêm động -->
+            </div>
+        </div>
+    </section>
 
-      <button class="btn" type="button" id="getLocation">Lấy vị trí GPS</button>
+    <!-- Modal for news details (thêm share button) -->
+    <div id="news-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 p-4 modal">
+        <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-screen overflow-y-auto p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h3 id="modal-title" class="text-2xl font-bold"></h3>
+                <button id="close-modal" class="text-gray-400 hover:text-gray-500">
+                    <i data-feather="x"></i>
+                </button>
+            </div>
+            <div id="modal-content" class="space-y-4"></div>
+            <div class="mt-6 border-t pt-4 flex space-x-4">
+                <a id="map-link" href="#" class="text-blue-600 hover:text-blue-800 flex items-center">
+                    <i data-feather="map-pin" class="mr-2 w-4 h-4"></i> Xem trên bản đồ
+                </a>
+                <a href="post.html" class="text-orange-600 hover:text-orange-700 flex items-center">
+                    <i data-feather="alert-triangle" class="mr-2 w-4 h-4"></i> Báo tin bổ sung
+                </a>
+                <button id="share-news" class="text-green-600 hover:text-green-700 flex items-center">
+                    <i data-feather="share-2" class="mr-2 w-4 h-4"></i> Chia sẻ
+                </button>
+            </div>
+            <div id="related-news" class="mt-6 border-t pt-4">
+                <h4 class="font-bold mb-4">Tin liên quan</h4>
+                <div class="space-y-2"></div>
+            </div>
+        </div>
+    </div>
 
-      <label>Mô tả</label>
-      <textarea id="desc" placeholder="Mô tả tình huống"></textarea>
+    <!-- Footer (giống index, thêm link tích hợp) -->
+    <footer class="bg-gray-900 text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                        <span class="text-2xl font-bold bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">CỨU HỘ QUỐC GIA</span>
+                    </div>
+                    <p class="text-gray-400 leading-relaxed">Kết nối người dân với lực lượng cứu hộ trong các tình huống khẩn cấp.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Dịch Vụ</h4>
+                    <ul class="space-y-2">
+                        <li><a href="index.html#services" class="text-gray-400 hover:text-white transition">Cứu hỏa</a></li>
+                        <li><a href="index.html#services" class="text-gray-400 hover:text-white transition">Cứu hộ giao thông</a></li>
+                        <li><a href="index.html#services" class="text-gray-400 hover:text-white transition">Y tế khẩn cấp</a></li>
+                        <li><a href="index.html#services" class="text-gray-400 hover:text-white transition">Ứng phó thiên tai</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Liên Kết</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Bộ Công An</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Bộ Y Tế</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Ban Chỉ Đạo PCTT</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Cục Cứu Hộ Cứu Nạn</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Hỗ Trợ</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Câu hỏi thường gặp</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Hướng dẫn sử dụng</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Chính sách bảo mật</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Điều khoản dịch vụ</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-12 pt-8 text-center text-gray-400">
+                <p>© 2025 Hệ Thống Cứu Hộ Quốc Gia. Bản quyền thuộc về Bộ Công An.</p>
+            </div>
+        </div>
+    </footer>
 
-      <button class="btn" type="submit">Gửi yêu cầu</button>
-    </form>
+    <script>
+        // Dữ liệu tin tức cập nhật mới nhất từ nguồn thực tế (tháng 10/2025, mở rộng với nhiều tin hơn)
+        const newsData = [
+            {
+                title: "Đà Nẵng: Chủ động ứng phó thiên tai những tháng cuối năm",
+                date: "2025-10-21",
+                type: "thien-tai",
+                location: "da-nang,mien-trung",
+                img: "https://media.daidoanket.vn/w1280/uploaded/images/2025/10/18/8898fcf6-b66a-433c-908c-72eb18bbdeb1.jpg",
+                content: "<p><strong>Tình hình:</strong> TP. Đà Nẵng đang hứng chịu thời tiết cực đoan, mưa lớn kéo dài gây sạt lở nghiêm trọng tại nhiều khu vực. Đáng chú ý, bờ biển phường Hội An Tây bị sóng đánh mạnh, sạt lở dài hơn 200m với vách đứng cao 5-6m, cây chắn sóng bật gốc, công trình ven biển nguy cơ sụp đổ. Tuyến đường ĐT606 (Km23+480) bị sụt lún sâu 18-30cm, dài 43m, vết nứt cắt ngang, taluy cao 50m có dấu hiệu trượt, đe dọa chia cắt giao thông miền núi.</p><p><strong>Thiệt hại ước tính:</strong> Chưa có con số thiệt hại cụ thể về người và tài sản. Các khu vực bị ảnh hưởng bao gồm sạt lở bờ biển sát khu dân cư và du lịch, đất cát cuốn trôi lớn, công trình nguy cơ sụp đổ, giao thông huyết mạch có nguy cơ đứt gãy hoàn toàn.</p><p><strong>Hành động ứng phó:</strong> UBND TP. Đà Nẵng ban hành Công điện số 07/CĐ-UBND, kích hoạt phương án ứng phó toàn diện trong 10 ngày tới và những tháng cuối năm 2025. Các biện pháp: theo dõi thời tiết, củng cố cảnh báo sớm, bố trí lực lượng canh gác, chốt chặn khu vực nguy cơ; chuẩn bị phương tiện cứu hộ theo phương châm “4 tại chỗ”; sơ tán dân vùng trũng thấp, ven biển; kiểm tra, vận hành hồ chứa, trạm bơm chống ngập; lực lượng vũ trang sẵn sàng hỗ trợ; tuyên truyền kỹ năng phòng tránh; kiểm tra công trình thi công và hệ thống thủy lợi, đê điều.</p><p><strong>Khuyến cáo:</strong> Người dân theo dõi bản tin dự báo, hạn chế di chuyển khi mưa lớn, di dời tài sản đến nơi cao ráo, đảm bảo an toàn tính mạng và tài sản. Chính quyền địa phương chuẩn bị phương án ứng phó, kiểm tra hệ thống tiêu thoát nước, cảnh giới khu vực sạt lở, hỗ trợ dân khi ngập lụt. Tăng cường tuyên truyền nâng cao nhận thức cộng đồng về phòng tránh thiên tai.</p><a href='https://thiennhienmoitruong.vn/da-nang-chu-dong-ung-pho-thien-tai-nhung-thang-cuoi-nam.html' target='_blank'>Nguồn gốc</a>"
+            },
+            {
+                title: "Vai trò y tế cơ sở trong chăm sóc sức khỏe tinh thần cho cộng đồng sau thiên tai",
+                date: "2025-10-21",
+                type: "cuu-ho",
+                location: "lao-cai,thai-nguyen,mien-bac",
+                img: "https://benhvientamthanhanoi.com/wp-content/uploads/2025/10/image.jpeg",
+                content: "<p><strong>Tình hình:</strong> Sau thiên tai như bão lũ năm 2024 tại Lào Cai và Thái Nguyên, người dân đối mặt với nỗi ám ảnh tinh thần kéo dài, bao gồm rối loạn stress sau sang chấn, lo âu, trầm cảm và 'lo âu khí hậu' ở giới trẻ. Theo WHO, tỷ lệ rối loạn tâm thần tăng đáng kể sau thiên tai, đặc biệt sau bão số 3 Yagi, với tác động lâu dài về mất mát tài sản, người thân và kế sinh nhai. Người dân thường âm thầm chịu đựng, thiếu thói quen tìm kiếm hỗ trợ tâm lý.</p><p><strong>Thiệt hại ước tính:</strong> Thiệt hại tinh thần không thể đo lường bằng con số cụ thể, nhưng nghiên cứu nhỏ của WHO sau bão Yagi cho thấy tác động đáng kể đến sức khỏe tâm thần, bao gồm lo âu và trầm cảm phổ biến. Tại Việt Nam, số lượng chuyên gia tâm thần ít so với dân số, dẫn đến dịch vụ chưa đáp ứng nhu cầu, với sự kỳ thị xã hội làm tăng thách thức.</p><p><strong>Hành động ứng phó:</strong> Y tế cơ sở đóng vai trò quan trọng trong chăm sóc sức khỏe tâm thần, với bác sĩ đa khoa và điều dưỡng có thể điều trị rối loạn phổ biến nếu được đào tạo. WHO khuyến nghị tích hợp đánh giá sức khỏe tâm thần vào ứng phó khẩn cấp, bao gồm đội phản ứng nhanh và dịch vụ hỗ trợ xã hội. Tình nguyện viên như CLB ca nô tại Lào Cai tham gia cứu hộ, vượt qua nỗi sợ để hỗ trợ cộng đồng.</p><p><strong>Khuyến cáo:</strong> Theo TS Angela Pratt (WHO), cần coi hỗ trợ tâm lý là phần không thể tách rời của ứng phó và phục hồi thiên tai, không chỉ sau khi đáp ứng nhu cầu vật chất. Đào tạo y tế cơ sở về nhận biết và hỗ trợ trầm cảm, lo âu; nâng cao năng lực tuyến huyện; tăng chuyên gia tâm thần để xây dựng hệ thống bền vững. Giảm kỳ thị xã hội và nghiên cứu sâu hơn về tác động tại Việt Nam.</p><a href='https://vov2.vov.vn/suc-khoe/vai-tro-y-te-co-so-trong-cham-soc-suc-khoe-tinh-than-cho-cong-dong-sau-thien-tai-55411' target='_blank'>Nguồn gốc</a>"
+            },
+            {
+                title: "Tai nạn giao thông mới nhất 19/10/2025: xe cứu hộ gây tai nạn liên hoàn trên quốc lộ 26",
+                date: "2025-10-19",
+                type: "tai-nan",
+                location: "dak-lak,tp-hcm,binh-dinh,tay-nguyen",
+                img: "https://cdnphoto.dantri.com.vn/fT-JEopnjSnsEkgTdgpPSX-an_8=/thumb_w/1020/2025/10/19/z7132063905158f9b65fad4a12b3160200c0a32ca66181-edited-1760843872053.jpg",
+                content: "<p><strong>Tình hình:</strong> Ngày 19/10/2025, xảy ra ba vụ tai nạn giao thông nghiêm trọng: Xe cứu hộ gây tai nạn liên hoàn tại km146+400 quốc lộ 26 (Đắk Lắk), người đàn ông tử vong do mất lái xe máy ở dốc cầu Bình Lợi (TP Hồ Chí Minh), và xe máy va chạm xe tải chở gỗ khiến cô gái tử vong trên tỉnh lộ 639 (Bình Định).</p><p><strong>Thiệt hại ước tính:</strong> - Vụ quốc lộ 26: 3 phương tiện hư hỏng, không thiệt hại về người. - Vụ cầu Bình Lợi: 1 người đàn ông tử vong, xe máy hư hỏng. - Vụ tỉnh lộ 639: 1 cô gái (SN 2001) tử vong tại chỗ, xe máy hư hỏng.</p><p><strong>Hành động ứng phó:</strong> Công an xã Tuy Phước Đông bảo vệ hiện trường, đảm bảo an toàn giao thông và phối hợp điều tra vụ tỉnh lộ 639. Các vụ khác chưa ghi nhận hành động cụ thể.</p><p><strong>Khuyến cáo:</strong> Không có khuyến cáo được đề cập trong nội dung.</p><a href='https://baomoi.com/tai-nan-giao-thong-moi-nhat-19-10-2025-xe-cuu-ho-gay-tai-nan-lien-hoan-tren-quoc-lo-26-c53531244.epi' target='_blank'>Nguồn gốc</a>"
+            },
+            {
+                title: "Thiên tai đã vượt quá sức chịu đựng của người dân",
+                date: "2025-10-10",
+                type: "thien-tai",
+                location: "thai-nguyen,bac-ninh,cao-bang,lang-son,mien-bac,mien-trung",
+                img: "https://premedia.vneconomy.vn/files/uploads/2025/10/10/c999b83a970f40588b4d060116ebed76-20061.png?w=900",
+                content: "<p><strong>Tình hình:</strong> Năm 2025, Việt Nam xảy ra 20 loại hình thiên tai với diễn biến dồn dập, khốc liệt, bất thường, vượt mức lịch sử, ảnh hưởng rộng lớn đến miền Bắc và miền Trung. Các cơn bão di chuyển nhanh trên biển nhưng chậm trên đất liền, gây mưa lớn kéo dài; mực nước lũ vượt lịch sử tại nhiều sông (như sông Thương, sông Lô, sông Bưởi); hình thành 'bão chồng bão, lũ chồng lũ' kèm lũ quét, sạt lở đất, ngập lụt nghiêm trọng tại đô thị và vùng trũng thấp.</p><p><strong>Thiệt hại ước tính:</strong> 238 người chết và mất tích, 367 người bị thương; gần 260.000 ngôi nhà hư hỏng, tốc mái; gần 556.000 ha lúa, hoa màu và cây trồng ngập úng; hơn 15.000 con gia súc và 1,45 triệu con gia cầm chết hoặc cuốn trôi; hơn 40.000 ha nuôi trồng thủy sản bị ảnh hưởng. Tổng thiệt hại gần 34 nghìn tỷ đồng (tương đương 47% thiệt hại về người và 37% thiệt hại kinh tế so với năm 2024).</p><p><strong>Hành động ứng phó:</strong> Bộ Nông nghiệp và Môi trường tổ chức họp Đối tác giảm nhẹ rủi ro thiên tai để cập nhật tình hình, đánh giá thiệt hại nhanh và lập kế hoạch tái thiết; thành lập 3 đoàn khảo sát thực địa tại Tuyên Quang - Phú Thọ, Cao Bằng - Lạng Sơn, Bắc Ninh - Thái Nguyên. Chính phủ triển khai biện pháp ứng phó, chính sách hỗ trợ khắc phục; kêu gọi hỗ trợ từ đối tác quốc tế (Liên hợp quốc, UNICEF, WHO, IOM) với cam kết huy động nguồn lực, cung cấp hàng cứu trợ (lương thực, nước uống, nước, thuốc men). Năm 2024, đối tác hỗ trợ 25 triệu USD và hàng nghìn tấn hàng hóa.</p><p><strong>Khuyến cáo:</strong> Đầu tư vào chuẩn bị và ứng phó rủi ro thiên tai, giảm thiểu và xây dựng khả năng phục hồi; hành động tập thể để hỗ trợ khẩn cấp các địa phương bị ảnh hưởng nặng, tập trung khôi phục nhà ở và sản xuất; các tổ chức quốc tế tham gia khảo sát và đánh giá nhu cầu cứu trợ kịp thời.</p><a href='https://vneconomy.vn/thien-tai-da-vuot-qua-suc-chiu-dung-cua-nguoi-dan.htm' target='_blank'>Nguồn gốc</a>"
+            },
+            {
+                title: "Việt Nam kêu gọi quốc tế hỗ trợ khắc phục hậu quả thiên tai",
+                date: "2025-10-09",
+                type: "thien-tai",
+                location: "ha-noi,thai-nguyen,bac-ninh,cao-bang,lang-son,mien-bac,mien-trung",
+                img: "https://mediaptq.mediatech.vn/upload/image/202510/medium/82710_55315046013060509712616981946138100992575692n_1760004748097379436332_09221910.jpg?id=82710",
+                content: "<p><strong>Tình hình:</strong> 20 loại thiên tai, 11 cơn bão gây 238 chết, thiệt hại 35.000 tỷ đồng. Bộ Nông nghiệp họp đối tác quốc tế hỗ trợ nước, thực phẩm, nước sạch cho miền Bắc và Bắc Trung Bộ.</p><p><strong>Thiệt hại ước tính:</strong> 238 người chết và mất tích, thiệt hại 35.000 tỷ đồng.</p><p><strong>Hành động ứng phó:</strong> Bộ Nông nghiệp họp đối tác quốc tế để hỗ trợ khẩn cấp.</p><p><strong>Khuyến cáo:</strong> Tăng cường chuẩn bị và phối hợp quốc tế.</p><a href='https://vnexpress.net/viet-nam-keu-goi-quoc-te-ho-tro-khac-phuc-hau-qua-thien-tai-4949397.html' target='_blank'>Nguồn gốc</a>"
+            },
+            {
+                title: "Việt Nam kêu gọi cứu trợ khẩn cấp từ cộng đồng quốc tế",
+                date: "2025-10-09",
+                type: "cuu-ho",
+                location: "ha-noi,mien-bac,mien-trung",
+                img: "https://image.phunuonline.com.vn/fckeditor/upload/2025/20251009/images/lien-hop-quoc-keu-goi-ho-_241760006840.jpg",
+                content: "<p><strong>Tình hình:</strong> Trong hai tháng 9 và 10/2025, Việt Nam liên tiếp hứng chịu bão số 8, 9, 10 và 11 cùng mưa lũ lớn. Bão số 10 đổ bộ vào Nghệ An - Hà Tĩnh đêm 28 và rạng sáng 29/9 với tốc độ nhanh, cường độ mạnh, phạm vi rộng. Hoàn lưu bão gây mưa lớn, ngập lụt diện rộng tại Bắc Bộ và Bắc Trung Bộ. Bão số 11 tiếp tục gây mưa rất to, mực nước sông từ Bắc Bộ đến Hà Tĩnh đạt báo động 2-3, vượt lũ lịch sử tại một số nơi, dẫn đến tình trạng “bão chồng bão, lũ chồng lũ”.</p><p><strong>Thiệt hại ước tính:</strong> Các địa phương bị thiệt hại nặng nề do ảnh hưởng thiên tai, nhưng không có con số cụ thể. Các tổ chức quốc tế đã viện trợ và cam kết hỗ trợ khoảng 5,7 triệu USD (tương đương 150,1 tỷ đồng) cho các địa phương bị ảnh hưởng sau bão số 10 và 11.</p><p><strong>Hành động ứng phó:</strong> Bộ Nông nghiệp và Môi trường ban hành Công điện số 15/BCĐ-BNNMT ngày 9/10/2025 hỗ trợ khẩn cấp các địa phương. Ban Chỉ đạo Phòng thủ Dân sự Quốc gia giao Cục Quản lý Đê điều và Phòng, chống thiên tai làm đầu mối điều phối, chia sẻ thông tin, kết nối nhà tài trợ với chính quyền địa phương. Việt Nam kêu gọi cộng đồng quốc tế hợp tác triển khai cứu trợ khẩn cấp và phục hồi sau thiên tai. Lực lượng chức năng bồi đắp tuyến đê sông Cầu tại Thái Nguyên.</p><p><strong>Khuyến cáo:</strong> Người dân các vùng bị ảnh hưởng cần hỗ trợ khẩn cấp từ cộng đồng quốc tế để ổn định đời sống, phục hồi sinh kế và nâng cao khả năng chống chịu thiên tai. Liên hệ: Cục Quản lý Đê điều và Phòng, chống thiên tai, Bộ Nông nghiệp và Môi trường, địa chỉ Số 10 Tôn Thất Thuyết, Hà Nội; email drrp@mae.gov.vn; ĐT 0912093879.</p><a href='https://mae.gov.vn/viet-nam-keu-goi-cuu-tro-khan-cap-tu-cong-dong-quoc-te-19944.htm' target='_blank'>Nguồn gốc</a>"
+            },
+            {
+                title: "Thanh tra Chính phủ phát động quyên góp ủng hộ đồng bào bị thiệt hại nặng nề bởi thiên tai",
+                date: "2025-10-14",
+                type: "cuu-ho",
+                location: "ha-noi,mien-bac,mien-trung",
+                img: "https://bcp.cdnchinhphu.vn/334894974524682240/2025/10/14/phat-dong-3-17604142941321461810469.jpg",
+                content: "<p><strong>Tình hình:</strong> Trong tháng 9 và 10/2025, Việt Nam hứng chịu 5 cơn bão, đặc biệt bão số 10 (BUALOI) và số 11 (MATMO) gây thiệt hại nặng nề về người và tài sản tại Bắc Bộ và miền Trung. Hậu quả bão số 10 chưa khắc phục xong thì hoàn lưu bão số 11 gây lũ chồng lũ, lũ quét, sạt lở đất trên diện rộng.</p><p><strong>Thiệt hại ước tính:</strong> Theo thống kê sơ bộ đến 8h ngày 2/10/2025, bão số 10 làm 54 người chết và mất tích, 140 người bị thương; trên 150.000 ngôi nhà bị sập, đổ, tốc mái, hư hỏng; trên 50.000 ha lúa và hoa màu bị ngập, thiệt hại; nhiều tuyến giao thông, trường học, cơ sở y tế, công trình công cộng bị hư hỏng. Bão số 11 gây thiệt hại nghiêm trọng về tính mạng, tài sản, đê điều, hồ chứa và cơ sở hạ tầng thiết yếu.</p><p><strong>Hành động ứng phó:</strong> Thanh tra Chính phủ tổ chức Lễ phát động quyên góp sáng 14/10/2025, hưởng ứng lời kêu gọi của Đảng, Nhà nước và Ủy ban Trung ương Mặt trận Tổ quốc Việt Nam. Tổng Thanh tra Đoàn Hồng Phong kêu gọi mỗi cán bộ, đảng viên, công chức, viên chức, người lao động đóng góp tối thiểu 1 ngày lương để hỗ trợ đồng bào. Văn phòng Đảng ủy, Ban Tuyên giáo và Dân vận phối hợp triển khai, tổng hợp báo cáo kết quả cho Ban Vận động cứu trợ Trung ương và Ban Dân vận Đảng ủy Chính phủ.</p><p><strong>Khuyến cáo:</strong> Phát huy tinh thần 'tương thân tương ái', 'lá lành đùm lá rách' để chung tay giúp đỡ đồng bào bị ảnh hưởng, sớm ổn định cuộc sống và tiếp tục lao động sản xuất.</p><a href='https://baochinhphu.vn/thanh-tra-chinh-phu-phat-dong-quyen-gop-ung-ho-dong-bao-bi-thiet-hai-nang-ne-boi-thien-tai-102251014110224359.htm' target='_blank'>Nguồn gốc</a>"
+            },
+            {
+                title: "Đoàn kết, chung sức vượt qua thiên tai",
+                date: "2025-10-21",
+                type: "thien-tai",
+                location: "toan-quoc,mien-bac,mien-trung",
+                img: "https://cdn.nhandan.vn/images/22f099ca8bc7ae81aa2a8d3416a84bf88164db7334089fd96cd92fb40ba5a5c416d1915411a36da149b3cda42b8716dd3d30e798dd294ae2e7036a1cdf939bd04bdf9eb112ac72b82740920805aa185fd637c5797f36c62cfeeadbce01c03c493c7c4f229359aba580a4e2f637103b66/z7138573067041-93f4e3ff2488379b42c2a1c06fb01e83-9502.jpg.webp",
+                content: "<p><strong>Tình hình:</strong> Năm 2025, Việt Nam hứng chịu khoảng 20 loại hình thiên tai, với các đợt “bão chồng bão, lũ chồng lũ”, đặc biệt mưa lũ sau bão số 11 gây thiệt hại nghiêm trọng tại các tỉnh như Thái Nguyên, Cao Bằng, Lạng Sơn, Bắc Ninh.</p><p><strong>Thiệt hại ước tính:</strong> Hàng trăm người chết hoặc mất tích; tổng thiệt hại kinh tế khoảng 35.000 tỷ đồng, làm giảm 0,2% GDP. Riêng mưa lũ sau bão số 11 gây thiệt hại hơn 7.000 tỷ đồng, trong đó Thái Nguyên chịu khoảng 4.000 tỷ đồng, dẫn đến gia đình mất người thân, nhà cửa, tài sản, ruộng vườn tan hoang, sản xuất đình trệ.</p><p><strong>Hành động ứng phó:</strong> Đảng và Nhà nước ưu tiên ứng phó thiên tai, huy động hệ thống chính trị, lực lượng vũ trang, đoàn thể và cộng đồng tham gia cứu trợ, tái thiết. Quốc hội ban hành Văn bản hợp nhất số 21/VBHN-VPQH về Luật Phòng, chống thiên tai ngày 26/2/2025, lồng ghép phòng chống thiên tai vào quy hoạch phát triển. Thủ tướng ban hành Chỉ thị số 19/CT-TTg ngày 19/6/2025, Quyết định số 2221/QĐ-TTg ngày 8/10/2025 hỗ trợ 140 tỷ đồng, và Quyết định số 2241/QĐ-TTg ngày 12/10/2025 hỗ trợ 400 tỷ đồng từ ngân sách trung ương. Kêu gọi hỗ trợ quốc tế tại cuộc họp “Đối tác Giảm nhẹ rủi ro thiên tai” ngày 9/10/2025, nhận cam kết từ Nhật Bản (JICA), Australia (3 triệu AUD), Nga, ASEAN với hàng cứu trợ nhu yếu phẩm, nước uống, nước, thuốc men. Việt Nam cũng hỗ trợ quốc tế như Cuba (hơn 500 tỷ đồng), Indonesia (100.000 USD), Lào (1 tấn gạo và nhu yếu phẩm).</p><p><strong>Khuyến cáo:</strong> Phát huy tinh thần đoàn kết dân tộc và quốc tế, tăng cường dự báo sớm, cảnh báo dựa trên công nghệ hiện đại như trí tuệ nhân tạo; lồng ghép phòng chống thiên tai vào quy hoạch phát triển bền vững; cộng đồng quốc tế hỗ trợ kỹ thuật, thiết bị dự báo, xây dựng công trình chống thiên tai.</p><a href='https://nhandan.vn/doan-ket-chung-suc-vuot-qua-thien-tai-post916808.html' target='_blank'>Nguồn gốc</a>"
+            },
+            {
+                title: "Hơn 1.066 tỷ đồng hỗ trợ đồng bào gặp thiên tai, bão lũ",
+                date: "2025-10-22",
+                type: "cuu-ho",
+                location: "toan-quoc,mien-bac,mien-trung",
+                img: "https://cdnmedia.baotintuc.vn/Upload/DmtgOUlHWBO5POIHzIwr1A/files/2025/10/21/ho-tro-dong-bao-21102025-01.jpg",
+                content: "<p><strong>Tình hình:</strong> Tính đến 17 giờ ngày 21/10, Ban Vận động Cứu trợ Trung ương, Ủy ban Trung ương MTTQ Việt Nam đã nhận ủng hộ hơn 1.066,764 tỷ đồng từ các đơn vị, tổ chức, cá nhân để hỗ trợ đồng bào gặp thiên tai, bão lũ. Các khoản ủng hộ trong ngày bao gồm: Bộ Xây dựng 5 tỷ đồng, VietinBank 10 tỷ đồng, sinh viên K15 Trường Đại học Luật Hà Nội 105 triệu đồng, Trường Tiểu học Thanh Xuân Trung 80 triệu đồng, Hiệp hội Doanh nghiệp Trung Quốc tại Việt Nam 2 tỷ đồng, Hội cựu giáo chức Việt Nam 636,113 triệu đồng, Hội người Việt Nam tại Westsachsen Zwickau (Đức) 5.500 Euro, Công ty TSQ Việt Nam 300 triệu đồng.</p><p><strong>Thiệt hại ước tính:</strong> Nội dung không đề cập chi tiết thiệt hại ước tính.</p><p><strong>Hành động ứng phó:</strong> Ban Vận động Cứu trợ Trung ương cam kết phân bổ kịp thời số tiền ủng hộ đến đúng địa chỉ để giúp nhân dân các tỉnh bị thiệt hại tái thiết cuộc sống. Bộ Xây dựng huy động lực lượng khắc phục hậu quả bão lũ, đảm bảo giao thông và hạ tầng thiết yếu, hỗ trợ xây dựng nhà ở tránh lũ.</p><p><strong>Khuyến cáo:</strong> Nội dung không đề cập khuyến cáo cụ thể.</p><a href='https://baotintuc.vn/thoi-su/hon-1066-ty-dong-ho-tro-dong-bao-gap-thien-tai-bao-lu-20251021200854276.htm' target='_blank'>Nguồn gốc</a>"
+            },
+            {
+                title: "Lực lượng Công an nhân dân chủ động ứng phó với bão số 12 và nguy cơ mưa lớn",
+                date: "2025-10-20",
+                type: "canh-bao",
+                location: "mien-trung,mien-bac",
+                img: "https://dbnd.1cdn.vn/2025/10/20/dbqgxtnd202510201700-17609581259941101885533.jpg",
+                content: "<p><strong>Tình hình:</strong> Bão số 12 (Fengshen) đi vào Biển Đông chiều 19/10/2025, sức gió cấp 9 giật cấp 11, di chuyển hướng Tây Bắc 25km/h. Dự báo từ 22-26/10, khu vực Hà Tĩnh đến Quảng Ngãi có mưa lớn diện rộng, kéo dài, cục bộ mưa rất lớn, nguy cơ lũ quét, sạt lở đất vùng núi, ngập lụt vùng trũng thấp và đô thị.</p><p><strong>Thiệt hại ước tính:</strong> Không có thông tin về thiệt hại ước tính.</p><p><strong>Hành động ứng phó:</strong> Bộ Công an ban hành Công điện 29/CĐ-BCA-V01 ngày 20/10/2025, yêu cầu các đơn vị và địa phương (từ Quảng Ninh đến Lâm Đồng) thực hiện nghiêm chỉ đạo Thủ tướng (Công điện 200/CĐ-TTg), theo dõi bão, đảm bảo an toàn tính mạng, tài sản; phân công trách nhiệm rõ ràng; tham mưu địa phương hướng dẫn neo đậu tàu thuyền, di dời dân, sẵn sàng phương án '4 tại chỗ'; huy động lực lượng kiểm soát giao thông, cứu hộ cứu nạn; tăng cường hỗ trợ từ Cảnh sát cơ động, Phòng cháy chữa cháy, Giao thông, Trang bị kho vận, Viễn thông, Y tế, Truyền thông; xử lý vi phạm lợi dụng thiên tai; báo cáo thường trực.</p><p><strong>Khuyến cáo:</strong> Theo dõi chặt chẽ diễn biến bão và mưa lớn, không chủ quan; chủ động phòng tránh, neo đậu phương tiện, di dời dân đến nơi an toàn; đảm bảo an toàn đê điều, hồ đập; phổ biến kỹ năng ứng phó thiên tai qua truyền thông.</p><a href='https://bocongan.gov.vn/bai-viet/luc-luong-cong-an-nhan-dan-chu-dong-ung-pho-voi-bao-so-12-va-nguy-co-mua-lon-dien-rong-1760964108' target='_blank'>Nguồn gốc</a>"
+            },
+            {
+                title: "Đoàn kết, chung sức vượt qua thiên tai - Báo An Giang",
+                date: "2025-10-21",
+                type: "thien-tai",
+                location: "toan-quoc,mien-nam",
+                img: "https://dangcongsan.org.vn/upload/2006988/20250624/881c364829c571ae3de256c3328d5fb01_2_.webp",
+                content: "<p><strong>Tình hình:</strong> Năm 2025, Việt Nam hứng chịu khoảng 20 loại hình thiên tai, với các đợt “bão chồng bão, lũ chồng lũ”, đặc biệt mưa lũ sau bão số 11 gây thiệt hại nghiêm trọng tại các tỉnh như Thái Nguyên, Cao Bằng, Lạng Sơn, Bắc Ninh.</p><p><strong>Thiệt hại ước tính:</strong> Hàng trăm người chết hoặc mất tích; tổng thiệt hại kinh tế khoảng 35.000 tỷ đồng, làm giảm 0,2% GDP. Riêng mưa lũ sau bão số 11 gây thiệt hại hơn 7.000 tỷ đồng, trong đó Thái Nguyên chịu khoảng 4.000 tỷ đồng, dẫn đến gia đình mất người thân, nhà cửa, tài sản, ruộng vườn tan hoang, sản xuất đình trệ.</p><p><strong>Hành động ứng phó:</strong> Đảng và Nhà nước ưu tiên ứng phó thiên tai, huy động hệ thống chính trị, lực lượng vũ trang, đoàn thể và cộng đồng tham gia cứu trợ, tái thiết. Quốc hội ban hành Văn bản hợp nhất số 21/VBHN-VPQH ngày 26/2/2025 về Luật Phòng, chống thiên tai, lồng ghép vào quy hoạch phát triển. Thủ tướng ban hành Chỉ thị số 19/CT-TTg ngày 19/6/2025, Quyết định số 2221/QĐ-TTg ngày 8/10/2025 hỗ trợ 140 tỷ đồng, và Quyết định số 2241/QĐ-TTg ngày 12/10/2025 hỗ trợ 400 tỷ đồng từ ngân sách trung ương cho các địa phương khắc phục hậu quả. Tăng cường dự báo, cảnh báo sớm, quan trắc, tu bổ công trình thủy lợi, sơ tán dân. Kêu gọi hỗ trợ quốc tế tại cuộc họp “Đối tác Giảm nhẹ rủi ro thiên tai” ngày 9/10/2025, nhận cam kết từ Nhật Bản (JICA hỗ trợ nhu yếu phẩm cho Bắc Ninh ngày 13/10/2025), Australia (3 triệu AUD), Nga, ASEAN (hàng cứu trợ thiết yếu). Việt Nam cũng hỗ trợ quốc tế như Cuba (hơn 500 tỷ đồng), Indonesia (100.000 USD năm 2018), Lào (1 tấn gạo và nhu yếu phẩm năm 2025).</p><p><strong>Khuyến cáo:</strong> Phòng, chống thiên tai là trách nhiệm của Nhà nước (vai trò chủ đạo), tổ chức, cá nhân (chủ động) và cộng đồng (giúp đỡ lẫn nhau). Cộng đồng quốc tế hỗ trợ khẩn cấp, kỹ thuật, thiết bị dự báo sớm, quản lý rủi ro, xây dựng công trình chống thiên tai thích ứng, phù hợp Khung Sendai 2015-2030 và các thỏa thuận ASEAN. Phát huy tinh thần đoàn kết dân tộc và quốc tế để vượt qua thách thức biến đổi khí hậu.</p><a href='https://baoangiang.com.vn/doan-ket-chung-suc-vuot-qua-thien-tai-a464618.html' target='_blank'>Nguồn gốc</a>"
+            },
+            {
+                title: "Thiên tai cuối năm 2025 phức tạp: Bắc Bộ vẫn có thể chịu ảnh hưởng của bão",
+                date: "2025-10-08",
+                type: "canh-bao",
+                location: "mien-bac,mien-trung",
+                img: "https://c.baothanhhoa.vn/img/mobile/news/2540/177d4090408t1820l1-51.webp",
+                content: "<p><strong>Tình hình:</strong> Thiên tai cuối năm 2025 diễn biến phức tạp, với 2-4 cơn bão/áp thấp nhiệt đới trên Biển Đông, 1-2 cơn ảnh hưởng trực tiếp đất liền. Bắc Bộ và Trung Bộ cần đề phòng bão bất thường do biến đổi khí hậu; mưa lớn, lũ quét, sạt lở đất ở vùng núi; không khí lạnh tăng cường từ tháng 10, dẫn đến rét đậm, rét hại, sương muối cuối năm. Từ đầu tháng 9/2025, đã xảy ra bão chồng bão, mưa lớn, ngập lụt, sạt lở liên tiếp.</p><p><strong>Thiệt hại ước tính:</strong> Gây tổn thất nghiêm trọng về người và kinh tế do tính chất cực đoan của biến đổi khí hậu; thiệt hại vẫn lớn dù có dự báo sớm, đặc biệt với các hiện tượng biến động cao như cường độ bão, lũ quét, mưa cục bộ.</p><p><strong>Hành động ứng phó:</strong> Hiện đại hóa công nghệ quan trắc, tăng mật độ trạm, ứng dụng AI, Big Data, IoT vào dự báo; nâng cao truyền tải thông tin đa dạng, phối hợp với địa phương và truyền thông; đào tạo kỹ năng ứng phó cộng đồng; đầu tư hạ tầng bền vững; triển khai Nghị quyết 57-NQ/TW về khoa học công nghệ.</p><p><strong>Khuyến cáo:</strong> Người dân đặc biệt lưu ý bão, mưa lớn, lũ quét, sạt lở, ngập úng, rét hại để chủ động phòng tránh; địa phương đẩy mạnh quản lý rủi ro dựa vào cộng đồng qua mạng lưới thông tin hai chiều, tập huấn, diễn tập; nâng cao ý thức ứng phó toàn xã hội.</p><a href='https://www.vietnamplus.vn/thien-tai-cuoi-nam-2025-phuc-tap-bac-bo-van-co-the-chiu-anh-huong-cua-bao-post1069070.vnp' target='_blank'>Nguồn gốc</a>"
+            },
+            {
+                title: "Thủ tướng Chính phủ yêu cầu chủ động ứng phó với bão số 12 và mưa lũ",
+                date: "2025-10-22",
+                type: "canh-bao",
+                location: "mien-trung,quang-tri,quang-ngai",
+                img: "https://nld.mediacdn.vn/291774122806476800/2025/10/22/pho-thu-tuong--1761126520218734304839.jpg",
+                content: "<p><strong>Tình hình:</strong> Bão Fengshen (bão số 12) diễn biến phức tạp, di chuyển hướng Tây Nam, ảnh hưởng vùng biển từ Nam Quảng Trị đến Quảng Ngãi, quần đảo Hoàng Sa. Gió mạnh cấp 8-10, giật cấp 12; sóng cao 3-7m. Từ đêm 22-27/10/2025, mưa lớn diện rộng ở Hà Tĩnh đến Quảng Ngãi, lượng mưa 200-900mm, cục bộ trên 500mm, có nguy cơ lũ quét, sạt lở đất, ngập lụt. Cấp độ rủi ro thiên tai cấp 3.</p><p><strong>Thiệt hại ước tính:</strong> Chưa có thiệt hại cụ thể, nhưng nguy cơ cao gây lũ lớn, ngập sâu, lũ ống, lũ quét, sạt lở đất, ảnh hưởng an toàn tính mạng người dân và tài sản.</p><p><strong>Hành động ứng phó:</strong> Thủ tướng ký Công điện 200/CĐ-TTg ngày 20/10/2025, yêu cầu các bộ ngành (Quốc phòng, Công an, Nông nghiệp và Môi trường, Xây dựng, Công Thương...) và địa phương từ Hà Tĩnh đến Đắk Lắk chủ động triển khai: rà soát tàu thuyền, sơ tán dân cư nguy cơ cao, bảo đảm an toàn hồ đập, đê điều, vận hành thủy điện; hỗ trợ sản xuất nông nghiệp, nuôi trồng thủy sản; bố trí lực lượng cứu hộ, nhu yếu phẩm; theo dõi dự báo, thông tin kịp thời qua truyền thông. Bộ Nông nghiệp và Môi trường cung cấp thông tin dự báo chính xác; Bộ Quốc phòng, Công an sẵn sàng hỗ trợ sơ tán, cứu nạn.</p><p><strong>Khuyến cáo:</strong> Chủ động sơ tán dân ở vùng núi, ven sông suối; hướng dẫn tàu thuyền tránh vùng nguy hiểm; vận hành an toàn hồ chứa, chuẩn bị ứng phó lũ vượt báo động 3; phổ biến kỹ năng ứng phó lũ quét, sạt lở, ngập lụt cho người dân.</p><a href='https://baomoi.com/thu-tuong-chinh-phu-yeu-cau-chu-dong-ung-pho-voi-bao-fengshen-bao-so-12-va-mua-lu-c53546684.epi' target='_blank'>Nguồn gốc</a>"
+            },
+            {
+                title: "Các nước, tổ chức quốc tế chung tay hỗ trợ Việt Nam khắc phục hậu quả thiên tai",
+                date: "2025-10-15",
+                type: "cuu-ho",
+                location: "toan-quoc,mien-bac,mien-trung",
+                img: "https://bcp.cdnchinhphu.vn/334894974524682240/2025/10/15/base64-1760496468629305052261.png",
+                content: "<p><strong>Tình hình:</strong> Việt Nam liên tiếp hứng chịu thiên tai nghiêm trọng trong tháng 9 và 10/2025, bao gồm bão số 8 (Mitag), số 9 (Ragasa), số 10 (Bualoi) và số 11 (Matmo), cùng mưa lũ lớn trên diện rộng. Các tỉnh chịu ảnh hưởng nặng nề: Lạng Sơn, Cao Bằng, Thái Nguyên, Tuyên Quang, Bắc Ninh, Nghệ An, Hà Tĩnh. Thiên tai gây thiệt hại nghiêm trọng về cơ sở hạ tầng và nông nghiệp, mực nước sông vượt mức kỷ lục lịch sử ở một số khu vực.</p><p><strong>Thiệt hại ước tính:</strong> Thiên tai gây thiệt hại nghiêm trọng đối với cơ sở hạ tầng và nông nghiệp, vượt quá khả năng chịu đựng của Chính phủ và người dân Việt Nam, theo Thứ trưởng Bộ Nông nghiệp và Môi trường Nguyễn Hoàng Hiệp tại cuộc họp ngày 9/10.</p><p><strong>Hành động ứng phó:</strong> Các tổ chức quốc tế và chính phủ nhiều nước hỗ trợ kịp thời: Australia trao 320 bộ dụng cụ nhà bếp, 756 bộ dụng cụ vệ sinh/sửa chữa, 300 bộ chăn cho Bắc Ninh; Nhật Bản (qua JICA) cung cấp thiết bị lọc nước, chăn, tấm nhựa, can nhựa cho Bắc Ninh; Hàn Quốc viện trợ 1 triệu USD; Samaritan's Purse hỗ trợ đồ dùng gia đình, mì, nước, xúc xích cho Hà Tĩnh, Tuyên Quang, Lạng Sơn; UNICEF dự kiến 4.500 thùng nước và 600 bồn chứa cho Lạng Sơn hoặc Cao Bằng; Save the Children hỗ trợ 500 triệu đồng cho trẻ em Hà Tĩnh; IOM cung cấp 4.000 chai nước và 350 bộ vật dụng; AHA Centre gửi 216.000 USD (dụng cụ gia đình, vệ sinh, bếp) cho Cao Bằng; ActionAid hỗ trợ 480 triệu đồng cho Tuyên Quang; Nga vận chuyển hàng cứu trợ đến Nội Bài; Canada hỗ trợ 50.000 USD qua NGO; Mỹ, EU, Meta lên kế hoạch viện trợ qua đối tác. Cục Quản lý đê điều và Phòng, chống thiên tai tiếp nhận và phân phối.</p><p><strong>Khuyến cáo:</strong> Thứ trưởng Nguyễn Hoàng Hiệp kêu gọi các đối tác quốc tế tiếp tục đồng hành, triển khai hỗ trợ nhanh chóng, chính xác và hiệu quả tới người dân vùng bị ảnh hưởng.</p><a href='https://baochinhphu.vn/cac-nuoc-to-chuc-quoc-te-chung-tay-ho-tro-viet-nam-khac-phuc-hau-qua-thien-tai-102251015091444105.htm' target='_blank'>Nguồn gốc</a>"
+            }
+        ];
 
-    <div id="result" class="card" style="display:none;margin-top:12px"></div>
-  </main>
+        // Mobile menu toggle
+        document.getElementById('menu-toggle').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+            const isHidden = menu.classList.contains('hidden');
+            this.innerHTML = isHidden ? feather.icons.menu.toSvg() : feather.icons.x.toSvg();
+        });
 
-  <script src="assets/js/request.js"></script>
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+                const mobileMenu = document.getElementById('mobile-menu');
+                if (!mobileMenu.classList.contains('hidden')) {
+                    mobileMenu.classList.add('hidden');
+                    document.getElementById('menu-toggle').innerHTML = feather.icons.menu.toSvg();
+                }
+            });
+        });
+
+        // Initialize feather icons
+        feather.replace();
+
+        // Hàm timeAgo
+        function timeAgo(dateString) {
+            const now = new Date();
+            const date = new Date(dateString);
+            const seconds = Math.floor((now - date) / 1000);
+            let interval = Math.floor(seconds / 31536000);
+            if (interval > 1) return `${interval} năm trước`;
+            interval = Math.floor(seconds / 2592000);
+            if (interval > 1) return `${interval} tháng trước`;
+            interval = Math.floor(seconds / 86400);
+            if (interval > 1) return `${interval} ngày trước`;
+            interval = Math.floor(seconds / 3600);
+            if (interval > 1) return `${interval} giờ trước`;
+            interval = Math.floor(seconds / 60);
+            if (interval > 1) return `${interval} phút trước`;
+            return "Vừa xong";
+        }
+
+        // Render news cards (nâng cấp với pagination, hiển thị 6 tin/trang)
+        const itemsPerPage = 6;
+        let currentPage = 1;
+
+        function renderNews(filteredData = newsData, page = 1) {
+            const grid = document.getElementById('news-grid');
+            grid.innerHTML = '';
+            const start = (page - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const paginatedData = filteredData.slice(start, end);
+            paginatedData.forEach((news, index) => {
+                const badgeColor = news.type === 'thien-tai' ? 'bg-blue-600' : news.type === 'tai-nan' ? 'bg-red-600' : news.type === 'cuu-ho' ? 'bg-green-600' : 'bg-yellow-600';
+                const badgeText = news.type === 'thien-tai' ? 'Thiên tai' : news.type === 'tai-nan' ? 'Tai nạn' : news.type === 'cuu-ho' ? 'Cứu hộ' : 'Cảnh báo';
+                const locBadge = news.location.split(',')[0].replace('-', ' ').toUpperCase();
+                const card = document.createElement('div');
+                card.className = 'news-card bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300';
+                card.dataset.type = news.type;
+                card.dataset.location = news.location;
+                card.innerHTML = `
+                    <img src="${news.img}" alt="${news.title}" class="w-full h-48 object-cover" loading="lazy">
+                    <span class="absolute top-4 left-4 ${badgeColor} text-white text-xs px-3 py-1 rounded-full font-bold">${badgeText}</span>
+                    <span class="absolute top-4 right-4 bg-purple-600 text-white text-xs px-3 py-1 rounded-full font-bold">${locBadge}</span>
+                    <div class="p-6">
+                        <div class="flex items-center text-sm text-gray-500 mb-2">
+                            <i data-feather="clock" class="mr-1 w-4 h-4"></i>
+                            <span>${timeAgo(news.date)}</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">${news.title}</h3>
+                        <p class="text-gray-600 mb-4">${news.content.replace(/<[^>]+>/g, '').substring(0, 100)}...</p>
+                        <button onclick="openModal(${newsData.indexOf(news)})" class="text-red-600 hover:text-red-800 font-medium flex items-center">
+                            Xem chi tiết
+                            <i data-feather="arrow-right" class="ml-2 w-4 h-4"></i>
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+            feather.replace();
+            renderPagination(filteredData.length, page);
+        }
+
+        // Render pagination
+        function renderPagination(totalItems, currentPage) {
+            const pagination = document.getElementById('pagination');
+            pagination.innerHTML = '';
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            for (let i = 1; i <= totalPages; i++) {
+                const btn = document.createElement('button');
+                btn.textContent = i;
+                btn.className = `px-4 py-2 border ${i === currentPage ? 'bg-red-600 text-white' : 'border-red-600 text-red-600'} rounded-md hover:bg-red-50 transition font-medium`;
+                btn.onclick = () => filterNews(i);
+                pagination.appendChild(btn);
+            }
+        }
+
+        // Skeleton loading
+        function showSkeleton() {
+            const grid = document.getElementById('news-grid');
+            grid.innerHTML = '';
+            for (let i = 0; i < itemsPerPage; i++) {
+                const skeletonCard = document.createElement('div');
+                skeletonCard.className = 'news-card bg-white rounded-xl overflow-hidden shadow-md';
+                skeletonCard.innerHTML = `
+                    <div class="w-full h-48 skeleton"></div>
+                    <div class="p-6">
+                        <div class="h-4 w-24 skeleton mb-4"></div>
+                        <div class="h-6 w-full skeleton mb-2"></div>
+                        <div class="h-4 w-3/4 skeleton mb-4"></div>
+                        <div class="h-4 w-32 skeleton"></div>
+                    </div>
+                `;
+                grid.appendChild(skeletonCard);
+            }
+        }
+
+        // Search and Filter (thêm sort)
+        const searchInput = document.getElementById('search-news');
+        const filterType = document.getElementById('filter-type');
+        const filterLocation = document.getElementById('filter-location');
+        const sortBy = document.getElementById('sort-by');
+        let debounceTimer;
+        function filterNews(page = 1) {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                showSkeleton();
+                setTimeout(() => {
+                    let filtered = newsData.slice();
+                    const search = searchInput.value.toLowerCase();
+                    const type = filterType.value;
+                    const loc = filterLocation.value;
+                    filtered = filtered.filter(news => {
+                        const titleMatch = news.title.toLowerCase().includes(search);
+                        const typeMatch = type === 'all' || news.type === type;
+                        const locMatch = loc === 'all' || news.location.split(',').some(l => l.trim() === loc);
+                        return titleMatch && typeMatch && locMatch;
+                    });
+                    if (sortBy.value === 'newest') {
+                        filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+                    } else if (sortBy.value === 'oldest') {
+                        filtered.sort((a, b) => new Date(a.date) - new Date(b.date));
+                    }
+                    renderNews(filtered, page);
+                }, 500);
+            }, 300);
+        }
+        searchInput.addEventListener('input', () => filterNews());
+        filterType.addEventListener('change', () => filterNews());
+        filterLocation.addEventListener('change', () => filterNews());
+        sortBy.addEventListener('change', () => filterNews());
+
+        // Tự động làm mới (mỗi 2 phút) và button refresh
+        const refreshBtn = document.getElementById('refresh-news');
+        function refreshNews() {
+            showSkeleton();
+            setTimeout(() => {
+                // Ở đây, nếu có API thực: fetch('/api/news').then(update newsData)
+                // Giả lập: reload với data hiện tại
+                filterNews();
+            }, 1000);
+        }
+        refreshBtn.addEventListener('click', refreshNews);
+        setInterval(refreshNews, 120000); // 2 phút
+
+        // Modal functions (thêm share)
+        function openModal(index) {
+            const news = newsData[index];
+            const modal = document.getElementById('news-modal');
+            document.getElementById('modal-title').textContent = news.title;
+            document.getElementById('modal-content').innerHTML = `<img src="${news.img}" alt="${news.title}" class="w-full h-48 object-cover rounded-md mb-4">` + news.content;
+            document.getElementById('map-link').href = `index.html#map?location=${news.location.split(',')[0]}`;
+            // Gợi ý tin liên quan (tối đa 5)
+            const related = document.getElementById('related-news').querySelector('.space-y-2');
+            related.innerHTML = '';
+            newsData.filter((n, i) => i !== index && n.type === news.type).slice(0, 5).forEach(n => {
+                const link = document.createElement('a');
+                link.href = '#';
+                link.onclick = () => { closeModal(); openModal(newsData.indexOf(n)); return false; };
+                link.className = 'block text-sm text-gray-700 hover:text-red-600';
+                link.textContent = `→ ${n.title}`;
+                related.appendChild(link);
+            });
+            // Share button (giả lập share qua navigator)
+            document.getElementById('share-news').onclick = () => {
+                if (navigator.share) {
+                    navigator.share({
+                        title: news.title,
+                        text: news.content.replace(/<[^>]+>/g, '').substring(0, 100) + '...',
+                        url: window.location.href
+                    });
+                } else {
+                    alert('Chức năng chia sẻ không được hỗ trợ trên thiết bị này.');
+                }
+            };
+            modal.classList.remove('hidden');
+        }
+        function closeModal() {
+            document.getElementById('news-modal').classList.add('hidden');
+        }
+        document.getElementById('close-modal').addEventListener('click', closeModal);
+
+        // Khởi tạo
+        // Kiểm tra và thêm báo cáo mới từ post.html
+const newReport = localStorage.getItem('new_report');
+if (newReport) {
+    const report = JSON.parse(newReport);
+    report.img = report.img || 'https://via.placeholder.com/640x360?text=Báo+cáo+mới'; // Ảnh mặc định
+    newsData.unshift(report); // Thêm vào đầu mảng
+    localStorage.removeItem('new_report'); // Xóa sau khi thêm
+    // Tự động cuộn đến đầu trang bản tin
+    setTimeout(() => {
+        document.getElementById('news-section').scrollIntoView({ behavior: 'smooth' });
+        alert('Báo cáo của bạn đã được thêm vào đầu bản tin!');
+    }, 500);
+}
+        filterNews();
+    </script>
 </body>
 </html>
