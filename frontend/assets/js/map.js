@@ -1323,3 +1323,4 @@ function initializeMap() {
 
 initializeMap();
 setInterval(updateStatistics, 30000); // Cập nhật thời gian thực mỗi 30 giây
+setInterval(updateStatistics, 30000); // Cập nhật thời gian thực mỗi 30 giây
