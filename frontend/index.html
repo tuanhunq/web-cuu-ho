@@ -12,86 +12,90 @@
     <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body class="bg-gray-50">
-    <!-- Navigation -->
-   <nav class="bg-white shadow-md sticky top-0 z-50 ">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-20 items-center">
-                <div class="flex items-center space-x-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                    </svg>
-                    <span class="text-2xl font-bold bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">CỨU HỘ QUỐC GIA</span>
-                </div>
-                <div class="hidden md:flex items-center space-x-8">
-                    <a href="index.html#home" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Trang chủ</a>
-                    <a href="map.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Bản đồ cứu hộ</a>
-                    <a href="request.html" class="nav-link text-red-500 font-bold transition">Bản tin</a>
-                    <a href="post.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Báo tin</a>
-                    <div class="flex space-x-4">
-                        <a href="admin.html" class="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-lg font-medium transition-all shadow hover:shadow-lg">Admin</a>
-                        <a href="login.html" class="bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-all shadow hover:shadow-lg">Đăng nhập</a>
-                    </div>
-                </div>
-                <div class="md:hidden flex items-center">
-                    <button id="menu-toggle" class="text-gray-700 hover:text-red-600" aria-label="Toggle menu">
-                        <i data-feather="menu"></i>
-                    </button>
+   <!-- Navigation -->
+<nav id="navbar" class="shadow-md sticky top-0 z-50 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-20 items-center">
+            <div class="flex items-center space-x-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+                <span class="text-2xl font-bold bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">CỨU HỘ QUỐC GIA</span>
+            </div>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="index.html" class="nav-link text-red-500 font-bold transition">Trang chủ</a>
+                <a href="map.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Bản đồ cứu hộ</a>
+                <a href="request.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Bản tin</a>
+                <a href="post.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Báo tin</a>
+                <div class="flex space-x-4">
+                    <a href="login.html" class="bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-all shadow hover:shadow-lg">Đăng nhập</a>
                 </div>
             </div>
-        </div>
-        <div id="mobile-menu" class="hidden md:hidden bg-white py-2 px-4 shadow-lg">
-            <a href="index.html#home" class="block py-2 text-gray-700 hover:text-red-600 transition">Trang chủ</a>
-            <a href="map.html" class="block py-2 text-gray-700 hover:text-red-600 transition">Bản đồ cứu hộ</a>
-            <a href="request.html" class="block py-2 text-red-600 font-bold transition">Bản tin</a>
-            <a href="post.html" class="block py-2 text-gray-700 hover:text-red-600 transition">Báo tin</a>
-            <a href="admin.html" class="block py-2 text-white bg-gray-800 rounded-md text-center">Admin</a>
-            <a href="login.html" class="block py-2 text-white bg-red-600 rounded-md text-center mt-2">Đăng nhập</a>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section id="home" class="hero-section py-20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row items-center">
-                <div class="md:w-1/2 mb-10 md:mb-0">
-                    <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-6">
-                        <span class="bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">Hệ Thống Cứu Hộ</span> <br>
-                        
-                    </h1>
-                    <p class="text-lg text-gray-600 mb-8 max-w-lg leading-relaxed">
-                        Kết nối người dân với lực lượng cứu hộ trong các tình huống khẩn cấp như thiên tai, hỏa hoạn, tai nạn giao thông và các sự cố đe dọa tính mạng.
-                    </p>
-                    <div class="flex space-x-4">
-                        <a href="post.html" class="emergency-btn bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white px-6 py-3 rounded-lg font-medium transition-all shadow-lg flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                            </svg>
-                            BÁO KHẨN CẤP
-                        </a>
-                        <a href="map.html" class="border-2 border-red-500 text-red-500 hover:bg-red-50 px-6 py-3 rounded-lg font-medium transition-all shadow flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                            XEM BẢN ĐỒ
-                        </a>
-                    </div>
-                </div>
-                <div class="md:w-1/2 flex justify-center">
-                    <div class="relative">
-                        <img src="https://images.unsplash.com/photo-1583324113626-70df0f4deaab?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Emergency rescue team" class="rounded-2xl shadow-2xl w-full max-w-md transform rotate-1">
-                        <div class="absolute -bottom-4 -right-4 bg-white p-3 rounded-lg shadow-lg">
-                            <div class="flex items-center">
-                                <div class="h-3 w-3 bg-red-500 rounded-full mr-2 animate-pulse"></div>
-                                <span class="text-sm font-medium">Đang hoạt động 24/24</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="md:hidden flex items-center">
+                <button id="menu-toggle" class="text-gray-700 hover:text-red-600" aria-label="Toggle menu">
+                    <i data-feather="menu"></i>
+                </button>
             </div>
         </div>
-    </section>
+    </div>
+    <div id="mobile-menu" class="hidden md:hidden bg-white py-2 px-4 shadow-lg">
+        <a href="index.html#home" class="block py-2 text-gray-700 hover:text-red-600 transition">Trang chủ</a>
+        <a href="map.html" class="block py-2 text-gray-700 hover:text-red-600 transition">Bản đồ cứu hộ</a>
+        <a href="request.html" class="block py-2 text-red-600 font-bold transition">Bản tin</a>
+        <a href="post.html" class="block py-2 text-gray-700 hover:text-red-600 transition">Báo tin</a>
+        <a href="login.html" class="block py-2 text-white bg-red-600 rounded-md text-center mt-2">Đăng nhập</a>
+    </div>
+</nav>
 
+<!-- Hero Section -->
+<section id="home" class="hero-section py-20 min-h-[80vh]" style="background-image: url('https://www.tapchicongsan.org.vn/image/journal/article?img_id=114021286&t=1622418445678'); background-size: cover; background-position: center; position: relative;">
+    <div class="absolute inset-0 bg-black opacity-50" style="z-index: 1;"></div> <!-- Overlay mờ hơn để tăng thẩm mỹ và dễ đọc -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative" style="z-index: 2;">
+        <div class="flex flex-col md:flex-row items-center">
+            <div class="md:w-1/2 mb-10 md:mb-0">
+                <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-6">
+                    <span class="bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">Hệ Thống Cứu Hộ</span> <br>
+                    
+                </h1>
+                <p class="text-lg text-white mb-8 max-w-lg leading-relaxed"> <!-- Thay text-gray-600 thành text-white để thẩm mỹ hơn -->
+                    Kết nối người dân với lực lượng cứu hộ trong các tình huống khẩn cấp như thiên tai, hỏa hoạn, tai nạn giao thông và các sự cố đe dọa tính mạng.
+                </p>
+                <div class="flex space-x-4">
+                    <a href="post.html" class="emergency-btn bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white px-6 py-3 rounded-lg font-medium transition-all shadow-lg flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                        BÁO TIN
+                    </a>
+                    <a href="map.html" class="border-2 border-red-500 text-red-500 hover:bg-red-50 px-6 py-3 rounded-lg font-medium transition-all shadow flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>  
+                        XEM BẢN ĐỒ
+                    </a>
+                </div>
+            </div>  
+        </div>
+    </div>
+</section>
+
+<!-- Thêm script để xử lý thay đổi màu header khi scroll -->
+<script>
+    window.addEventListener('scroll', function() {
+        const navbar = document.getElementById('navbar');
+        if (window.scrollY > 0) {
+            navbar.classList.add('bg-white'); // Thay thành màu trắng sữa khi scroll
+            navbar.classList.remove('bg-transparent'); // Xóa transparent nếu có
+        } else {
+            navbar.classList.remove('bg-white'); // Quay về transparent khi ở top
+            navbar.classList.add('bg-transparent'); // Đồng bộ với ảnh nền (transparent để thấy overlay)
+        }
+    });
+
+    // Khởi tạo ban đầu
+    document.getElementById('navbar').classList.add('bg-transparent');
+</script>
   <div class="flex flex-col items-center justify-center min-h-screen bg-gray-50 py-12 px-4">
     <div class="text-center mb-12">
         <h2 class="text-3xl font-bold text-gray-800 mb-4">Dịch Vụ Ứng Cứu Khẩn Cấp</h2>
@@ -334,7 +338,7 @@
         </div>
 
         <div class="text-center mt-10">
-            <a href="news.html" class="inline-flex items-center px-6 py-3 border border-red-600 text-red-600 rounded-md hover:bg-red-50 transition font-medium">
+            <a href="request.html" class="inline-flex items-center px-6 py-3 border border-red-600 text-red-600 rounded-md hover:bg-red-50 transition font-medium">
                 Xem tất cả bản tin
                 <i data-feather="chevron-right" class="ml-2 w-4 h-4"></i>
             </a>
