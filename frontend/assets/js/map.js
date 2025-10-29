@@ -1,576 +1,738 @@
-/* assets/js/map.js — Modernized map script with robust tile-provider fallback
-   - Auto-fetch from API / local JSON
-   - Polling & manual refresh
-   - Debounced search
-   - LayerGroup + Map of current markers (better perf)
-   - Popup event binding (no inline onclick/alert)
-   - Graceful DOM checks and error handling
-   - Robust tile provider fallback + invalidateSize fix
-*/
+// Map functionality for Emergency Rescue System
 
-(() => {
-  // CONFIG
-  const DATA_URL = "assets/data/emergencies.json"; // change to your API endpoint if needed
-  const POLL_INTERVAL_MS = 30000; // polling interval (30s)
-  const MAP_CENTER = [16.0471, 108.2068];
-  const MAP_ZOOM = 6;
-
-  // fallback sample data if fetch fails
-  const FALLBACK_EMERGENCIES = [
-    { id: 1, name: "Cháy nhà dân", address: "Số 35 Trần Hưng Đạo, Hoàn Kiếm, Hà Nội", coords: [21.027, 105.85], type: "fire", province: "hanoi", status: "active", time: "10 phút trước" },
-    { id: 2, name: "Ngập lụt khu dân cư", address: "Khu vực Định Công, Hoàng Mai, Hà Nội", coords: [20.98, 105.84], type: "flood", province: "hanoi", status: "active", time: "25 phút trước" },
-    { id: 3, name: "Tai nạn giao thông", address: "QL1A - Phường Tân Tạo, Bình Tân, TP.HCM", coords: [10.76, 106.62], type: "accident", province: "hcm", status: "resolved", time: "1 giờ trước" },
-    { id: 4, name: "Sạt lở đất", address: "Huyện Mường La, Sơn La", coords: [21.41, 104.11], type: "disaster", province: "sonla", status: "active", time: "2 giờ trước" },
-    { id: 5, name: "Cháy rừng", address: "Vườn Quốc Gia Cúc Phương, Ninh Bình", coords: [20.31, 105.61], type: "fire", province: "ninhbinh", status: "active", time: "3 giờ trước" },
-    { id: 6, name: "Ngập cục bộ", address: "Đường Nguyễn Văn Linh, Đà Nẵng", coords: [16.06, 108.21], type: "flood", province: "danang", status: "resolved", time: "4 giờ trước" }
-  ];
-
-  // province coordinates (can extend)
-  const provinceCoordinates = {
-    hanoi: [21.0278, 105.8342],
-    hcm: [10.8231, 106.6297],
-    danang: [16.0544, 108.2022],
-    hue: [16.4637, 107.5909],
-    nghean: [18.6796, 105.6813],
-    thanhhoa: [19.8076, 105.7766],
-    haiphong: [20.8449, 106.6881],
-    cantho: [10.0452, 105.7469],
-    sonla: [21.3257, 103.9160],
-    ninhbinh: [20.2506, 105.9745]
-  };
-
-  // helper: config per type: color (hex), emoji/icon, label
-  function getTypeConfig(type) {
-    const map = {
-      fire: { color: "#ef4444", icon: "🔥", label: "Hỏa hoạn" },
-      flood: { color: "#3b82f6", icon: "💧", label: "Ngập lụt" },
-      accident: { color: "#f97316", icon: "🚗", label: "Tai nạn" },
-      disaster: { color: "#8b5cf6", icon: "🌪️", label: "Thiên tai" },
-    };
-    return map[type] || { color: "#6b7280", icon: "⚠️", label: "Khác" };
-  }
-
-  // safe DOM getters
-  const $ = sel => document.querySelector(sel);
-  const $$ = sel => Array.from(document.querySelectorAll(sel));
-
-  // debounce util
-  function debounce(fn, wait = 250) {
-    let t;
-    return (...args) => {
-      clearTimeout(t);
-      t = setTimeout(() => fn(...args), wait);
-    };
-  }
-
-  // modal builder (creates modal if not exists)
-  function ensureModal() {
-    if ($("#emergency-modal")) return $("#emergency-modal");
-    const modal = document.createElement("div");
-    modal.id = "emergency-modal";
-    modal.className = "fixed inset-0 z-50 hidden items-center justify-center p-4";
-    modal.innerHTML = `
-      <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6">
-        <div class="flex justify-between items-start">
-          <h3 id="em-modal-title" class="text-xl font-bold"></h3>
-          <button id="em-modal-close" aria-label="Đóng">✕</button>
-        </div>
-        <div id="em-modal-body" class="mt-4"></div>
-      </div>
-    `;
-    document.body.appendChild(modal);
-    $("#em-modal-close").addEventListener("click", () => modal.classList.add("hidden"));
-    // click outside to close
-    modal.addEventListener("click", (ev) => {
-      if (ev.target === modal) modal.classList.add("hidden");
-    });
-    return modal;
-  }
-
-  // show modal
-  function showModal(title, html) {
-    const modal = ensureModal();
-    $("#em-modal-title").textContent = title;
-    $("#em-modal-body").innerHTML = html;
-    modal.classList.remove("hidden");
-  }
-
-  // format popup content (no inline onclick)
-  function buildPopupHtml(emg) {
-    const cfg = getTypeConfig(emg.type);
-    return `
-      <div class="p-3 min-w-[240px]">
-        <div class="flex items-center gap-2 mb-2">
-          <div style="background:${cfg.color};width:36px;height:36px;border-radius:999px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px">
-            ${cfg.icon}
-          </div>
-          <div>
-            <div style="font-weight:700;color:#1f2937">${emg.name}</div>
-            <div style="font-size:12px;color:#6b7280">${emg.address}</div>
-          </div>
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-top:6px">
-          <span style="background:#f3f4f6;padding:4px 8px;border-radius:6px">${cfg.label}</span>
-          <span style="color:#6b7280">${emg.time}</span>
-        </div>
-        <div style="margin-top:10px;display:flex;gap:8px">
-          <button class="em-detail-btn flex-1 px-3 py-1 rounded" data-id="${emg.id}" style="background:#ef4444;color:#fff;border-radius:6px;border:none;cursor:pointer">Chi tiết</button>
-          <button class="em-share-btn flex-1 px-3 py-1 rounded" data-id="${emg.id}" style="background:#3b82f6;color:#fff;border-radius:6px;border:none;cursor:pointer">Chia sẻ</button>
-        </div>
-      </div>
-    `;
-  }
-
-  // state
-  let emergencies = FALLBACK_EMERGENCIES.slice();
-  let currentFilters = { type: "all", province: "all", search: "" };
-  let markerLayer = null;
-  let idToMarker = new Map();
-  let pollTimer = null;
-  let fetchController = null;
-
-  // tile providers array (priority order). Each item: { name, url, options }
-  const TILE_PROVIDERS = [
-    {
-      name: "OpenStreetMap (osm.fr)",
-      url: "https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png",
-      options: { attribution: '&copy; OpenStreetMap contributors', maxZoom: 20 }
-    },
-    {
-      name: "OpenStreetMap (standard)",
-      url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-      options: { attribution: '&copy; OpenStreetMap contributors', maxZoom: 19 }
-    },
-    {
-      name: "CartoDB Positron",
-      url: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
-      options: { attribution: '&copy; CartoDB', maxZoom: 19 }
-    },
-    {
-      name: "Esri WorldStreetMap",
-      url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
-      options: { attribution: 'Tiles &copy; Esri', maxZoom: 19 }
+class EmergencyMap {
+    constructor() {
+        this.map = null;
+        this.incidents = [];
+        this.markers = [];
+        this.currentFilters = {
+            type: 'all',
+            province: 'all',
+            status: 'all'
+        };
+        
+        this.init();
     }
-  ];
-
-  // helper: create tileLayer with tracking of errors
-  function createTileLayer(mapInstance, providerIndex = 0) {
-    if (!TILE_PROVIDERS[providerIndex]) {
-      console.error("No working tile providers available.");
-      return null;
+    
+    init() {
+        this.initializeMap();
+        this.loadIncidents();
+        this.setupEventListeners();
+        this.setupMapControls();
     }
-    const prov = TILE_PROVIDERS[providerIndex];
-    const layer = L.tileLayer(prov.url, prov.options);
-
-    // count tile errors; if exceed threshold switch provider
-    let tileErrorCount = 0;
-    const ERROR_THRESHOLD = 50; // if many tiles failing, switch to next provider
-
-    layer.on("tileerror", (err) => {
-      tileErrorCount++;
-      console.warn(`[tileerror] provider=${prov.name} count=${tileErrorCount}`, err);
-      // if too many tile errors, switch provider
-      if (tileErrorCount >= ERROR_THRESHOLD) {
-        console.warn(`Tile provider "${prov.name}" failing. Switching to next provider.`);
-        // remove current layer and try next provider
-        try { layer.remove(); } catch (e) {}
-        const next = createTileLayer(mapInstance, providerIndex + 1);
-        if (next) next.addTo(mapInstance);
-      }
-    });
-
-    return layer;
-  }
-
-  // ==========================
-// Map init (đã fix ID/class)
-// ==========================
-function initMap() {
-  // ✅ Đổi selector từ "#map" thành "#rescue-map" cho khớp HTML mới
-  const mapEl = document.querySelector("#rescue-map");
-  if (!mapEl) {
-    console.warn("Không tìm thấy #rescue-map trong DOM. Bỏ qua khởi tạo bản đồ.");
-    return null;
-  }
-
-  // ✅ Đảm bảo bản đồ có chiều cao đủ (tránh lỗi trắng map)
-  const computed = window.getComputedStyle(mapEl);
-  if ((!computed.height || computed.height === "0px") && !mapEl.style.height) {
-    mapEl.style.height = "550px";
-  }
-
-  // ✅ Khởi tạo bản đồ
-  const map = L.map(mapEl, {
-    worldCopyJump: true,
-    zoomControl: false // bạn có thể bật/tắt tùy ý
-  }).setView(MAP_CENTER, MAP_ZOOM);
-
-  // ✅ Fallback tile provider thông minh
-  const initialTile = createTileLayer(map, 0);
-  if (initialTile) initialTile.addTo(map);
-
-  // ✅ Fix lỗi map trắng khi vừa load (invalidateSize)
-  setTimeout(() => {
-    try {
-      map.invalidateSize();
-    } catch (e) {
-      console.warn("invalidateSize failed", e);
+    
+    initializeMap() {
+        // Initialize Leaflet map
+        this.map = L.map('map').setView([10.762622, 106.660172], 13); // Default to Ho Chi Minh City
+        
+        // Add tile layer (using OpenStreetMap)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            maxZoom: 18
+        }).addTo(this.map);
+        
+        // Add custom styles for different map types
+        this.addMapLayers();
+        
+        // Add scale control
+        L.control.scale({ imperial: false }).addTo(this.map);
     }
-  }, 300);
-
-  // ✅ Thêm thước đo tỉ lệ
-  L.control.scale({ imperial: false }).addTo(map);
-
-  // ✅ Tạo layer chứa các marker
-  markerLayer = L.layerGroup().addTo(map);
-
-  // ✅ Bắt sự kiện popup để xử lý nút “Chi tiết” và “Chia sẻ”
-  map.on("popupopen", (e) => {
-    const pop = e.popup.getElement();
-    if (!pop) return;
-    const detailBtn = pop.querySelector(".em-detail-btn");
-    const shareBtn = pop.querySelector(".em-share-btn");
-    if (detailBtn) {
-      detailBtn.addEventListener("click", () => {
-        const id = detailBtn.dataset.id;
-        const em = emergencies.find(x => String(x.id) === String(id));
-        if (em) {
-          showModal(em.name, renderDetailHtml(em));
+    
+    addMapLayers() {
+        // Add satellite layer option
+        const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+            maxZoom: 18
+        });
+        
+        // Add base maps
+        const baseMaps = {
+            "Bản đồ đường": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'),
+            "Ảnh vệ tinh": satelliteLayer
+        };
+        
+        // Add layer control
+        L.control.layers(baseMaps).addTo(this.map);
+    }
+    
+    async loadIncidents() {
+        try {
+            // Show loading state
+            this.showLoading(true);
+            
+            const data = await ApiService.getIncidents(this.currentFilters);
+            this.incidents = data.incidents || [];
+            
+            this.renderIncidents();
+            this.updateStatistics();
+            this.showLoading(false);
+            
+        } catch (error) {
+            console.error('Error loading incidents:', error);
+            this.showLoading(false);
+            this.showError('Không thể tải dữ liệu sự cố. Vui lòng thử lại sau.');
         }
-      });
     }
-    if (shareBtn) {
-      shareBtn.addEventListener("click", async () => {
-        const id = shareBtn.dataset.id;
-        const em = emergencies.find(x => String(x.id) === String(id));
-        if (!em) return;
-        if (navigator.share) {
-          try {
-            await navigator.share({
-              title: `Sự cố: ${em.name}`,
-              text: `${em.name} — ${em.address}`,
-              url: window.location.href
+    
+    renderIncidents() {
+        // Clear existing markers
+        this.clearMarkers();
+        
+        // Add markers for each incident
+        this.incidents.forEach(incident => {
+            const marker = this.createIncidentMarker(incident);
+            this.markers.push(marker);
+        });
+    }
+    
+    createIncidentMarker(incident) {
+        const icon = this.getIconForIncident(incident);
+        
+        const marker = L.marker(incident.coordinates, { icon: icon })
+            .addTo(this.map)
+            .bindPopup(this.createPopupContent(incident));
+        
+        // Add click handler
+        marker.on('click', () => {
+            this.onIncidentClick(incident);
+        });
+        
+        return marker;
+    }
+    
+    getIconForIncident(incident) {
+        const iconColors = {
+            fire: 'red',
+            flood: 'blue',
+            accident: 'orange',
+            disaster: 'purple'
+        };
+        
+        const iconHtml = `
+            <div class="incident-marker ${incident.type} ${incident.status}" 
+                 style="background-color: ${this.getColorForType(incident.type)}">
+                <i data-feather="${this.getIconForType(incident.type)}"></i>
+            </div>
+        `;
+        
+        return L.divIcon({
+            html: iconHtml,
+            className: 'incident-marker-container',
+            iconSize: [32, 32],
+            iconAnchor: [16, 16]
+        });
+    }
+    
+    getColorForType(type) {
+        const colors = {
+            fire: '#ef4444',
+            flood: '#3b82f6',
+            accident: '#f97316',
+            disaster: '#8b5cf6'
+        };
+        
+        return colors[type] || '#6b7280';
+    }
+    
+    getIconForType(type) {
+        const icons = {
+            fire: 'flame',
+            flood: 'droplet',
+            accident: 'activity',
+            disaster: 'alert-octagon'
+        };
+        
+        return icons[type] || 'alert-circle';
+    }
+    
+    createPopupContent(incident) {
+        return `
+            <div class="incident-popup">
+                <div class="popup-header">
+                    <span class="popup-type">${this.getTypeLabel(incident.type)}</span>
+                    <span class="popup-status ${incident.status}">${incident.status === 'active' ? 'Đang xử lý' : 'Đã giải quyết'}</span>
+                </div>
+                <div class="popup-title">${incident.title}</div>
+                <div class="popup-location">
+                    <i data-feather="map-pin" class="w-3 h-3 mr-1"></i>
+                    ${incident.location}
+                </div>
+                <div class="popup-time">
+                    <i data-feather="clock" class="w-3 h-3 mr-1"></i>
+                    ${formatTimeAgo(incident.timestamp)}
+                </div>
+                <div class="popup-actions">
+                    <button class="popup-btn primary" onclick="emergencyMap.viewIncidentDetails(${incident.id})">
+                        Xem chi tiết
+                    </button>
+                    <button class="popup-btn secondary" onclick="emergencyMap.shareIncident(${incident.id})">
+                        Chia sẻ
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+    
+    getTypeLabel(type) {
+        const labels = {
+            fire: '🔥 Hỏa hoạn',
+            flood: '💧 Ngập lụt',
+            accident: '🚗 Tai nạn',
+            disaster: '🌪️ Thiên tai'
+        };
+        
+        return labels[type] || 'Sự cố';
+    }
+    
+    onIncidentClick(incident) {
+        // Update statistics panel
+        this.updateActiveIncident(incident);
+        
+        // Log analytics
+        this.trackIncidentView(incident);
+    }
+    
+    updateStatistics() {
+        const activeCount = this.incidents.filter(i => i.status === 'active').length;
+        const resolvedCount = this.incidents.filter(i => i.status === 'resolved').length;
+        
+        // Update counters
+        document.getElementById('active-incidents').textContent = activeCount;
+        document.getElementById('resolved-incidents').textContent = resolvedCount;
+        
+        // Update type-specific counters
+        this.updateTypeCounters();
+    }
+    
+    updateTypeCounters() {
+        const types = ['fire', 'flood', 'accident', 'disaster'];
+        
+        types.forEach(type => {
+            const count = this.incidents.filter(i => i.type === type && i.status === 'active').length;
+            const counterElement = document.getElementById(`count-${type}`);
+            if (counterElement) {
+                counterElement.textContent = count;
+            }
+        });
+    }
+    
+    updateActiveIncident(incident) {
+        // This would update a details panel if we had one
+        console.log('Active incident:', incident);
+    }
+    
+    setupEventListeners() {
+        // Search functionality
+        const searchInput = document.getElementById('search-incidents');
+        if (searchInput) {
+            searchInput.addEventListener('input', this.debounce(() => {
+                this.currentFilters.search = searchInput.value;
+                this.loadIncidents();
+            }, 300));
+        }
+        
+        // Province filter
+        const provinceFilter = document.getElementById('province-filter');
+        if (provinceFilter) {
+            provinceFilter.addEventListener('change', (e) => {
+                this.currentFilters.province = e.target.value;
+                this.loadIncidents();
             });
-          } catch (err) {
-            console.warn("Share cancelled or failed", err);
-          }
-        } else {
-          try {
-            await navigator.clipboard.writeText(window.location.href);
-            alert("Đã sao chép liên kết (copy) vào clipboard.");
-          } catch {
-            alert("Trình duyệt không hỗ trợ chia sẻ/copy.");
-          }
         }
-      });
+        
+        // Type filter
+        const typeFilter = document.getElementById('type-filter');
+        if (typeFilter) {
+            typeFilter.addEventListener('change', (e) => {
+                this.currentFilters.type = e.target.value;
+                this.loadIncidents();
+            });
+        }
+        
+        // Reset filters
+        const resetBtn = document.getElementById('reset-filters');
+        if (resetBtn) {
+            resetBtn.addEventListener('click', () => {
+                this.resetFilters();
+            });
+        }
+        
+        // Type card clicks
+        document.querySelectorAll('.incident-type-card').forEach(card => {
+            card.addEventListener('click', (e) => {
+                const type = card.dataset.type;
+                this.filterByType(type);
+            });
+        });
     }
-  });
-
-  return map;
+    
+    setupMapControls() {
+        // Locate button
+        const locateBtn = document.getElementById('locate-btn');
+        if (locateBtn) {
+            locateBtn.addEventListener('click', () => {
+                this.locateUser();
+            });
+        }
+        
+        // Zoom in button
+        const zoomInBtn = document.getElementById('zoom-in-btn');
+        if (zoomInBtn) {
+            zoomInBtn.addEventListener('click', () => {
+                this.map.zoomIn();
+            });
+        }
+        
+        // Zoom out button
+        const zoomOutBtn = document.getElementById('zoom-out-btn');
+        if (zoomOutBtn) {
+            zoomOutBtn.addEventListener('click', () => {
+                this.map.zoomOut();
+            });
+        }
+    }
+    
+    locateUser() {
+        if (!navigator.geolocation) {
+            alert('Trình duyệt của bạn không hỗ trợ định vị.');
+            return;
+        }
+        
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const { latitude, longitude } = position.coords;
+                this.map.setView([latitude, longitude], 15);
+                
+                // Add user location marker
+                L.marker([latitude, longitude])
+                    .addTo(this.map)
+                    .bindPopup('Vị trí của bạn')
+                    .openPopup();
+            },
+            (error) => {
+                console.error('Error getting location:', error);
+                alert('Không thể xác định vị trí của bạn. Vui lòng kiểm tra cài đặt quyền truy cập vị trí.');
+            }
+        );
+    }
+    
+    filterByType(type) {
+        this.currentFilters.type = type;
+        document.getElementById('type-filter').value = type;
+        this.loadIncidents();
+    }
+    
+    resetFilters() {
+        this.currentFilters = {
+            type: 'all',
+            province: 'all',
+            status: 'all',
+            search: ''
+        };
+        
+        // Reset form elements
+        document.getElementById('search-incidents').value = '';
+        document.getElementById('province-filter').value = 'all';
+        document.getElementById('type-filter').value = 'all';
+        
+        this.loadIncidents();
+    }
+    
+    clearMarkers() {
+        this.markers.forEach(marker => {
+            this.map.removeLayer(marker);
+        });
+        this.markers = [];
+    }
+    
+    showLoading(show) {
+        const mapElement = document.getElementById('map');
+        if (show) {
+            mapElement.classList.add('loading');
+        } else {
+            mapElement.classList.remove('loading');
+        }
+    }
+    
+    showError(message) {
+        // You could implement a toast notification system here
+        console.error('Map error:', message);
+        alert(message);
+    }
+    
+    debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+    
+    trackIncidentView(incident) {
+        // Analytics tracking
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'view_incident', {
+                'event_category': 'engagement',
+                'event_label': incident.type,
+                'value': incident.id
+            });
+        }
+    }
+    
+    // Public methods
+    viewIncidentDetails(incidentId) {
+        const incident = this.incidents.find(i => i.id === incidentId);
+        if (incident) {
+            // Open incident details in modal or new page
+            window.location.href = `incident-details.html?id=${incidentId}`;
+        }
+    }
+    
+    shareIncident(incidentId) {
+        const incident = this.incidents.find(i => i.id === incidentId);
+        if (incident && navigator.share) {
+            navigator.share({
+                title: incident.title,
+                text: `Sự cố: ${incident.title}`,
+                url: `${window.location.origin}/incident-details.html?id=${incidentId}`
+            });
+        } else {
+            // Fallback: copy to clipboard
+            const url = `${window.location.origin}/incident-details.html?id=${incidentId}`;
+            navigator.clipboard.writeText(url).then(() => {
+                alert('Đã sao chép liên kết vào clipboard');
+            });
+        }
+    }
 }
 
-  function renderDetailHtml(em) {
-    const cfg = getTypeConfig(em.type);
-    return `
-      <div>
-        <div style="display:flex;gap:12px;align-items:center">
-          <div style="background:${cfg.color};width:46px;height:46px;border-radius:999px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px">${cfg.icon}</div>
-          <div>
-            <h4 style="margin:0 0 4px 0;font-weight:700">${em.name}</h4>
-            <div style="font-size:13px;color:#6b7280">${em.address}</div>
-          </div>
-        </div>
-        <div style="margin-top:10px">
-          <p><strong>Loại:</strong> ${cfg.label}</p>
-          <p><strong>Trạng thái:</strong> ${em.status}</p>
-          <p><strong>Thời điểm:</strong> ${em.time}</p>
-        </div>
-        <div style="margin-top:12px;display:flex;gap:8px">
-          <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(em.coords.join(','))}" target="_blank" style="padding:8px 12px;border-radius:6px;background:#ef4444;color:#fff;text-decoration:none">Mở trên Google Maps</a>
-          <button id="em-modal-action" style="padding:8px 12px;border-radius:6px;background:#10b981;color:#fff;border:none;cursor:pointer">Đánh dấu đã xử lý</button>
-        </div>
-    `;
-  }
+// Initialize map when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    window.emergencyMap = new EmergencyMap();
+});
 
-  // draw markers from current filtered data
-  function renderMarkers(mapInstance) {
-    if (!mapInstance || !markerLayer) return;
-    markerLayer.clearLayers();
-    idToMarker.clear();
+// Export for testing
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { EmergencyMap };
+}
 
-    const filtered = applyFiltersTo(emergencies);
-    filtered.forEach(em => {
-      const cfg = getTypeConfig(em.type);
-      const markerHtml = `
-        <div style="position:relative;display:flex;align-items:center;justify-content:center">
-          <div style="width:40px;height:40px;border-radius:999px;display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 6px 12px rgba(0,0,0,0.12);border:2px solid #fff;background:${cfg.color};transform:translateY(0);">
-            <span style="font-size:18px">${cfg.icon}</span>
-          </div>
-          ${em.status === "active" ? `<div style="position:absolute;right:-4px;top:-4px;width:10px;height:10px;background:#ef4444;border-radius:999px;animation: pulseAnim 1.8s infinite;"></div>` : ""}
-        </div>
-      `.trim();
 
-      const marker = L.marker(em.coords, {
-        icon: L.divIcon({
-          html: markerHtml,
-          className: "custom-marker",
-          iconSize: [44, 44],
-          iconAnchor: [22, 22]
-        })
-      }).addTo(markerLayer);
+//map// Dữ liệu tin tức từ trang news (đồng bộ)// ===== THÊM CÁC HÀM HỖ TRỢ BỊ THIẾU =====
+function timeAgo(dateString) {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / (1000 * 60));
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-      marker.bindPopup(buildPopupHtml(em));
-      idToMarker.set(String(em.id), marker);
-    });
-
-    // update stats
-    updateStatisticsUI();
-  }
-
-  // CSS keyframes injection for pulse (if not in CSS)
-  function injectPulseKeyframe() {
-    if (document.getElementById("pulse-style")) return;
-    const s = document.createElement("style");
-    s.id = "pulse-style";
-    s.textContent = `
-      @keyframes pulseAnim {
-        0% { transform: scale(1); opacity: 1; }
-        50% { transform: scale(1.18); opacity: 0.8; }
-        100% { transform: scale(1); opacity: 1; }
-      }
-    `;
-    document.head.appendChild(s);
-  }
-
-  // apply filters
-  function applyFiltersTo(data) {
-    const q = currentFilters.search.trim().toLowerCase();
-    return data.filter(em => {
-      const typeOk = currentFilters.type === "all" || em.type === currentFilters.type;
-      const provOk = currentFilters.province === "all" || em.province === currentFilters.province;
-      const searchOk = q === "" ||
-        (em.name && em.name.toLowerCase().includes(q)) ||
-        (em.address && em.address.toLowerCase().includes(q));
-      return typeOk && provOk && searchOk;
-    });
-  }
-
-  // update statistics in DOM
-  function updateStatisticsUI() {
-    const active = emergencies.filter(e => e.status === "active").length;
-    const resolved = emergencies.filter(e => e.status === "resolved").length;
-    const elActive = $("#active-incidents");
-    const elResolved = $("#resolved-incidents");
-    if (elActive) elActive.textContent = active;
-    if (elResolved) elResolved.textContent = resolved;
-
-    // counts per type
-    $$('[id^="count-"]').forEach(el => {
-      const type = el.id.replace("count-", "");
-      const count = emergencies.filter(e => e.type === type).length;
-      el.textContent = count;
-    });
-
-    const lastUpdateEl = $("#last-update");
-    if (lastUpdateEl) lastUpdateEl.textContent = new Date().toLocaleTimeString("vi-VN");
-  }
-
-  // fly to province
-  function flyToProvince(mapInstance, code) {
-    if (!mapInstance) return;
-    if (code === "all") {
-      mapInstance.flyTo(MAP_CENTER, MAP_ZOOM, { duration: 1.2, easeLinearity: 0.25 });
-      return;
+    if (diffMins < 60) {
+        return `${diffMins} phút trước`;
+    } else if (diffHours < 24) {
+        return `${diffHours} giờ trước`;
+    } else {
+        return `${diffDays} ngày trước`;
     }
-    const coords = provinceCoordinates[code];
-    if (!coords) return;
-    mapInstance.flyTo(coords, 11, { duration: 1.2, easeLinearity: 0.25 });
-    const temp = L.marker(coords).addTo(mapInstance).bindPopup(`<b>${getProvinceDisplayName(code)}</b><br>Hiển thị khu vực`).openPopup();
-    setTimeout(() => {
-      try { mapInstance.removeLayer(temp); } catch {}
-    }, 2500);
-  }
+}
 
-  // mapping province code -> display name (extend as needed)
-  function getProvinceDisplayName(code) {
-    const names = {
-      hanoi: "Hà Nội",
-      hcm: "TP. Hồ Chí Minh",
-      danang: "Đà Nẵng",
-      hue: "Thừa Thiên Huế",
-      nghean: "Nghệ An",
-      thanhhoa: "Thanh Hóa",
-      haiphong: "Hải Phòng",
-      cantho: "Cần Thơ",
-      sonla: "Sơn La",
-      ninhbinh: "Ninh Bình"
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('vi-VN', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    });
+}
+
+function formatTime(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString('vi-VN', {
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+}
+
+// ===== SỬA LẠI HÀM VẼ MARKER =====
+function drawMarkers() {
+    // Xóa các marker cũ
+    currentMarkers.forEach(marker => map.removeLayer(marker));
+    currentMarkers = [];
+
+    const filteredEmergencies = filterEmergencies();
+    
+    console.log('Filtered emergencies:', filteredEmergencies); // Debug log
+    
+    filteredEmergencies.forEach(emg => {
+        const color = getColorByType(emg.type);
+        const icon = getIconByType(emg.type);
+        
+        // Tạo marker với inline styles thay vì Tailwind classes
+        const marker = L.marker(emg.coords, {
+            icon: L.divIcon({
+                html: `
+                    <div style="position: relative;">
+                        <div style="
+                            width: 40px; 
+                            height: 40px; 
+                            background-color: ${getColorHex(emg.type)}; 
+                            border-radius: 50%; 
+                            display: flex; 
+                            align-items: center; 
+                            justify-content: center; 
+                            color: white; 
+                            font-size: 16px; 
+                            box-shadow: 0 2px 8px rgba(0,0,0,0.3); 
+                            border: 2px solid white;
+                            cursor: pointer;
+                            ${emg.status === 'resolved' ? 'opacity: 0.7;' : ''}
+                        ">
+                            ${icon}
+                        </div>
+                        ${emg.status === 'active' ? 
+                            '<div style="position: absolute; top: -2px; right: -2px; width: 12px; height: 12px; background-color: #ef4444; border-radius: 50%; animation: pulse 1.5s infinite;"></div>' : 
+                            ''
+                        }
+                    </div>
+                    <style>
+                        @keyframes pulse {
+                            0% { opacity: 1; }
+                            50% { opacity: 0.4; }
+                            100% { opacity: 1; }
+                        }
+                    </style>
+                `,
+                className: 'custom-marker',
+                iconSize: [40, 40],
+                iconAnchor: [20, 20]
+            })
+        })
+        .addTo(map)
+        .bindPopup(`
+            <div style="padding: 12px; min-width: 250px; font-family: sans-serif;">
+                <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                    <div style="width: 24px; height: 24px; background-color: ${getColorHex(emg.type)}; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 8px; color: white; font-size: 12px;">
+                        ${icon}
+                    </div>
+                    <h4 style="font-weight: bold; color: #1f2937; margin: 0;">${emg.name}</h4>
+                </div>
+                <p style="font-size: 14px; color: #4b5563; margin-bottom: 8px;">${emg.address}</p>
+                <p style="font-size: 14px; color: #6b7280; margin-bottom: 12px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${emg.description}</p>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 12px;">
+                    <span style="padding: 4px 8px; background-color: ${getColorHex(emg.type)}20; color: ${getColorHex(emg.type)}; border-radius: 4px;">${getTypeName(emg.type)}</span>
+                    <span style="color: #6b7280;">${emg.time}</span>
+                </div>
+                <div style="margin-top: 12px; display: flex; gap: 8px;">
+                    <button onclick="showEmergencyDetail(${emg.id})" style="flex: 1; background-color: #ef4444; color: white; padding: 6px 12px; border: none; border-radius: 4px; font-size: 12px; cursor: pointer; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#dc2626'" onmouseout="this.style.backgroundColor='#ef4444'">
+                        Chi tiết
+                    </button>
+                    <button onclick="shareEmergency(${emg.id})" style="flex: 1; background-color: #3b82f6; color: white; padding: 6px 12px; border: none; border-radius: 4px; font-size: 12px; cursor: pointer; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#2563eb'" onmouseout="this.style.backgroundColor='#3b82f6'">
+                        Chia sẻ
+                    </button>
+                </div>
+            </div>
+        `);
+
+        currentMarkers.push(marker);
+    });
+
+    updateStatistics();
+    updateRecentIncidents();
+}
+
+// ===== THÊM HÀM LẤY MÀU HEX =====
+function getColorHex(type) {
+    const colors = {
+        fire: '#ef4444',
+        flood: '#3b82f6', 
+        accident: '#f97316',
+        disaster: '#8b5cf6',
+        rescue: '#10b981',
+        warning: '#eab308'
     };
-    return names[code] || code;
-  }
+    return colors[type] || '#6b7280';
+}
 
-  // safe DOM wiring of UI controls
-  function wireUi(mapInstance) {
-    if (!mapInstance) return;
+// ===== SỬA LẠI HÀM KHỞI TẠO MAP =====
+function initializeMap() {
+    // Đảm bảo container map tồn tại
+    const mapContainer = document.getElementById('map');
+    if (!mapContainer) {
+        console.error('Map container not found!');
+        return;
+    }
 
-    injectPulseKeyframe();
+    // Khởi tạo map
+    map = L.map("map").setView([16.0471, 108.2068], 6);
+    
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap'
+    }).addTo(map);
 
-    const typeFilter = $("#type-filter");
-    const provinceFilter = $("#province-filter");
-    const searchInput = $("#search-incidents");
-    const resetBtn = $("#reset-filters");
-    const locateBtn = $("#locate-btn");
-    const zoomInBtn = $("#zoom-in-btn");
-    const zoomOutBtn = $("#zoom-out-btn");
+    // Debug: Kiểm tra dữ liệu
+    console.log('Original emergencies:', emergencies);
+    console.log('News emergencies:', newsEmergencies);
+    console.log('All emergencies:', [...emergencies, ...newsEmergencies]);
+
+    // Vẽ markers sau khi map đã load
+    map.whenReady(() => {
+        drawMarkers();
+        updateStatistics();
+        updateRecentIncidents();
+    });
+
+    // Thêm event listeners
+    setupEventListeners();
+}
+
+// ===== TÁCH RIÊNG PHẦN EVENT LISTENERS =====
+function setupEventListeners() {
+    // Filter events
+    const typeFilter = document.getElementById('type-filter');
+    const provinceFilter = document.getElementById('province-filter');
+    const searchInput = document.getElementById('search-incidents');
+    const resetBtn = document.getElementById('reset-filters');
 
     if (typeFilter) {
-      typeFilter.addEventListener("change", (e) => {
-        currentFilters.type = e.target.value;
-        renderMarkers(mapInstance);
-      });
+        typeFilter.addEventListener('change', (e) => {
+            currentFilters.type = e.target.value;
+            drawMarkers();
+        });
     }
 
     if (provinceFilter) {
-      provinceFilter.addEventListener("change", (e) => {
-        currentFilters.province = e.target.value;
-        flyToProvince(mapInstance, e.target.value);
-        renderMarkers(mapInstance);
-      });
+        provinceFilter.addEventListener('change', (e) => {
+            currentFilters.province = e.target.value;
+            flyToProvince(e.target.value);
+            drawMarkers();
+        });
     }
 
     if (searchInput) {
-      const deb = debounce((val) => {
-        currentFilters.search = val;
-        renderMarkers(mapInstance);
-      }, 300);
-      searchInput.addEventListener("input", (e) => deb(e.target.value));
+        searchInput.addEventListener('input', (e) => {
+            currentFilters.search = e.target.value;
+            drawMarkers();
+        });
     }
 
     if (resetBtn) {
-      resetBtn.addEventListener("click", () => {
-        currentFilters = { type: "all", province: "all", search: "" };
-        if (typeFilter) typeFilter.value = "all";
-        if (provinceFilter) provinceFilter.value = "all";
-        if (searchInput) searchInput.value = "";
-        flyToProvince(mapInstance, "all");
-        renderMarkers(mapInstance);
-      });
+        resetBtn.addEventListener('click', () => {
+            currentFilters = { type: 'all', province: 'all', search: '' };
+            if (typeFilter) typeFilter.value = 'all';
+            if (provinceFilter) provinceFilter.value = 'all';
+            if (searchInput) searchInput.value = '';
+            flyToProvince('all');
+            drawMarkers();
+        });
     }
+
+    // Map controls
+    const locateBtn = document.getElementById('locate-btn');
+    const zoomInBtn = document.getElementById('zoom-in-btn');
+    const zoomOutBtn = document.getElementById('zoom-out-btn');
 
     if (locateBtn) {
-      locateBtn.addEventListener("click", () => {
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition((pos) => {
-            const lat = pos.coords.latitude;
-            const lng = pos.coords.longitude;
-            mapInstance.flyTo([lat, lng], 13, { duration: 1.2 });
-            L.marker([lat, lng]).addTo(mapInstance).bindPopup("📍 Vị trí của bạn").openPopup();
-          }, () => alert("Không thể lấy vị trí của bạn. Vui lòng kiểm tra quyền truy cập vị trí."));
-        } else {
-          alert("Trình duyệt không hỗ trợ định vị!");
-        }
-      });
+        locateBtn.addEventListener('click', locateUser);
     }
 
-    if (zoomInBtn) zoomInBtn.addEventListener("click", () => mapInstance.zoomIn());
-    if (zoomOutBtn) zoomOutBtn.addEventListener("click", () => mapInstance.zoomOut());
-
-    // quick filter elements (class .filter-quick) and legend items (data-type)
-    $$(".filter-quick").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const t = btn.dataset.type || "all";
-        currentFilters.type = t;
-        if (typeFilter) typeFilter.value = t;
-        renderMarkers(mapInstance);
-      });
-    });
-
-    $$("[data-type]").forEach(item => {
-      item.addEventListener("click", () => {
-        const t = item.dataset.type || "all";
-        currentFilters.type = t;
-        if (typeFilter) typeFilter.value = t;
-        renderMarkers(mapInstance);
-      });
-    });
-  }
-
-  // fetch data from API or local JSON, with abort + fallback
-  async function fetchDataAndUpdate(mapInstance) {
-    // abort previous in-flight
-    if (fetchController) {
-      try { fetchController.abort(); } catch {}
+    if (zoomInBtn) {
+        zoomInBtn.addEventListener('click', () => map.zoomIn());
     }
-    fetchController = new AbortController();
-    const signal = fetchController.signal;
 
-    try {
-      const res = await fetch(DATA_URL, { signal, cache: "no-store" });
-      if (!res.ok) throw new Error("Network response not ok");
-      const data = await res.json();
-      // validate basic structure - expecting array of objects with id, coords
-      if (Array.isArray(data) && data.length) {
-        emergencies = data;
-      } else {
-        console.warn("Data format unexpected, using fallback.");
-        emergencies = FALLBACK_EMERGENCIES.slice();
-      }
-    } catch (err) {
-      if (err.name === "AbortError") {
-        console.log("Fetch aborted (new fetch started).");
-      } else {
-        console.warn("Fetch failed, using fallback data:", err);
-        emergencies = FALLBACK_EMERGENCIES.slice();
-      }
-    } finally {
-      renderMarkers(mapInstance);
+    if (zoomOutBtn) {
+        zoomOutBtn.addEventListener('click', () => map.zoomOut());
     }
-  }
 
-  // start polling (auto-refresh)
-  function startPolling(mapInstance) {
-    // immediate fetch
-    fetchDataAndUpdate(mapInstance);
-    if (pollTimer) clearInterval(pollTimer);
-    pollTimer = setInterval(() => fetchDataAndUpdate(mapInstance), POLL_INTERVAL_MS);
-  }
+    // Modal events
+    setupModalEvents();
+}
 
-  // main init
-  function main() {
-    const mapInstance = initMap();
-    if (!mapInstance) return;
-
-    wireUi(mapInstance);
-    renderMarkers(mapInstance); // render initial fallback
-    startPolling(mapInstance); // kicks off fetch + subsequent updates
-
-    // also update statistics every 30s UI-side
-    setInterval(() => updateStatisticsUI(), 30000);
-  }
-
-  // expose minimal global functions for compatibility if other scripts expect them
-  window.viewEmergencyDetail = function (id) {
-    const em = emergencies.find(x => String(x.id) === String(id));
-    if (em) showModal(em.name, renderDetailHtml(em));
-  };
-  window.shareEmergency = async function (id) {
-    const em = emergencies.find(x => String(x.id) === String(id));
-    if (!em) return;
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: `Sự cố: ${em.name}`, text: `${em.name} — ${em.address}`, url: window.location.href });
-      } catch (err) { console.warn(err); }
+// ===== HÀM ĐỊNH VỊ NGƯỜI DÙNG =====
+function locateUser() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            pos => {
+                const lat = pos.coords.latitude;
+                const lng = pos.coords.longitude;
+                map.flyTo([lat, lng], 13, { duration: 1.5 });
+                
+                L.marker([lat, lng])
+                    .addTo(map)
+                    .bindPopup("📍 Vị trí của bạn")
+                    .openPopup();
+            },
+            error => {
+                console.error('Geolocation error:', error);
+                alert("Không thể lấy vị trí của bạn. Vui lòng kiểm tra quyền truy cập vị trí.");
+            }
+        );
     } else {
-      try { await navigator.clipboard.writeText(window.location.href); alert("Đã sao chép liên kết."); } catch { alert("Không hỗ trợ chia sẻ/copy"); }
+        alert("Trình duyệt không hỗ trợ định vị!");
     }
-  };
+}
 
-  // start when DOM ready
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", main);
-  } else {
-    main();
-  }
-})();
+// ===== SETUP MODAL EVENTS =====
+function setupModalEvents() {
+    const closeModal = document.getElementById('close-modal');
+    const modalCloseBtn = document.getElementById('modal-close-btn');
+    const modalShareBtn = document.getElementById('modal-share-btn');
+    const modalNavigateBtn = document.getElementById('modal-navigate-btn');
+    const modalReportBtn = document.getElementById('modal-report-btn');
+    const modalElement = document.getElementById('emergency-detail-modal');
 
+    if (closeModal) {
+        closeModal.addEventListener('click', closeEmergencyDetail);
+    }
 
+    if (modalCloseBtn) {
+        modalCloseBtn.addEventListener('click', closeEmergencyDetail);
+    }
 
+    if (modalShareBtn) {
+        modalShareBtn.addEventListener('click', () => {
+            const emergencyId = document.getElementById('modal-id').textContent;
+            shareEmergency(parseInt(emergencyId.replace('#', '')));
+        });
+    }
+
+    if (modalNavigateBtn) {
+        modalNavigateBtn.addEventListener('click', () => {
+            const emergencyId = document.getElementById('modal-id').textContent;
+            viewEmergencyOnMap(parseInt(emergencyId.replace('#', '')));
+            closeEmergencyDetail();
+        });
+    }
+
+    if (modalReportBtn) {
+        modalReportBtn.addEventListener('click', () => {
+            alert('Cảm ơn bạn đã báo cáo. Chúng tôi sẽ kiểm tra thông tin này.');
+        });
+    }
+
+    if (modalElement) {
+        modalElement.addEventListener('click', (e) => {
+            if (e.target.id === 'emergency-detail-modal') {
+                closeEmergencyDetail();
+            }
+        });
+    }
+}
+
+// ===== KHỞI TẠO KHI TRANG LOAD =====
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, initializing map...');
+    initializeMap();
+    
+    // Cập nhật thời gian thực mỗi 30 giây
+    setInterval(updateStatistics, 30000);
+});
+
+// ===== ĐẢM BẢO CÁC HÀM TOÀN CỤC =====
+window.showEmergencyDetail = showEmergencyDetail;
+window.closeEmergencyDetail = closeEmergencyDetail;
+window.shareEmergency = shareEmergency;
+window.viewEmergencyOnMap = viewEmergencyOnMap;

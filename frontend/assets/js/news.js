@@ -1,232 +1,660 @@
+// assets/js/news.js
 
-// Dữ liệu tin tức (đồng bộ với news.html)
-const newsData = [
-    {
-        title: "Đà Nẵng: Chủ động ứng phó thiên tai những tháng cuối năm",
-        date: "2025-10-21",
-        type: "thien-tai",
-        location: "da-nang,mien-trung",
-        img: "https://media.daidoanket.vn/w1280/uploaded/images/2025/10/18/8898fcf6-b66a-433c-908c-72eb18bbdeb1.jpg",
-        content: "<p><strong>Tình hình:</strong> TP. Đà Nẵng đang hứng chịu thời tiết cực đoan, mưa lớn kéo dài gây sạt lở nghiêm trọng tại nhiều khu vực. Đáng chú ý, bờ biển phường Hội An Tây bị sóng đánh mạnh, sạt lở dài hơn 200m với vách đứng cao 5-6m, cây chắn sóng bật gốc, công trình ven biển nguy cơ sụp đổ. Tuyến đường ĐT606 (Km23+480) bị sụt lún sâu 18-30cm, dài 43m, vết nứt cắt ngang, taluy cao 50m có dấu hiệu trượt, đe dọa chia cắt giao thông miền núi.</p><p><strong>Thiệt hại ước tính:</strong> Chưa có con số thiệt hại cụ thể về người và tài sản. Các khu vực bị ảnh hưởng bao gồm sạt lở bờ biển sát khu dân cư và du lịch, đất cát cuốn trôi lớn, công trình nguy cơ sụp đổ, giao thông huyết mạch có nguy cơ đứt gãy hoàn toàn.</p><p><strong>Hành động ứng phó:</strong> UBND TP. Đà Nẵng ban hành Công điện số 07/CĐ-UBND, kích hoạt phương án ứng phó toàn diện trong 10 ngày tới và những tháng cuối năm 2025. Các biện pháp: theo dõi thời tiết, củng cố cảnh báo sớm, bố trí lực lượng canh gác, chốt chặn khu vực nguy cơ; chuẩn bị phương tiện cứu hộ theo phương châm “4 tại chỗ”; sơ tán dân vùng trũng thấp, ven biển; kiểm tra, vận hành hồ chứa, trạm bơm chống ngập; lực lượng vũ trang sẵn sàng hỗ trợ; tuyên truyền kỹ năng phòng tránh; kiểm tra công trình thi công và hệ thống thủy lợi, đê điều.</p><p><strong>Khuyến cáo:</strong> Người dân theo dõi bản tin dự báo, hạn chế di chuyển khi mưa lớn, di dời tài sản đến nơi cao ráo, đảm bảo an toàn tính mạng và tài sản. Chính quyền địa phương chuẩn bị phương án ứng phó, kiểm tra hệ thống tiêu thoát nước, cảnh giới khu vực sạt lở, hỗ trợ dân khi ngập lụt. Tăng cường tuyên truyền nâng cao nhận thức cộng đồng về phòng tránh thiên tai.</p><a href='https://thiennhienmoitruong.vn/da-nang-chu-dong-ung-pho-thien-tai-nhung-thang-cuoi-nam.html' target='_blank'>Nguồn gốc</a>"
-    },
-    {
-        title: "Vai trò y tế cơ sở trong chăm sóc sức khỏe tinh thần cho cộng đồng sau thiên tai",
-        date: "2025-10-21",
-        type: "cuu-ho",
-        location: "lao-cai,thai-nguyen,mien-bac",
-        img: "https://benhvientamthanhanoi.com/wp-content/uploads/2025/10/image.jpeg",
-        content: "<p><strong>Tình hình:</strong> Sau thiên tai như bão lũ năm 2024 tại Lào Cai và Thái Nguyên, người dân đối mặt với nỗi ám ảnh tinh thần kéo dài, bao gồm rối loạn stress sau sang chấn, lo âu, trầm cảm và 'lo âu khí hậu' ở giới trẻ. Theo WHO, tỷ lệ rối loạn tâm thần tăng đáng kể sau thiên tai, đặc biệt sau bão số 3 Yagi, với tác động lâu dài về mất mát tài sản, người thân và kế sinh nhai. Người dân thường âm thầm chịu đựng, thiếu thói quen tìm kiếm hỗ trợ tâm lý.</p><p><strong>Thiệt hại ước tính:</strong> Thiệt hại tinh thần không thể đo lường bằng con số cụ thể, nhưng nghiên cứu nhỏ của WHO sau bão Yagi cho thấy tác động đáng kể đến sức khỏe tâm thần, bao gồm lo âu và trầm cảm phổ biến. Tại Việt Nam, số lượng chuyên gia tâm thần ít so với dân số, dẫn đến dịch vụ chưa đáp ứng nhu cầu, với sự kỳ thị xã hội làm tăng thách thức.</p><p><strong>Hành động ứng phó:</strong> Y tế cơ sở đóng vai trò quan trọng trong chăm sóc sức khỏe tâm thần, với bác sĩ đa khoa và điều dưỡng có thể điều trị rối loạn phổ biến nếu được đào tạo. WHO khuyến nghị tích hợp đánh giá sức khỏe tâm thần vào ứng phó khẩn cấp, bao gồm đội phản ứng nhanh và dịch vụ hỗ trợ xã hội. Tình nguyện viên như CLB ca nô tại Lào Cai tham gia cứu hộ, vượt qua nỗi sợ để hỗ trợ cộng đồng.</p><p><strong>Khuyến cáo:</strong> Theo TS Angela Pratt (WHO), cần coi hỗ trợ tâm lý là phần không thể tách rời của ứng phó và phục hồi thiên tai, không chỉ sau khi đáp ứng nhu cầu vật chất. Đào tạo y tế cơ sở về nhận biết và hỗ trợ trầm cảm, lo âu; nâng cao năng lực tuyến huyện; tăng chuyên gia tâm thần để xây dựng hệ thống bền vững. Giảm kỳ thị xã hội và nghiên cứu sâu hơn về tác động tại Việt Nam.</p><a href='https://vov2.vov.vn/suc-khoe/vai-tro-y-te-co-so-trong-cham-soc-suc-khoe-tinh-than-cho-cong-dong-sau-thien-tai-55411' target='_blank'>Nguồn gốc</a>"
-    },
-    {
-        title: "Tai nạn giao thông mới nhất 19/10/2025: xe cứu hộ gây tai nạn liên hoàn trên quốc lộ 26",
-        date: "2025-10-19",
-        type: "tai-nan",
-        location: "dak-lak,tp-hcm,binh-dinh,tay-nguyen",
-        img: "https://cdnphoto.dantri.com.vn/fT-JEopnjSnsEkgTdgpPSX-an_8=/thumb_w/1020/2025/10/19/z7132063905158f9b65fad4a12b3160200c0a32ca66181-edited-1760843872053.jpg",
-        content: "<p><strong>Tình hình:</strong> Ngày 19/10/2025, xảy ra ba vụ tai nạn giao thông nghiêm trọng: Xe cứu hộ gây tai nạn liên hoàn tại km146+400 quốc lộ 26 (Đắk Lắk), người đàn ông tử vong do mất lái xe máy ở dốc cầu Bình Lợi (TP Hồ Chí Minh), và xe máy va chạm xe tải chở gỗ khiến cô gái tử vong trên tỉnh lộ 639 (Bình Định).</p><p><strong>Thiệt hại ước tính:</strong> - Vụ quốc lộ 26: 3 phương tiện hư hỏng, không thiệt hại về người. - Vụ cầu Bình Lợi: 1 người đàn ông tử vong, xe máy hư hỏng. - Vụ tỉnh lộ 639: 1 cô gái (SN 2001) tử vong tại chỗ, xe máy hư hỏng.</p><p><strong>Hành động ứng phó:</strong> Công an xã Tuy Phước Đông bảo vệ hiện trường, đảm bảo an toàn giao thông và phối hợp điều tra vụ tỉnh lộ 639. Các vụ khác chưa ghi nhận hành động cụ thể.</p><p><strong>Khuyến cáo:</strong> Không có khuyến cáo được đề cập trong nội dung.</p><a href='https://baomoi.com/tai-nan-giao-thong-moi-nhat-19-10-2025-xe-cuu-ho-gay-tai-nan-lien-hoan-tren-quoc-lo-26-c53531244.epi' target='_blank'>Nguồn gốc</a>"
-    },
-    {
-        title: "Thiên tai đã vượt quá sức chịu đựng của người dân",
-        date: "2025-10-10",
-        type: "thien-tai",
-        location: "thai-nguyen,bac-ninh,cao-bang,lang-son,mien-bac,mien-trung",
-        img: "https://premedia.vneconomy.vn/files/uploads/2025/10/10/c999b83a970f40588b4d060116ebed76-20061.png?w=900",
-        content: "<p><strong>Tình hình:</strong> Năm 2025, Việt Nam xảy ra 20 loại hình thiên tai với diễn biến dồn dập, khốc liệt, bất thường, vượt mức lịch sử, ảnh hưởng rộng lớn đến miền Bắc và miền Trung. Các cơn bão di chuyển nhanh trên biển nhưng chậm trên đất liền, gây mưa lớn kéo dài; mực nước lũ vượt lịch sử tại nhiều sông (như sông Thương, sông Lô, sông Bưởi); hình thành 'bão chồng bão, lũ chồng lũ' kèm lũ quét, sạt lở đất, ngập lụt nghiêm trọng tại đô thị và vùng trũng thấp.</p><p><strong>Thiệt hại ước tính:</strong> 238 người chết và mất tích, 367 người bị thương; gần 260.000 ngôi nhà hư hỏng, tốc mái; gần 556.000 ha lúa, hoa màu và cây trồng ngập úng; hơn 15.000 con gia súc và 1,45 triệu con gia cầm chết hoặc cuốn trôi; hơn 40.000 ha nuôi trồng thủy sản bị ảnh hưởng. Tổng thiệt hại gần 34 nghìn tỷ đồng (tương đương 47% thiệt hại về người và 37% thiệt hại kinh tế so với năm 2024).</p><p><strong>Hành động ứng phó:</strong> Bộ Nông nghiệp và Môi trường tổ chức họp Đối tác giảm nhẹ rủi ro thiên tai để cập nhật tình hình, đánh giá thiệt hại nhanh và lập kế hoạch tái thiết; thành lập 3 đoàn khảo sát thực địa tại Tuyên Quang - Phú Thọ, Cao Bằng - Lạng Sơn, Bắc Ninh - Thái Nguyên. Chính phủ triển khai biện pháp ứng phó, chính sách hỗ trợ khắc phục; kêu gọi hỗ trợ từ đối tác quốc tế (Liên hợp quốc, UNICEF, WHO, IOM) với cam kết huy động nguồn lực, cung cấp hàng cứu trợ (lương thực, nước uống, nước, thuốc men). Năm 2024, đối tác hỗ trợ 25 triệu USD và hàng nghìn tấn hàng hóa.</p><p><strong>Khuyến cáo:</strong> Đầu tư vào chuẩn bị và ứng phó rủi ro thiên tai, giảm thiểu và xây dựng khả năng phục hồi; hành động tập thể để hỗ trợ khẩn cấp các địa phương bị ảnh hưởng nặng, tập trung khôi phục nhà ở và sản xuất; các tổ chức quốc tế tham gia khảo sát và đánh giá nhu cầu cứu trợ kịp thời.</p><a href='https://vneconomy.vn/thien-tai-da-vuot-qua-suc-chiu-dung-cua-nguoi-dan.htm' target='_blank'>Nguồn gốc</a>"
-    },
-    {
-        title: "Việt Nam kêu gọi quốc tế hỗ trợ khắc phục hậu quả thiên tai",
-        date: "2025-10-09",
-        type: "thien-tai",
-        location: "ha-noi,thai-nguyen,bac-ninh,cao-bang,lang-son,mien-bac,mien-trung",
-        img: "https://mediaptq.mediatech.vn/upload/image/202510/medium/82710_55315046013060509712616981946138100992575692n_1760004748097379436332_09221910.jpg?id=82710",
-        content: "<p><strong>Tình hình:</strong> 20 loại thiên tai, 11 cơn bão gây 238 chết, thiệt hại 35.000 tỷ đồng. Bộ Nông nghiệp họp đối tác quốc tế hỗ trợ nước, thực phẩm, nước sạch cho miền Bắc và Bắc Trung Bộ.</p><p><strong>Thiệt hại ước tính:</strong> 238 người chết và mất tích, thiệt hại 35.000 tỷ đồng.</p><p><strong>Hành động ứng phó:</strong> Bộ Nông nghiệp họp đối tác quốc tế để hỗ trợ khẩn cấp.</p><p><strong>Khuyến cáo:</strong> Tăng cường chuẩn bị và phối hợp quốc tế.</p><a href='https://vnexpress.net/viet-nam-keu-goi-quoc-te-ho-tro-khac-phuc-hau-qua-thien-tai-4949397.html' target='_blank'>Nguồn gốc</a>"
-    },
-    {
-        title: "Việt Nam kêu gọi cứu trợ khẩn cấp từ cộng đồng quốc tế",
-        date: "2025-10-09",
-        type: "cuu-ho",
-        location: "ha-noi,mien-bac,mien-trung",
-        img: "https://image.phunuonline.com.vn/fckeditor/upload/2025/20251009/images/lien-hop-quoc-keu-goi-ho-_241760006840.jpg",
-        content: "<p><strong>Tình hình:</strong> Trong hai tháng 9 và 10/2025, Việt Nam liên tiếp hứng chịu bão số 8, 9, 10 và 11 cùng mưa lũ lớn. Bão số 10 đổ bộ vào Nghệ An - Hà Tĩnh đêm 28 và rạng sáng 29/9 với tốc độ nhanh, cường độ mạnh, phạm vi rộng. Hoàn lưu bão gây mưa lớn, ngập lụt diện rộng tại Bắc Bộ và Bắc Trung Bộ. Bão số 11 tiếp tục gây mưa rất to, mực nước sông từ Bắc Bộ đến Hà Tĩnh đạt báo động 2-3, vượt lũ lịch sử tại một số nơi, dẫn đến tình trạng “bão chồng bão, lũ chồng lũ”.</p><p><strong>Thiệt hại ước tính:</strong> Các địa phương bị thiệt hại nặng nề do ảnh hưởng thiên tai, nhưng không có con số cụ thể. Các tổ chức quốc tế đã viện trợ và cam kết hỗ trợ khoảng 5,7 triệu USD (tương đương 150,1 tỷ đồng) cho các địa phương bị ảnh hưởng sau bão số 10 và 11.</p><p><strong>Hành động ứng phó:</strong> Bộ Nông nghiệp và Môi trường ban hành Công điện số 15/BCĐ-BNNMT ngày 9/10/2025 hỗ trợ khẩn cấp các địa phương. Ban Chỉ đạo Phòng thủ Dân sự Quốc gia giao Cục Quản lý Đê điều và Phòng, chống thiên tai làm đầu mối điều phối, chia sẻ thông tin, kết nối nhà tài trợ với chính quyền địa phương. Việt Nam kêu gọi cộng đồng quốc tế hợp tác triển khai cứu trợ khẩn cấp và phục hồi sau thiên tai. Lực lượng chức năng bồi đắp tuyến đê sông Cầu tại Thái Nguyên.</p><p><strong>Khuyến cáo:</strong> Người dân các vùng bị ảnh hưởng cần hỗ trợ khẩn cấp từ cộng đồng quốc tế để ổn định đời sống, phục hồi sinh kế và nâng cao khả năng chống chịu thiên tai. Liên hệ: Cục Quản lý Đê điều và Phòng, chống thiên tai, Bộ Nông nghiệp và Môi trường, địa chỉ Số 10 Tôn Thất Thuyết, Hà Nội; email drrp@mae.gov.vn; ĐT 0912093879.</p><a href='https://mae.gov.vn/viet-nam-keu-goi-cuu-tro-khan-cap-tu-cong-dong-quoc-te-19944.htm' target='_blank'>Nguồn gốc</a>"
-    },
-    {
-        title: "Thanh tra Chính phủ phát động quyên góp ủng hộ đồng bào bị thiệt hại nặng nề bởi thiên tai",
-        date: "2025-10-14",
-        type: "cuu-ho",
-        location: "ha-noi,mien-bac,mien-trung",
-        img: "https://bcp.cdnchinhphu.vn/334894974524682240/2025/10/14/phat-dong-3-17604142941321461810469.jpg",
-        content: "<p><strong>Tình hình:</strong> Trong tháng 9 và 10/2025, Việt Nam hứng chịu 5 cơn bão, đặc biệt bão số 10 (BUALOI) và số 11 (MATMO) gây thiệt hại nặng nề về người và tài sản tại Bắc Bộ và miền Trung. Hậu quả bão số 10 chưa khắc phục xong thì hoàn lưu bão số 11 gây lũ chồng lũ, lũ quét, sạt lở đất trên diện rộng.</p><p><strong>Thiệt hại ước tính:</strong> Theo thống kê sơ bộ đến 8h ngày 2/10/2025, bão số 10 làm 54 người chết và mất tích, 140 người bị thương; trên 150.000 ngôi nhà bị sập, đổ, tốc mái, hư hỏng; trên 50.000 ha lúa và hoa màu bị ngập, thiệt hại; nhiều tuyến giao thông, trường học, cơ sở y tế, công trình công cộng bị hư hỏng. Bão số 11 gây thiệt hại nghiêm trọng về tính mạng, tài sản, đê điều, hồ chứa và cơ sở hạ tầng thiết yếu.</p><p><strong>Hành động ứng phó:</strong> Thanh tra Chính phủ tổ chức Lễ phát động quyên góp sáng 14/10/2025, hưởng ứng lời kêu gọi của Đảng, Nhà nước và Ủy ban Trung ương Mặt trận Tổ quốc Việt Nam. Tổng Thanh tra Đoàn Hồng Phong kêu gọi mỗi cán bộ, đảng viên, công chức, viên chức, người lao động đóng góp tối thiểu 1 ngày lương để hỗ trợ đồng bào. Văn phòng Đảng ủy, Ban Tuyên giáo và Dân vận phối hợp triển khai, tổng hợp báo cáo kết quả cho Ban Vận động cứu trợ Trung ương và Ban Dân vận Đảng ủy Chính phủ.</p><p><strong>Khuyến cáo:</strong> Phát huy tinh thần 'tương thân tương ái', 'lá lành đùm lá rách' để chung tay giúp đỡ đồng bào bị ảnh hưởng, sớm ổn định cuộc sống và tiếp tục lao động sản xuất.</p><a href='https://baochinhphu.vn/thanh-tra-chinh-phu-phat-dong-quyen-gop-ung-ho-dong-bao-bi-thiet-hai-nang-ne-boi-thien-tai-102251014110224359.htm' target='_blank'>Nguồn gốc</a>"
-    },
-    {
-        title: "Đoàn kết, chung sức vượt qua thiên tai",
-        date: "2025-10-21",
-        type: "thien-tai",
-        location: "toan-quoc,mien-bac,mien-trung",
-        img: "https://cdn.nhandan.vn/images/22f099ca8bc7ae81aa2a8d3416a84bf88164db7334089fd96cd92fb40ba5a5c416d1915411a36da149b3cda42b8716dd3d30e798dd294ae2e7036a1cdf939bd04bdf9eb112ac72b82740920805aa185fd637c5797f36c62cfeeadbce01c03c493c7c4f229359aba580a4e2f637103b66/z7138573067041-93f4e3ff2488379b42c2a1c06fb01e83-9502.jpg.webp",
-        content: "<p><strong>Tình hình:</strong> Năm 2025, Việt Nam hứng chịu khoảng 20 loại hình thiên tai, với các đợt “bão chồng bão, lũ chồng lũ”, đặc biệt mưa lũ sau bão số 11 gây thiệt hại nghiêm trọng tại các tỉnh như Thái Nguyên, Cao Bằng, Lạng Sơn, Bắc Ninh.</p><p><strong>Thiệt hại ước tính:</strong> Hàng trăm người chết hoặc mất tích; tổng thiệt hại kinh tế khoảng 35.000 tỷ đồng, làm giảm 0,2% GDP. Riêng mưa lũ sau bão số 11 gây thiệt hại hơn 7.000 tỷ đồng, trong đó Thái Nguyên chịu khoảng 4.000 tỷ đồng, dẫn đến gia đình mất người thân, nhà cửa, tài sản, ruộng vườn tan hoang, sản xuất đình trệ.</p><p><strong>Hành động ứng phó:</strong> Đảng và Nhà nước ưu tiên ứng phó thiên tai, huy động hệ thống chính trị, lực lượng vũ trang, đoàn thể và cộng đồng tham gia cứu trợ, tái thiết. Quốc hội ban hành Văn bản hợp nhất số 21/VBHN-VPQH về Luật Phòng, chống thiên tai ngày 26/2/2025, lồng ghép phòng chống thiên tai vào quy hoạch phát triển. Thủ tướng ban hành Chỉ thị số 19/CT-TTg ngày 19/6/2025, Quyết định số 2221/QĐ-TTg ngày 8/10/2025 hỗ trợ 140 tỷ đồng, và Quyết định số 2241/QĐ-TTg ngày 12/10/2025 hỗ trợ 400 tỷ đồng từ ngân sách trung ương. Kêu gọi hỗ trợ quốc tế tại cuộc họp “Đối tác Giảm nhẹ rủi ro thiên tai” ngày 9/10/2025, nhận cam kết từ Nhật Bản (JICA), Australia (3 triệu AUD), Nga, ASEAN với hàng cứu trợ nhu yếu phẩm, nước uống, nước, thuốc men. Việt Nam cũng hỗ trợ quốc tế như Cuba (hơn 500 tỷ đồng), Indonesia (100.000 USD), Lào (1 tấn gạo và nhu yếu phẩm).</p><p><strong>Khuyến cáo:</strong> Phát huy tinh thần đoàn kết dân tộc và quốc tế, tăng cường dự báo sớm, cảnh báo dựa trên công nghệ hiện đại như trí tuệ nhân tạo; lồng ghép phòng chống thiên tai vào quy hoạch phát triển bền vững; cộng đồng quốc tế hỗ trợ kỹ thuật, thiết bị dự báo, xây dựng công trình chống thiên tai.</p><a href='https://nhandan.vn/doan-ket-chung-suc-vuot-qua-thien-tai-post916808.html' target='_blank'>Nguồn gốc</a>"
-    },
-    {
-        title: "Hơn 1.066 tỷ đồng hỗ trợ đồng bào gặp thiên tai, bão lũ",
-        date: "2025-10-22",
-        type: "cuu-ho",
-        location: "toan-quoc,mien-bac,mien-trung",
-        img: "https://cdnmedia.baotintuc.vn/Upload/DmtgOUlHWBO5POIHzIwr1A/files/2025/10/21/ho-tro-dong-bao-21102025-01.jpg",
-        content: "<p><strong>Tình hình:</strong> Tính đến 17 giờ ngày 21/10, Ban Vận động Cứu trợ Trung ương, Ủy ban Trung ương MTTQ Việt Nam đã nhận ủng hộ hơn 1.066,764 tỷ đồng từ các đơn vị, tổ chức, cá nhân để hỗ trợ đồng bào gặp thiên tai, bão lũ. Các khoản ủng hộ trong ngày bao gồm: Bộ Xây dựng 5 tỷ đồng, VietinBank 10 tỷ đồng, sinh viên K15 Trường Đại học Luật Hà Nội 105 triệu đồng, Trường Tiểu học Thanh Xuân Trung 80 triệu đồng, Hiệp hội Doanh nghiệp Trung Quốc tại Việt Nam 2 tỷ đồng, Hội cựu giáo chức Việt Nam 636,113 triệu đồng, Hội người Việt Nam tại Westsachsen Zwickau (Đức) 5.500 Euro, Công ty TSQ Việt Nam 300 triệu đồng.</p><p><strong>Thiệt hại ước tính:</strong> Nội dung không đề cập chi tiết thiệt hại ước tính.</p><p><strong>Hành động ứng phó:</strong> Ban Vận động Cứu trợ Trung ương cam kết phân bổ kịp thời số tiền ủng hộ đến đúng địa chỉ để giúp nhân dân các tỉnh bị thiệt hại tái thiết cuộc sống. Bộ Xây dựng huy động lực lượng khắc phục hậu quả bão lũ, đảm bảo giao thông và hạ tầng thiết yếu, hỗ trợ xây dựng nhà ở tránh lũ.</p><p><strong>Khuyến cáo:</strong> Nội dung không đề cập khuyến cáo cụ thể.</p><a href='https://baotintuc.vn/thoi-su/hon-1066-ty-dong-ho-tro-dong-bao-gap-thien-tai-bao-lu-20251021200854276.htm' target='_blank'>Nguồn gốc</a>"
-    },
-    {
-        title: "Lực lượng Công an nhân dân chủ động ứng phó với bão số 12 và nguy cơ mưa lớn",
-        date: "2025-10-20",
-        type: "canh-bao",
-        location: "mien-trung,mien-bac",
-        img: "https://dbnd.1cdn.vn/2025/10/20/dbqgxtnd202510201700-17609581259941101885533.jpg",
-        content: "<p><strong>Tình hình:</strong> Bão số 12 (Fengshen) đi vào Biển Đông chiều 19/10/2025, sức gió cấp 9 giật cấp 11, di chuyển hướng Tây Bắc 25km/h. Dự báo từ 22-26/10, khu vực Hà Tĩnh đến Quảng Ngãi có mưa lớn diện rộng, kéo dài, cục bộ mưa rất lớn, nguy cơ lũ quét, sạt lở đất vùng núi, ngập lụt vùng trũng thấp và đô thị.</p><p><strong>Thiệt hại ước tính:</strong> Không có thông tin về thiệt hại ước tính.</p><p><strong>Hành động ứng phó:</strong> Bộ Công an ban hành Công điện 29/CĐ-BCA-V01 ngày 20/10/2025, yêu cầu các đơn vị và địa phương (từ Quảng Ninh đến Lâm Đồng) thực hiện nghiêm chỉ đạo Thủ tướng (Công điện 200/CĐ-TTg), theo dõi bão, đảm bảo an toàn tính mạng, tài sản; phân công trách nhiệm rõ ràng; tham mưu địa phương hướng dẫn neo đậu tàu thuyền, di dời dân, sẵn sàng phương án '4 tại chỗ'; huy động lực lượng kiểm soát giao thông, cứu hộ cứu nạn; tăng cường hỗ trợ từ Cảnh sát cơ động, Phòng cháy chữa cháy, Giao thông, Trang bị kho vận, Viễn thông, Y tế, Truyền thông; xử lý vi phạm lợi dụng thiên tai; báo cáo thường trực.</p><p><strong>Khuyến cáo:</strong> Theo dõi chặt chẽ diễn biến bão và mưa lớn, không chủ quan; chủ động phòng tránh, neo đậu phương tiện, di dời dân đến nơi an toàn; đảm bảo an toàn đê điều, hồ đập; phổ biến kỹ năng ứng phó thiên tai qua truyền thông.</p><a href='https://bocongan.gov.vn/bai-viet/luc-luong-cong-an-nhan-dan-chu-dong-ung-pho-voi-bao-so-12-va-nguy-co-mua-lon-dien-rong-1760964108' target='_blank'>Nguồn gốc</a>"
-    },
-    {
-        title: "Đoàn kết, chung sức vượt qua thiên tai - Báo An Giang",
-        date: "2025-10-21",
-        type: "thien-tai",
-        location: "toan-quoc,mien-nam",
-        img: "https://dangcongsan.org.vn/upload/2006988/20250624/881c364829c571ae3de256c3328d5fb01_2_.webp",
-        content: "<p><strong>Tình hình:</strong> Năm 2025, Việt Nam hứng chịu khoảng 20 loại hình thiên tai, với các đợt “bão chồng bão, lũ chồng lũ”, đặc biệt mưa lũ sau bão số 11 gây thiệt hại nghiêm trọng tại các tỉnh như Thái Nguyên, Cao Bằng, Lạng Sơn, Bắc Ninh.</p><p><strong>Thiệt hại ước tính:</strong> Hàng trăm người chết hoặc mất tích; tổng thiệt hại kinh tế khoảng 35.000 tỷ đồng, làm giảm 0,2% GDP. Riêng mưa lũ sau bão số 11 gây thiệt hại hơn 7.000 tỷ đồng, trong đó Thái Nguyên chịu khoảng 4.000 tỷ đồng, dẫn đến gia đình mất người thân, nhà cửa, tài sản, ruộng vườn tan hoang, sản xuất đình trệ.</p><p><strong>Hành động ứng phó:</strong> Đảng và Nhà nước ưu tiên ứng phó thiên tai, huy động hệ thống chính trị, lực lượng vũ trang, đoàn thể và cộng đồng tham gia cứu trợ, tái thiết. Quốc hội ban hành Văn bản hợp nhất số 21/VBHN-VPQH về Luật Phòng, chống thiên tai ngày 26/2/2025, lồng ghép vào quy hoạch phát triển. Thủ tướng ban hành Chỉ thị số 19/CT-TTg ngày 19/6/2025, Quyết định số 2221/QĐ-TTg ngày 8/10/2025 hỗ trợ 140 tỷ đồng, và Quyết định số 2241/QĐ-TTg ngày 12/10/2025 hỗ trợ 400 tỷ đồng từ ngân sách trung ương cho các địa phương khắc phục hậu quả. Tăng cường dự báo, cảnh báo sớm, quan trắc, tu bổ công trình thủy lợi, sơ tán dân. Kêu gọi hỗ trợ quốc tế tại cuộc họp “Đối tác Giảm nhẹ rủi ro thiên tai” ngày 9/10/2025, nhận cam kết từ Nhật Bản (JICA hỗ trợ nhu yếu phẩm cho Bắc Ninh ngày 13/10/2025), Australia (3 triệu AUD), Nga, ASEAN (hàng cứu trợ thiết yếu). Việt Nam cũng hỗ trợ quốc tế như Cuba (hơn 500 tỷ đồng), Indonesia (100.000 USD năm 2018), Lào (1 tấn gạo và nhu yếu phẩm năm 2025).</p><p><strong>Khuyến cáo:</strong> Phòng, chống thiên tai là trách nhiệm của Nhà nước (vai trò chủ đạo), tổ chức, cá nhân (chủ động) và cộng đồng (giúp đỡ lẫn nhau). Cộng đồng quốc tế hỗ trợ khẩn cấp, kỹ thuật, thiết bị dự báo sớm, quản lý rủi ro, xây dựng công trình chống thiên tai thích ứng, phù hợp Khung Sendai 2015-2030 và các thỏa thuận ASEAN. Phát huy tinh thần đoàn kết dân tộc và quốc tế để vượt qua thách thức biến đổi khí hậu.</p><a href='https://baoangiang.com.vn/doan-ket-chung-suc-vuot-qua-thien-tai-a464618.html' target='_blank'>Nguồn gốc</a>"
-    },
-    {
-        title: "Thiên tai cuối năm 2025 phức tạp: Bắc Bộ vẫn có thể chịu ảnh hưởng của bão",
-        date: "2025-10-08",
-        type: "canh-bao",
-        location: "mien-bac,mien-trung",
-        img: "https://c.baothanhhoa.vn/img/mobile/news/2540/177d4090408t1820l1-51.webp",
-        content: "<p><strong>Tình hình:</strong> Thiên tai cuối năm 2025 diễn biến phức tạp, với 2-4 cơn bão/áp thấp nhiệt đới trên Biển Đông, 1-2 cơn ảnh hưởng trực tiếp đất liền. Bắc Bộ và Trung Bộ cần đề phòng bão bất thường do biến đổi khí hậu; mưa lớn, lũ quét, sạt lở đất ở vùng núi; không khí lạnh tăng cường từ tháng 10, dẫn đến rét đậm, rét hại, sương muối cuối năm. Từ đầu tháng 9/2025, đã xảy ra bão chồng bão, mưa lớn, ngập lụt, sạt lở liên tiếp.</p><p><strong>Thiệt hại ước tính:</strong> Gây tổn thất nghiêm trọng về người và kinh tế do tính chất cực đoan của biến đổi khí hậu; thiệt hại vẫn lớn dù có dự báo sớm, đặc biệt với các hiện tượng biến động cao như cường độ bão, lũ quét, mưa cục bộ.</p><p><strong>Hành động ứng phó:</strong> Hiện đại hóa công nghệ quan trắc, tăng mật độ trạm, ứng dụng AI, Big Data, IoT vào dự báo; nâng cao truyền tải thông tin đa dạng, phối hợp với địa phương và truyền thông; đào tạo kỹ năng ứng phó cộng đồng; đầu tư hạ tầng bền vững; triển khai Nghị quyết 57-NQ/TW về khoa học công nghệ.</p><p><strong>Khuyến cáo:</strong> Người dân đặc biệt lưu ý bão, mưa lớn, lũ quét, sạt lở, ngập úng, rét hại để chủ động phòng tránh; địa phương đẩy mạnh quản lý rủi ro dựa vào cộng đồng qua mạng lưới thông tin hai chiều, tập huấn, diễn tập; nâng cao ý thức ứng phó toàn xã hội.</p><a href='https://www.vietnamplus.vn/thien-tai-cuoi-nam-2025-phuc-tap-bac-bo-van-co-the-chiu-anh-huong-cua-bao-post1069070.vnp' target='_blank'>Nguồn gốc</a>"
-    },
-    {
-        title: "Thủ tướng Chính phủ yêu cầu chủ động ứng phó với bão số 12 và mưa lũ",
-        date: "2025-10-22",
-        type: "canh-bao",
-        location: "mien-trung,quang-tri,quang-ngai",
-        img: "https://nld.mediacdn.vn/291774122806476800/2025/10/22/pho-thu-tuong--1761126520218734304839.jpg",
-        content: "<p><strong>Tình hình:</strong> Bão Fengshen (bão số 12) diễn biến phức tạp, di chuyển hướng Tây Nam, ảnh hưởng vùng biển từ Nam Quảng Trị đến Quảng Ngãi, quần đảo Hoàng Sa. Gió mạnh cấp 8-10, giật cấp 12; sóng cao 3-7m. Từ đêm 22-27/10/2025, mưa lớn diện rộng ở Hà Tĩnh đến Quảng Ngãi, lượng mưa 200-900mm, cục bộ trên 500mm, có nguy cơ lũ quét, sạt lở đất, ngập lụt. Cấp độ rủi ro thiên tai cấp 3.</p><p><strong>Thiệt hại ước tính:</strong> Chưa có thiệt hại cụ thể, nhưng nguy cơ cao gây lũ lớn, ngập sâu, lũ ống, lũ quét, sạt lở đất, ảnh hưởng an toàn tính mạng người dân và tài sản.</p><p><strong>Hành động ứng phó:</strong> Thủ tướng ký Công điện 200/CĐ-TTg ngày 20/10/2025, yêu cầu các bộ ngành (Quốc phòng, Công an, Nông nghiệp và Môi trường, Xây dựng, Công Thương...) và địa phương từ Hà Tĩnh đến Đắk Lắk chủ động triển khai: rà soát tàu thuyền, sơ tán dân cư nguy cơ cao, bảo đảm an toàn hồ đập, đê điều, vận hành thủy điện; hỗ trợ sản xuất nông nghiệp, nuôi trồng thủy sản; bố trí lực lượng cứu hộ, nhu yếu phẩm; theo dõi dự báo, thông tin kịp thời qua truyền thông. Bộ Nông nghiệp và Môi trường cung cấp thông tin dự báo chính xác; Bộ Quốc phòng, Công an sẵn sàng hỗ trợ sơ tán, cứu nạn.</p><p><strong>Khuyến cáo:</strong> Chủ động sơ tán dân ở vùng núi, ven sông suối; hướng dẫn tàu thuyền tránh vùng nguy hiểm; vận hành an toàn hồ chứa, chuẩn bị ứng phó lũ vượt báo động 3; phổ biến kỹ năng ứng phó lũ quét, sạt lở, ngập lụt cho người dân.</p><a href='https://baomoi.com/thu-tuong-chinh-phu-yeu-cau-chu-dong-ung-pho-voi-bao-fengshen-bao-so-12-va-mua-lu-c53546684.epi' target='_blank'>Nguồn gốc</a>"
-    },
-    {
-        title: "Các nước, tổ chức quốc tế chung tay hỗ trợ Việt Nam khắc phục hậu quả thiên tai",
-        date: "2025-10-15",
-        type: "cuu-ho",
-        location: "toan-quoc,mien-bac,mien-trung",
-        img: "https://bcp.cdnchinhphu.vn/334894974524682240/2025/10/15/base64-1760496468629305052261.png",
-        content: "<p><strong>Tình hình:</strong> Việt Nam liên tiếp hứng chịu thiên tai nghiêm trọng trong tháng 9 và 10/2025, bao gồm bão số 8 (Mitag), số 9 (Ragasa), số 10 (Bualoi) và số 11 (Matmo), cùng mưa lũ lớn trên diện rộng. Các tỉnh chịu ảnh hưởng nặng nề: Lạng Sơn, Cao Bằng, Thái Nguyên, Tuyên Quang, Bắc Ninh, Nghệ An, Hà Tĩnh. Thiên tai gây thiệt hại nghiêm trọng về cơ sở hạ tầng và nông nghiệp, mực nước sông vượt mức kỷ lục lịch sử ở một số khu vực.</p><p><strong>Thiệt hại ước tính:</strong> Thiên tai gây thiệt hại nghiêm trọng đối với cơ sở hạ tầng và nông nghiệp, vượt quá khả năng chịu đựng của Chính phủ và người dân Việt Nam, theo Thứ trưởng Bộ Nông nghiệp và Môi trường Nguyễn Hoàng Hiệp tại cuộc họp ngày 9/10.</p><p><strong>Hành động ứng phó:</strong> Các tổ chức quốc tế và chính phủ nhiều nước hỗ trợ kịp thời: Australia trao 320 bộ dụng cụ nhà bếp, 756 bộ dụng cụ vệ sinh/sửa chữa, 300 bộ chăn cho Bắc Ninh; Nhật Bản (qua JICA) cung cấp thiết bị lọc nước, chăn, tấm nhựa, can nhựa cho Bắc Ninh; Hàn Quốc viện trợ 1 triệu USD; Samaritan's Purse hỗ trợ đồ dùng gia đình, mì, nước, xúc xích cho Hà Tĩnh, Tuyên Quang, Lạng Sơn; UNICEF dự kiến 4.500 thùng nước và 600 bồn chứa cho Lạng Sơn hoặc Cao Bằng; Save the Children hỗ trợ 500 triệu đồng cho trẻ em Hà Tĩnh; IOM cung cấp 4.000 chai nước và 350 bộ vật dụng; AHA Centre gửi 216.000 USD (dụng cụ gia đình, vệ sinh, bếp) cho Cao Bằng; ActionAid hỗ trợ 480 triệu đồng cho Tuyên Quang; Nga vận chuyển hàng cứu trợ đến Nội Bài; Canada hỗ trợ 50.000 USD qua NGO; Mỹ, EU, Meta lên kế hoạch viện trợ qua đối tác. Cục Quản lý đê điều và Phòng, chống thiên tai tiếp nhận và phân phối.</p><p><strong>Khuyến cáo:</strong> Thứ trưởng Nguyễn Hoàng Hiệp kêu gọi các đối tác quốc tế tiếp tục đồng hành, triển khai hỗ trợ nhanh chóng, chính xác và hiệu quả tới người dân vùng bị ảnh hưởng.</p><a href='https://baochinhphu.vn/cac-nuoc-to-chuc-quoc-te-chung-tay-ho-tro-viet-nam-khac-phuc-hau-qua-thien-tai-102251015091444105.htm' target='_blank'>Nguồn gốc</a>"
+let emergenciesData = [];
+
+// Hàm fetch dữ liệu từ JSON
+async function fetchEmergenciesData() {
+    try {
+        const response = await fetch('data/emergencies.json');
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        emergenciesData = data.emergencies;
+        return emergenciesData;
+    } catch (error) {
+        console.error('Error fetching emergencies data:', error);
+        return [];
     }
-];
-
-// Hàm timeAgo
-function timeAgo(dateString) {
-    const now = new Date();
-    const date = new Date(dateString);
-    const seconds = Math.floor((now - date) / 1000);
-    let interval = Math.floor(seconds / 31536000);
-    if (interval > 1) return `${interval} năm trước`;
-    interval = Math.floor(seconds / 2592000);
-    if (interval > 1) return `${interval} tháng trước`;
-    interval = Math.floor(seconds / 86400);
-    if (interval > 1) return `${interval} ngày trước`;
-    interval = Math.floor(seconds / 3600);
-    if (interval > 1) return `${interval} giờ trước`;
-    interval = Math.floor(seconds / 60);
-    if (interval > 1) return `${interval} phút trước`;
-    return "Vừa xong";
 }
 
-// Render news cards
-function renderNews() {
-    const grid = document.getElementById('news-grid');
-    grid.innerHTML = '';
-    const sortedData = newsData.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 4); // Lấy 4 tin mới nhất
-    sortedData.forEach(news => {
-        const badgeColor = news.type === 'thien-tai' ? 'bg-blue-600' : news.type === 'tai-nan' ? 'bg-red-600' : news.type === 'cuu-ho' ? 'bg-green-600' : 'bg-yellow-600';
-        const badgeText = news.type === 'thien-tai' ? 'Thiên tai' : news.type === 'tai-nan' ? 'Tai nạn' : news.type === 'cuu-ho' ? 'Cứu hộ' : 'Cảnh báo';
-        const locBadge = news.location.split(',')[0].replace('-', ' ').toUpperCase();
-        const card = document.createElement('div');
-        card.className = 'news-card bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1';
-        card.dataset.type = news.type;
-        card.dataset.location = news.location;
-        card.innerHTML = `
-            <img src="${news.img}" alt="${news.title}" class="w-full h-40 object-cover" loading="lazy">
-            <span class="absolute top-3 left-3 ${badgeColor} text-white text-xs px-2 py-1 rounded-full font-bold">${badgeText}</span>
-            <span class="absolute top-3 right-3 bg-purple-600 text-white text-xs px-2 py-1 rounded-full font-bold">${locBadge}</span>
-            <div class="p-5">
-                <div class="flex items-center text-sm text-gray-500 mb-2">
-                    <i data-feather="clock" class="mr-1 w-4 h-4"></i>
-                    <span>${timeAgo(news.date)}</span>
-                </div>
-                <h3 class="text-lg font-bold mb-2">${news.title}</h3>
-                <p class="text-gray-600 mb-3 text-sm">${news.content.replace(/<[^>]+>/g, '').substring(0, 80)}...</p>
-                <button onclick="openModal(${newsData.indexOf(news)})" class="text-red-600 hover:text-red-800 font-medium flex items-center text-sm">
-                    Xem chi tiết
-                    <i data-feather="arrow-right" class="ml-1 w-4 h-4"></i>
-                </button>
-            </div>
-        `;
-        grid.appendChild(card);
+// Hàm hiển thị tin tức lên grid
+function displayNews(newsArray) {
+    const newsGrid = document.getElementById('news-grid');
+    
+    if (!newsGrid) return;
+
+    // Clear existing content
+    newsGrid.innerHTML = '';
+
+    // Hiển thị 4 tin mới nhất
+    const latestNews = newsArray.slice(0, 4);
+
+    latestNews.forEach(emergency => {
+        const newsCard = createNewsCard(emergency);
+        newsGrid.appendChild(newsCard);
     });
+}
+
+// Hàm tạo card tin tức
+function createNewsCard(emergency) {
+    const card = document.createElement('div');
+    card.className = 'bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer news-card';
+    card.setAttribute('data-id', emergency.id);
+    
+    // Map type to Vietnamese and colors
+    const typeMap = {
+        'fire': { name: 'Hỏa hoạn', color: 'red', icon: 'flame' },
+        'flood': { name: 'Ngập lụt', color: 'blue', icon: 'droplet' },
+        'accident': { name: 'Tai nạn', color: 'orange', icon: 'activity' },
+        'disaster': { name: 'Thiên tai', color: 'purple', icon: 'alert-octagon' },
+        'medical': { name: 'Y tế', color: 'green', icon: 'heart' }
+    };
+
+    const typeInfo = typeMap[emergency.type] || { name: 'Khẩn cấp', color: 'gray', icon: 'alert-triangle' };
+    
+    // Format date
+    const date = new Date(emergency.timestamp);
+    const formattedDate = date.toLocaleDateString('vi-VN', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+
+    // Status badge
+    const statusMap = {
+        'active': { text: 'Đang xử lý', color: 'bg-red-100 text-red-800' },
+        'resolved': { text: 'Đã giải quyết', color: 'bg-green-100 text-green-800' },
+        'warning': { text: 'Cảnh báo', color: 'bg-yellow-100 text-yellow-800' }
+    };
+    const statusInfo = statusMap[emergency.status] || { text: 'Không xác định', color: 'bg-gray-100 text-gray-800' };
+
+    card.innerHTML = `
+        <div class="relative">
+            <img src="${emergency.image}" alt="${emergency.title}" class="w-full h-48 object-cover">
+            <div class="absolute top-4 left-4">
+                <span class="px-3 py-1 ${statusInfo.color} rounded-full text-xs font-medium">
+                    ${statusInfo.text}
+                </span>
+            </div>
+            <div class="absolute top-4 right-4">
+                <span class="px-3 py-1 bg-${typeInfo.color}-100 text-${typeInfo.color}-800 rounded-full text-xs font-medium flex items-center">
+                    <i data-feather="${typeInfo.icon}" class="w-3 h-3 mr-1"></i>
+                    ${typeInfo.name}
+                </span>
+            </div>
+        </div>
+        <div class="p-6">
+            <h3 class="font-bold text-lg mb-2 text-gray-800 line-clamp-2">${emergency.title}</h3>
+            <p class="text-gray-600 text-sm mb-4 line-clamp-2">${emergency.summary}</p>
+            <div class="flex items-center justify-between text-sm text-gray-500">
+                <div class="flex items-center">
+                    <i data-feather="map-pin" class="w-4 h-4 mr-1"></i>
+                    <span>${emergency.location}</span>
+                </div>
+                <div class="flex items-center">
+                    <i data-feather="clock" class="w-4 h-4 mr-1"></i>
+                    <span>${formattedDate}</span>
+                </div>
+            </div>
+            ${emergency.casualties > 0 ? `
+                <div class="mt-3 p-2 bg-red-50 rounded-lg">
+                    <div class="flex items-center text-red-700 text-sm">
+                        <i data-feather="alert-triangle" class="w-4 h-4 mr-2"></i>
+                        <span>${emergency.casualties} người bị thương</span>
+                    </div>
+                </div>
+            ` : ''}
+        </div>
+    `;
+
+    // Add click event
+    card.addEventListener('click', () => openNewsModal(emergency));
+
+    return card;
+}
+
+// Hàm mở modal chi tiết
+function openNewsModal(emergency) {
+    const modal = document.getElementById('news-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalContent = document.getElementById('modal-content');
+    const mapLink = document.getElementById('map-link');
+    const relatedNews = document.querySelector('#related-news .space-y-2');
+
+    if (!modal || !modalTitle || !modalContent) return;
+
+    // Map type to Vietnamese
+    const typeMap = {
+        'fire': { name: 'Hỏa hoạn', color: 'red', icon: 'flame' },
+        'flood': { name: 'Ngập lụt', color: 'blue', icon: 'droplet' },
+        'accident': { name: 'Tai nạn giao thông', color: 'orange', icon: 'activity' },
+        'disaster': { name: 'Thiên tai', color: 'purple', icon: 'alert-octagon' },
+        'medical': { name: 'Y tế', color: 'green', icon: 'heart' }
+    };
+
+    const typeInfo = typeMap[emergency.type] || { name: 'Khẩn cấp', color: 'gray', icon: 'alert-triangle' };
+
+    // Format date
+    const date = new Date(emergency.timestamp);
+    const formattedDate = date.toLocaleDateString('vi-VN', {
+        weekday: 'long',
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+
+    // Status badge
+    const statusMap = {
+        'active': { text: 'Đang xử lý', color: 'bg-red-100 text-red-800 border-red-200' },
+        'resolved': { text: 'Đã giải quyết', color: 'bg-green-100 text-green-800 border-green-200' },
+        'warning': { text: 'Cảnh báo', color: 'bg-yellow-100 text-yellow-800 border-yellow-200' }
+    };
+    const statusInfo = statusMap[emergency.status] || { text: 'Không xác định', color: 'bg-gray-100 text-gray-800 border-gray-200' };
+
+    // Set modal content
+    modalTitle.textContent = emergency.title;
+    
+    modalContent.innerHTML = `
+        <div class="flex flex-wrap gap-2 mb-4">
+            <span class="px-3 py-1 ${statusInfo.color} border rounded-full text-sm font-medium">
+                ${statusInfo.text}
+            </span>
+            <span class="px-3 py-1 bg-${typeInfo.color}-100 text-${typeInfo.color}-800 border border-${typeInfo.color}-200 rounded-full text-sm font-medium flex items-center">
+                <i data-feather="${typeInfo.icon}" class="w-4 h-4 mr-1"></i>
+                ${typeInfo.name}
+            </span>
+        </div>
+
+        <div class="bg-gray-50 rounded-lg p-4 mb-4">
+            <div class="grid grid-cols-2 gap-4 text-sm">
+                <div class="flex items-center">
+                    <i data-feather="map-pin" class="w-4 h-4 mr-2 text-gray-600"></i>
+                    <span class="font-medium">Địa điểm:</span>
+                    <span class="ml-1">${emergency.location}</span>
+                </div>
+                <div class="flex items-center">
+                    <i data-feather="clock" class="w-4 h-4 mr-2 text-gray-600"></i>
+                    <span class="font-medium">Thời gian:</span>
+                    <span class="ml-1">${formattedDate}</span>
+                </div>
+                ${emergency.casualties > 0 ? `
+                    <div class="flex items-center">
+                        <i data-feather="alert-triangle" class="w-4 h-4 mr-2 text-red-600"></i>
+                        <span class="font-medium">Thương vong:</span>
+                        <span class="ml-1 text-red-600">${emergency.casualties} người</span>
+                    </div>
+                ` : ''}
+                <div class="flex items-center">
+                    <i data-feather="users" class="w-4 h-4 mr-2 text-blue-600"></i>
+                    <span class="font-medium">Lực lượng:</span>
+                    <span class="ml-1 text-blue-600">${emergency.rescue_teams} đội</span>
+                </div>
+            </div>
+        </div>
+
+        <img src="${emergency.image}" alt="${emergency.title}" class="w-full h-64 object-cover rounded-lg mb-4">
+
+        <div class="prose max-w-none">
+            <p class="text-gray-700 leading-relaxed">${emergency.content}</p>
+        </div>
+
+        ${emergency.affected_areas && emergency.affected_areas.length > 0 ? `
+            <div class="mt-4 p-4 bg-blue-50 rounded-lg">
+                <h5 class="font-semibold text-blue-800 mb-2 flex items-center">
+                    <i data-feather="navigation" class="w-4 h-4 mr-2"></i>
+                    Khu vực ảnh hưởng:
+                </h5>
+                <div class="flex flex-wrap gap-2">
+                    ${emergency.affected_areas.map(area => `
+                        <span class="px-3 py-1 bg-white text-blue-700 rounded-full text-sm border border-blue-200">
+                            ${area}
+                        </span>
+                    `).join('')}
+                </div>
+            </div>
+        ` : ''}
+    `;
+
+    // Set map link
+    if (mapLink) {
+        mapLink.href = `emergency_map.html?id=${emergency.id}&lat=${emergency.coordinates[0]}&lng=${emergency.coordinates[1]}`;
+    }
+
+    // Show related news
+    if (relatedNews) {
+        const related = getRelatedNews(emergency.id, emergency.type);
+        relatedNews.innerHTML = related.map(news => `
+            <div class="flex items-start p-3 hover:bg-gray-50 rounded-lg cursor-pointer" onclick="openNewsModalById(${news.id})">
+                <img src="${news.image}" alt="${news.title}" class="w-16 h-16 object-cover rounded mr-3">
+                <div class="flex-1">
+                    <h6 class="font-medium text-sm text-gray-800 line-clamp-2">${news.title}</h6>
+                    <p class="text-xs text-gray-500 mt-1">${new Date(news.timestamp).toLocaleDateString('vi-VN')}</p>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // Show modal
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+
+    // Refresh icons
     feather.replace();
 }
 
-// Skeleton loading
-function showSkeleton() {
-    const grid = document.getElementById('news-grid');
-    grid.innerHTML = '';
-    for (let i = 0; i < 4; i++) {
-        const skeletonCard = document.createElement('div');
-        skeletonCard.className = 'news-card bg-white rounded-xl overflow-hidden shadow-md';
-        skeletonCard.innerHTML = `
-            <div class="w-full h-40 skeleton"></div>
-            <div class="p-5">
-                <div class="h-4 w-24 skeleton mb-2"></div>
-                <div class="h-6 w-full skeleton mb-2"></div>
-                <div class="h-4 w-3/4 skeleton mb-3"></div>
-                <div class="h-4 w-32 skeleton"></div>
-            </div>
-        `;
-        grid.appendChild(skeletonCard);
+// Hàm lấy tin liên quan
+function getRelatedNews(currentId, currentType) {
+    return emergenciesData
+        .filter(emergency => emergency.id !== currentId && emergency.type === currentType)
+        .slice(0, 3);
+}
+
+// Hàm mở modal bằng ID
+function openNewsModalById(id) {
+    const emergency = emergenciesData.find(emergency => emergency.id === id);
+    if (emergency) {
+        openNewsModal(emergency);
     }
 }
 
-// Modal functions
-function openModal(index) {
-    const news = newsData[index];
+// Hàm đóng modal
+function setupModalClose() {
     const modal = document.getElementById('news-modal');
-    document.getElementById('modal-title').textContent = news.title;
-    document.getElementById('modal-content').innerHTML = `<img src="${news.img}" alt="${news.title}" class="w-full h-48 object-cover rounded-md mb-4">${news.content}`;
-    document.getElementById('map-link').href = `index.html#map?location=${news.location.split(',')[0]}`;
-    // Related news (tối đa 5 để đồng bộ với news.html)
-    const related = document.getElementById('related-news').querySelector('.space-y-2');
-    related.innerHTML = '';
-    newsData.filter((n, i) => i !== index && n.type === news.type).slice(0, 5).forEach(n => {
-        const link = document.createElement('a');
-        link.href = '#';
-        link.onclick = () => { closeModal(); openModal(newsData.indexOf(n)); return false; };
-        link.className = 'block text-sm text-gray-700 hover:text-red-600';
-        link.textContent = `→ ${n.title}`;
-        related.appendChild(link);
-    });
-    // Share button
-    document.getElementById('share-news').onclick = () => {
-        if (navigator.share) {
-            navigator.share({
-                title: news.title,
-                text: news.content.replace(/<[^>]+>/g, '').substring(0, 100) + '...',
-                url: window.location.href
-            });
-        } else {
-            alert('Chức năng chia sẻ không được hỗ trợ trên thiết bị này.');
-        }
-    };
-    modal.classList.remove('hidden');
-}
-function closeModal() {
-    document.getElementById('news-modal').classList.add('hidden');
-}
-document.getElementById('close-modal').addEventListener('click', closeModal);
+    const closeBtn = document.getElementById('close-modal');
 
-// Khởi tạo
-showSkeleton();
-setTimeout(() => {
-    renderNews();
-}, 500);
+    if (closeBtn && modal) {
+        closeBtn.addEventListener('click', () => {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        });
+
+        // Close modal when clicking outside
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        });
+    }
+}
+
+// Hàm chia sẻ tin tức
+function setupShareButton() {
+    const shareBtn = document.getElementById('share-news');
+    if (shareBtn) {
+        shareBtn.addEventListener('click', () => {
+            if (navigator.share) {
+                navigator.share({
+                    title: document.getElementById('modal-title').textContent,
+                    text: 'Thông tin sự cố khẩn cấp',
+                    url: window.location.href,
+                });
+            } else {
+                // Fallback: copy to clipboard
+                const modalTitle = document.getElementById('modal-title').textContent;
+                navigator.clipboard.writeText(modalTitle + ' - ' + window.location.href);
+                alert('Đã sao chép liên kết tin tức!');
+            }
+        });
+    }
+}
+
+// Hàm khởi tạo
+async function initNews() {
+    await fetchEmergenciesData();
+    displayNews(emergenciesData);
+    setupModalClose();
+    setupShareButton();
+    feather.replace();
+}
+
+// Khởi chạy khi DOM loaded
+document.addEventListener('DOMContentLoaded', initNews);
+
+
+//map
+console.log('News module loaded');
+
+
+//index
+// News functionality for Emergency Rescue System
+
+class NewsManager {
+    constructor() {
+        this.news = [];
+        this.currentPage = 1;
+        this.itemsPerPage = 8;
+        this.init();
+    }
+    
+    async init() {
+        await this.loadNews();
+        this.renderNews();
+        this.setupEventListeners();
+    }
+    
+    async loadNews() {
+        try {
+            this.news = await ApiService.getNews();
+        } catch (error) {
+            console.error('Error loading news:', error);
+            this.news = this.getMockNews();
+        }
+    }
+    
+    renderNews() {
+        const newsGrid = document.getElementById('news-grid');
+        if (!newsGrid) return;
+        
+        const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+        const endIndex = startIndex + this.itemsPerPage;
+        const newsToShow = this.news.slice(startIndex, endIndex);
+        
+        if (newsToShow.length === 0) {
+            newsGrid.innerHTML = `
+                <div class="col-span-full text-center py-12">
+                    <i data-feather="file-text" class="w-12 h-12 text-gray-400 mx-auto mb-4"></i>
+                    <p class="text-gray-500">Không có bản tin nào.</p>
+                </div>
+            `;
+            feather.replace();
+            return;
+        }
+        
+        newsGrid.innerHTML = newsToShow.map(newsItem => this.createNewsCard(newsItem)).join('');
+        feather.replace();
+    }
+    
+    createNewsCard(newsItem) {
+        const timeAgo = formatTimeAgo(newsItem.publishedAt);
+        const typeIcon = this.getTypeIcon(newsItem.type);
+        const severityClass = this.getSeverityClass(newsItem.severity);
+        
+        return `
+            <div class="news-card bg-white rounded-xl shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-all duration-300"
+                 onclick="newsManager.openNewsModal(${newsItem.id})">
+                <div class="relative">
+                    <img src="${newsItem.image}" alt="${newsItem.title}" class="w-full h-48 object-cover">
+                    <div class="absolute top-3 right-3 ${severityClass} px-2 py-1 rounded-full text-xs font-semibold text-white">
+                        ${this.getSeverityLabel(newsItem.severity)}
+                    </div>
+                    <div class="absolute bottom-3 left-3 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-xs">
+                        ${typeIcon} ${this.getTypeLabel(newsItem.type)}
+                    </div>
+                </div>
+                <div class="p-4">
+                    <h3 class="font-bold text-lg mb-2 line-clamp-2 text-gray-800">${newsItem.title}</h3>
+                    <p class="text-gray-600 text-sm mb-3 line-clamp-2">${newsItem.summary}</p>
+                    <div class="flex justify-between items-center text-xs text-gray-500">
+                        <span>${timeAgo}</span>
+                        <span>${newsItem.location}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    getTypeIcon(type) {
+        const icons = {
+            warning: '⚠️',
+            info: 'ℹ️',
+            emergency: '🚨',
+            update: '📢'
+        };
+        return icons[type] || '📰';
+    }
+    
+    getTypeLabel(type) {
+        const labels = {
+            warning: 'Cảnh báo',
+            info: 'Thông tin',
+            emergency: 'Khẩn cấp',
+            update: 'Cập nhật'
+        };
+        return labels[type] || 'Tin tức';
+    }
+    
+    getSeverityClass(severity) {
+        const classes = {
+            high: 'bg-red-500',
+            medium: 'bg-orange-500',
+            low: 'bg-yellow-500',
+            info: 'bg-blue-500'
+        };
+        return classes[severity] || 'bg-gray-500';
+    }
+    
+    getSeverityLabel(severity) {
+        const labels = {
+            high: 'Cao',
+            medium: 'Trung bình',
+            low: 'Thấp',
+            info: 'Thông tin'
+        };
+        return labels[severity] || 'Không xác định';
+    }
+    
+    setupEventListeners() {
+        // Modal close button
+        const closeModal = document.getElementById('close-modal');
+        if (closeModal) {
+            closeModal.addEventListener('click', () => this.closeNewsModal());
+        }
+        
+        // Modal backdrop click
+        const modal = document.getElementById('news-modal');
+        if (modal) {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    this.closeNewsModal();
+                }
+            });
+        }
+        
+        // Share button
+        const shareBtn = document.getElementById('share-news');
+        if (shareBtn) {
+            shareBtn.addEventListener('click', () => this.shareCurrentNews());
+        }
+        
+        // Escape key to close modal
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                this.closeNewsModal();
+            }
+        });
+    }
+    
+    openNewsModal(newsId) {
+        const newsItem = this.news.find(item => item.id === newsId);
+        if (!newsItem) return;
+        
+        const modal = document.getElementById('news-modal');
+        const title = document.getElementById('modal-title');
+        const content = document.getElementById('modal-content');
+        const mapLink = document.getElementById('map-link');
+        const relatedNews = document.getElementById('related-news').querySelector('.space-y-2');
+        
+        if (!modal || !title || !content) return;
+        
+        // Set modal content
+        title.textContent = newsItem.title;
+        content.innerHTML = this.createModalContent(newsItem);
+        
+        // Set map link
+        if (mapLink && newsItem.coordinates) {
+            mapLink.href = `emergency_map.html?lat=${newsItem.coordinates[0]}&lng=${newsItem.coordinates[1]}&zoom=15`;
+        }
+        
+        // Show related news
+        const related = this.getRelatedNews(newsItem);
+        relatedNews.innerHTML = related.map(item => `
+            <div class="flex items-center space-x-3 p-2 hover:bg-gray-50 rounded cursor-pointer" 
+                 onclick="newsManager.openNewsModal(${item.id})">
+                <img src="${item.image}" alt="${item.title}" class="w-12 h-12 object-cover rounded">
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-900 truncate">${item.title}</p>
+                    <p class="text-xs text-gray-500">${formatTimeAgo(item.publishedAt)}</p>
+                </div>
+            </div>
+        `).join('');
+        
+        // Show modal
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        
+        // Update Feather icons in modal
+        feather.replace();
+        
+        // Track view
+        this.trackNewsView(newsItem);
+    }
+    
+    createModalContent(newsItem) {
+        return `
+            <div class="mb-4">
+                <img src="${newsItem.image}" alt="${newsItem.title}" class="w-full h-64 object-cover rounded-lg">
+            </div>
+            <div class="flex items-center space-x-4 text-sm text-gray-600 mb-4">
+                <span class="flex items-center">
+                    <i data-feather="clock" class="w-4 h-4 mr-1"></i>
+                    ${formatDate(newsItem.publishedAt)}
+                </span>
+                <span class="flex items-center">
+                    <i data-feather="map-pin" class="w-4 h-4 mr-1"></i>
+                    ${newsItem.location}
+                </span>
+                <span class="flex items-center">
+                    <i data-feather="alert-circle" class="w-4 h-4 mr-1"></i>
+                    ${this.getSeverityLabel(newsItem.severity)}
+                </span>
+            </div>
+            <div class="prose max-w-none">
+                ${newsItem.content || newsItem.summary}
+            </div>
+            ${newsItem.affectedAreas ? `
+                <div class="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                    <h4 class="font-semibold text-yellow-800 mb-2 flex items-center">
+                        <i data-feather="alert-triangle" class="w-4 h-4 mr-2"></i>
+                        Khu vực ảnh hưởng
+                    </h4>
+                    <p class="text-yellow-700">${newsItem.affectedAreas}</p>
+                </div>
+            ` : ''}
+            ${newsItem.safetyInstructions ? `
+                <div class="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <h4 class="font-semibold text-blue-800 mb-2 flex items-center">
+                        <i data-feather="shield" class="w-4 h-4 mr-2"></i>
+                        Hướng dẫn an toàn
+                    </h4>
+                    <p class="text-blue-700">${newsItem.safetyInstructions}</p>
+                </div>
+            ` : ''}
+        `;
+    }
+    
+    getRelatedNews(currentNews) {
+        return this.news
+            .filter(item => 
+                item.id !== currentNews.id && 
+                (item.type === currentNews.type || item.location === currentNews.location)
+            )
+            .slice(0, 3);
+    }
+    
+    closeNewsModal() {
+        const modal = document.getElementById('news-modal');
+        if (modal) {
+            modal.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+    }
+    
+    shareCurrentNews() {
+        const modal = document.getElementById('news-modal');
+        const title = document.getElementById('modal-title');
+        
+        if (!modal.classList.contains('hidden') && title) {
+            const newsItem = this.news.find(item => item.title === title.textContent);
+            if (newsItem) {
+                this.shareNews(newsItem);
+            }
+        }
+    }
+    
+    shareNews(newsItem) {
+        const shareData = {
+            title: newsItem.title,
+            text: newsItem.summary,
+            url: `${window.location.origin}/news.html?id=${newsItem.id}`
+        };
+        
+        if (navigator.share) {
+            navigator.share(shareData)
+                .then(() => console.log('News shared successfully'))
+                .catch(error => console.log('Error sharing news:', error));
+        } else {
+            // Fallback: copy to clipboard
+            navigator.clipboard.writeText(shareData.url).then(() => {
+                alert('Đã sao chép liên kết vào clipboard');
+            });
+        }
+    }
+    
+    trackNewsView(newsItem) {
+        // Analytics tracking
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'view_news', {
+                'event_category': 'engagement',
+                'event_label': newsItem.type,
+                'value': newsItem.id
+            });
+        }
+    }
+    
+    getMockNews() {
+        return [
+            {
+                id: 1,
+                title: "Cảnh báo mưa lớn diện rộng tại miền Trung",
+                summary: "Mưa lớn kéo dài gây ngập lụt nhiều khu vực tại các tỉnh miền Trung",
+                content: "Theo Trung tâm Dự báo Khí tượng Thủy văn Quốc gia, mưa lớn diện rộng đang xảy ra tại các tỉnh miền Trung...",
+                type: "warning",
+                severity: "high",
+                location: "Miền Trung",
+                image: "https://images.unsplash.com/photo-1599058917765-7805dd3c0a56?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                publishedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+                coordinates: [16.047079, 108.206230],
+                affectedAreas: "Các tỉnh từ Thừa Thiên Huế đến Khánh Hòa",
+                safetyInstructions: "Người dân hạn chế ra đường, chuẩn bị sẵn sàng phương án sơ tán"
+            },
+            {
+                id: 2,
+                title: "Hỏa hoạn tại chung cư Quận 1",
+                summary: "Đám cháy bùng phát tại tầng hầm chung cư cao cấp",
+                content: "Một vụ hỏa hoạn đã xảy ra tại tầng hầm chung cư...",
+                type: "emergency",
+                severity: "high",
+                location: "Quận 1, TP.HCM",
+                image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                publishedAt: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
+                coordinates: [10.7769, 106.7009]
+            }
+        ];
+    }
+}
+
+// Initialize news manager when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    window.newsManager = new NewsManager();
+});
+
+// Export for testing
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { NewsManager };
+}
