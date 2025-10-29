@@ -56,7 +56,7 @@
                 <div class="md:w-1/2 mb-10 md:mb-0">
                     <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-6">
                         <span class="bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">Hệ Thống Cứu Hộ</span> <br>
-                        <span class="text-gray-800">Ứng Phó Khẩn Cấp Quốc Gia</span>
+                        
                     </h1>
                     <p class="text-lg text-gray-600 mb-8 max-w-lg leading-relaxed">
                         Kết nối người dân với lực lượng cứu hộ trong các tình huống khẩn cấp như thiên tai, hỏa hoạn, tai nạn giao thông và các sự cố đe dọa tính mạng.
@@ -68,7 +68,7 @@
                             </svg>
                             BÁO KHẨN CẤP
                         </a>
-                        <a href="emergency_map.html" class="border-2 border-red-500 text-red-500 hover:bg-red-50 px-6 py-3 rounded-lg font-medium transition-all shadow flex items-center">
+                        <a href="map.html" class="border-2 border-red-500 text-red-500 hover:bg-red-50 px-6 py-3 rounded-lg font-medium transition-all shadow flex items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -83,7 +83,7 @@
                         <div class="absolute -bottom-4 -right-4 bg-white p-3 rounded-lg shadow-lg">
                             <div class="flex items-center">
                                 <div class="h-3 w-3 bg-red-500 rounded-full mr-2 animate-pulse"></div>
-                                <span class="text-sm font-medium">Đang hoạt động 24/7</span>
+                                <span class="text-sm font-medium">Đang hoạt động 24/24</span>
                             </div>
                         </div>
                     </div>
@@ -92,55 +92,52 @@
         </div>
     </section>
 
-    <!-- Services Section -->
-    <section class="py-20 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold mb-4 bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">Dịch Vụ Cứu Hộ</h2>
-                <p class="text-gray-600 max-w-2xl mx-auto text-lg">Các dịch vụ cứu hộ khẩn cấp luôn sẵn sàng hỗ trợ 24/7</p>
+  <div class="flex flex-col items-center justify-center min-h-screen bg-gray-50 py-12 px-4">
+    <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold text-gray-800 mb-4">Dịch Vụ Ứng Cứu Khẩn Cấp</h2>
+        <p class="text-gray-600 max-w-2xl mx-auto">Chúng tôi cung cấp các dịch vụ ứng cứu nhanh chóng và hiệu quả trong mọi tình huống khẩn cấp</p>
+    </div>
+    
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+        <div class="service-card bg-white border border-gray-100 p-8 shadow-sm rounded-xl text-center transition-all duration-300 hover:shadow-md hover:-translate-y-1">
+            <div class="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
             </div>
-            
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                <div class="service-card bg-white border border-gray-100 p-8 shadow-sm">
-                    <div class="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mb-6">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                        </svg>
-                    </div>
-                    <h3 class="font-bold text-xl mb-3 text-gray-800">Thiên Tai</h3>
-                    <p class="text-gray-600 leading-relaxed">Bão lụt, động đất, sạt lở đất và các hiện tượng thiên tai khác</p>
-                </div>
-                <div class="service-card bg-white border border-gray-100 p-8 shadow-sm">
-                    <div class="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mb-6">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z" />
-                        </svg>
-                    </div>
-                    <h3 class="font-bold text-xl mb-3 text-gray-800">Hỏa Hoạn</h3>
-                    <p class="text-gray-600 leading-relaxed">Cứu hỏa, ứng cứu các vụ cháy nổ, sự cố công nghiệp</p>
-                </div>
-                <div class="service-card bg-white border border-gray-100 p-8 shadow-sm">
-                    <div class="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mb-6">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                        </svg>
-                    </div>
-                    <h3 class="font-bold text-xl mb-3 text-gray-800">Giao Thông</h3>
-                    <p class="text-gray-600 leading-relaxed">Tai nạn đường bộ, hàng không, hàng hải và đường sắt</p>
-                </div>
-                <div class="service-card bg-white border border-gray-100 p-8 shadow-sm">
-                    <div class="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mb-6">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                        </svg>
-                    </div>
-                    <h3 class="font-bold text-xl mb-3 text-gray-800">Y Tế</h3>
-                    <p class="text-gray-600 leading-relaxed">Cấp cứu y tế, tai nạn lao động, sự cố sức khỏe</p>
-                </div>
-            </div>
+            <h3 class="font-bold text-xl mb-3 text-gray-800">Thiên Tai</h3>
+            <p class="text-gray-600 leading-relaxed">Bão lụt, động đất, sạt lở đất và các hiện tượng thiên tai khác</p>
         </div>
-    </section>
+        <div class="service-card bg-white border border-gray-100 p-8 shadow-sm rounded-xl text-center transition-all duration-300 hover:shadow-md hover:-translate-y-1">
+            <div class="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z" />
+                </svg>
+            </div>
+            <h3 class="font-bold text-xl mb-3 text-gray-800">Hỏa Hoạn</h3>
+            <p class="text-gray-600 leading-relaxed">Cứu hỏa, ứng cứu các vụ cháy nổ, sự cố công nghiệp</p>
+        </div>
+        <div class="service-card bg-white border border-gray-100 p-8 shadow-sm rounded-xl text-center transition-all duration-300 hover:shadow-md hover:-translate-y-1">
+            <div class="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                </svg>
+            </div>
+            <h3 class="font-bold text-xl mb-3 text-gray-800">Giao Thông</h3>
+            <p class="text-gray-600 leading-relaxed">Tai nạn đường bộ, hàng không, hàng hải và đường sắt</p>
+        </div>
+        <div class="service-card bg-white border border-gray-100 p-8 shadow-sm rounded-xl text-center transition-all duration-300 hover:shadow-md hover:-translate-y-1">
+            <div class="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+            </div>
+            <h3 class="font-bold text-xl mb-3 text-gray-800">Y Tế</h3>
+            <p class="text-gray-600 leading-relaxed">Cấp cứu y tế, tai nạn lao động, sự cố sức khỏe</p>
+        </div>
+    </div>
+</div>
 
     <!-- Map Section -->
     <section id="map-section" class="py-20 bg-gradient-to-b from-gray-50 to-white">

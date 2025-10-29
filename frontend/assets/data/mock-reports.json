@@ -1,0 +1,16 @@
+[
+    {
+        "id": 1,
+        "type": "fire",
+        "location": "Mock Location 1",
+        "severity": "critical",
+        "timestamp": "2025-10-29T10:00:00Z"
+    },
+    {
+        "id": 2,
+        "type": "traffic",
+        "location": "Mock Location 2",
+        "severity": "high",
+        "timestamp": "2025-10-29T11:00:00Z"
+    }
+]
