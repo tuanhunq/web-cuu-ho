@@ -8,27 +8,74 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/feather-icons"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<<<<<<< HEAD
     <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body class="bg-gray-50">
     <!-- Navigation -->
     <div id="navbar-container"></div>
+=======
+    
+    <link rel="stylesheet" href="assets/css/styles.css"> 
+    <link rel="stylesheet" href="assets/css/map.css"> 
+</head>
+<body class="bg-gray-50">
+    <nav class="bg-white shadow-md sticky top-0 z-50 backdrop-blur-sm bg-opacity-80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex items-center space-x-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                    <span class="text-2xl font-bold bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">CỨU HỘ QUỐC GIA</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="indexx.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Trang chủ</a>
+                    <a href="map.html" class="nav-link text-red-500 font-medium transition">Bản đồ cứu hộ</a>
+                    <a href="request.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Bản tin</a>
+                    <a href="post.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Báo tin</a>
+                    <div class="flex space-x-4">
+                        <a href="admin.html" class="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-lg font-medium transition-all shadow hover:shadow-lg">Admin</a>
+                        <a href="login.html" class="bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-all shadow hover:shadow-lg">Đăng nhập</a>
+                    </div>
+                </div>
+                <div class="md:hidden flex items-center">
+                    <button id="menu-toggle" class="text-gray-700 hover:text-red-600">
+                        <i data-feather="menu"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-white py-2 px-4 shadow-lg">
+            <a href="indexx.html" class="block py-2 text-gray-700 hover:text-red-600 transition">Trang chủ</a>
+            <a href="map.html" class="block py-2 text-red-600 font-medium transition">Bản đồ cứu hộ</a>
+            <a href="request.html" class="block py-2 text-gray-700 hover:text-red-600 transition">Bản tin</a>
+            <a href="post.html" class="block py-2 text-gray-700 hover:text-red-600 transition">Báo tin</a>
+            <a href="admin.html" class="block py-2 text-white bg-gray-800 rounded-md text-center">Admin</a>
+            <a href="login.html" class="block py-2 text-white bg-red-600 rounded-md text-center mt-2">Đăng nhập</a>
+        </div>
+    </nav>
 
-    <!-- Map Section -->
+    <div class="bg-gradient-to-r from-red-500 to-orange-500 text-white py-3 px-4 text-center animate-pulse">
+        <div class="max-w-7xl mx-auto flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <span class="font-medium tracking-wide">CẢNH BÁO THIÊN TAI: Mưa lớn diện rộng tại miền Trung - Cập nhật lúc 14:30 15/06/2023</span>
+        </div>
+    </div>
+>>>>>>> 916d57f35bbb0937659eaa65a431aaa13c3173aa
+
     <section class="py-8 bg-gradient-to-b from-gray-50 to-white relative">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <!-- Breadcrumb -->
-
             <div class="text-center mb-8">
                 <h1 class="text-4xl font-bold mb-4 bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">
                     Bản Đồ Cứu Hộ Trực Tuyến
                 </h1>
             </div>
 
-            <!-- Bộ lọc và tìm kiếm -->
             <div class="mb-6 bg-white rounded-2xl shadow-lg p-6">
                 <div class="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
-                    <!-- Tìm kiếm -->
                     <div class="flex-1 w-full lg:w-auto">
                         <div class="relative">
                             <i data-feather="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"></i>
@@ -41,7 +88,6 @@
                         </div>
                     </div>
 
-                    <!-- Bộ lọc tỉnh thành -->
                     <div class="w-full lg:w-64">
                         <select id="province-filter" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
                             <option value="all">Tất cả tỉnh thành</option>
@@ -56,7 +102,6 @@
                         </select>
                     </div>
 
-                    <!-- Bộ lọc loại sự cố -->
                     <div class="w-full lg:w-64">
                         <select id="type-filter" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
                             <option value="all">Tất cả loại sự cố</option>
@@ -69,7 +114,6 @@
                         </select>
                     </div>
 
-                    <!-- Nút reset -->
                     <button id="reset-filters" class="px-6 py-3 border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-xl transition flex items-center whitespace-nowrap">
                         <i data-feather="refresh-cw" class="mr-2 w-4 h-4"></i> Đặt lại
                     </button>
@@ -77,11 +121,9 @@
             </div>
 
             <div class="flex flex-col lg:flex-row gap-8 relative">
-                <!-- 🗺️ Bản đồ -->
                 <div class="lg:w-2/3 relative z-10">
                     <div id="map" class="h-[600px] w-full rounded-2xl shadow-xl border border-gray-200 relative"></div>
 
-                    <!-- Controls -->
                     <div class="mt-4 flex flex-wrap gap-3 items-center justify-between">
                         <div class="flex flex-wrap gap-2">
                             <button id="locate-btn" class="bg-white border border-gray-300 px-4 py-2 rounded-lg flex items-center hover:bg-gray-50 transition shadow-sm">
@@ -108,10 +150,8 @@
                     </div>
                 </div>
 
-                <!-- 🔥 Panel thông tin -->
                 <div class="lg:w-1/3 relative z-30">
                     <div class="bg-white rounded-2xl shadow-xl overflow-hidden sticky-panel sticky top-24">
-                        <!-- Header -->
                         <div class="bg-gradient-to-r from-red-500 to-orange-500 p-6 text-white">
                             <h3 class="text-xl font-bold mb-2 flex items-center">
                                 <i data-feather="activity" class="mr-2 w-5 h-5"></i>
@@ -120,7 +160,6 @@
                             <p class="text-red-100 text-sm">Cập nhật lúc: <span id="last-update">--:--:--</span></p>
                         </div>
 
-                        <!-- Thống kê -->
                         <div class="p-6 border-b border-gray-200">
                             <div class="grid grid-cols-2 gap-4">
                                 <div class="text-center p-4 bg-red-50 rounded-xl">
@@ -142,7 +181,6 @@
                             </div>
                         </div>
 
-                        <!-- Chú thích -->
                         <div class="p-6">
                             <h4 class="font-bold mb-4 text-gray-800 flex items-center">
                                 <i data-feather="map" class="text-red-500 mr-2 w-4 h-4"></i>
@@ -150,7 +188,6 @@
                             </h4>
 
                             <div class="space-y-3">
-                                <!-- Hỏa hoạn -->
                                 <div class="flex items-center p-3 bg-red-50 rounded-lg border border-red-200 hover:bg-red-100 transition cursor-pointer" data-type="fire">
                                     <div class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center mr-3">
                                         <i data-feather="flame" class="text-white w-4 h-4"></i>
@@ -162,7 +199,6 @@
                                     <div class="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold" id="count-fire">0</div>
                                 </div>
 
-                                <!-- Ngập lụt -->
                                 <div class="flex items-center p-3 bg-blue-50 rounded-lg border border-blue-200 hover:bg-blue-100 transition cursor-pointer" data-type="flood">
                                     <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center mr-3">
                                         <i data-feather="droplet" class="text-white w-4 h-4"></i>
@@ -174,7 +210,6 @@
                                     <div class="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-bold" id="count-flood">0</div>
                                 </div>
 
-                                <!-- Tai nạn giao thông -->
                                 <div class="flex items-center p-3 bg-orange-50 rounded-lg border border-orange-200 hover:bg-orange-100 transition cursor-pointer" data-type="accident">
                                     <div class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center mr-3">
                                         <i data-feather="activity" class="text-white w-4 h-4"></i>
@@ -186,7 +221,6 @@
                                     <div class="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center text-white text-xs font-bold" id="count-accident">0</div>
                                 </div>
 
-                                <!-- Thiên tai -->
                                 <div class="flex items-center p-3 bg-purple-50 rounded-lg border border-purple-200 hover:bg-purple-100 transition cursor-pointer" data-type="disaster">
                                     <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center mr-3">
                                         <i data-feather="alert-octagon" class="text-white w-4 h-4"></i>
@@ -203,7 +237,6 @@
                 </div>
             </div>
 
-            <!-- Danh sách sự cố gần đây -->
             <div class="mt-12">
                 <div class="bg-white rounded-2xl shadow-lg p-6">
                     <h3 class="text-2xl font-bold mb-6 flex items-center text-gray-800">
@@ -211,14 +244,12 @@
                         Sự Cố Gần Đây
                     </h3>
                     <div id="recent-incidents" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <!-- Sẽ được cập nhật bằng JavaScript -->
-                    </div>
+                        </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Modal Chi Tiết Sự Cố -->
     <div id="emergency-detail-modal" class="hidden fixed inset-0 z-50 overflow-y-auto">
         <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
             <div class="fixed inset-0 transition-opacity modal-overlay" aria-hidden="true">
@@ -235,7 +266,6 @@
                     </div>
                     
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <!-- Thông tin cơ bản -->
                         <div class="space-y-4">
                             <div class="bg-gray-50 rounded-xl p-4">
                                 <h4 class="font-semibold text-lg mb-3 text-gray-800 flex items-center">
@@ -266,7 +296,6 @@
                                 </div>
                             </div>
 
-                            <!-- Thông tin địa điểm -->
                             <div class="bg-gray-50 rounded-xl p-4">
                                 <h4 class="font-semibold text-lg mb-3 text-gray-800 flex items-center">
                                     <i data-feather="map-pin" class="text-green-500 mr-2 w-5 h-5"></i>
@@ -289,9 +318,7 @@
                             </div>
                         </div>
 
-                        <!-- Thông tin chi tiết -->
                         <div class="space-y-4">
-                            <!-- Mô tả sự cố -->
                             <div class="bg-gray-50 rounded-xl p-4">
                                 <h4 class="font-semibold text-lg mb-3 text-gray-800 flex items-center">
                                     <i data-feather="file-text" class="text-purple-500 mr-2 w-5 h-5"></i>
@@ -300,7 +327,6 @@
                                 <p class="text-gray-700" id="modal-description">--</p>
                             </div>
 
-                            <!-- Thông tin người báo cáo -->
                             <div class="bg-gray-50 rounded-xl p-4">
                                 <h4 class="font-semibold text-lg mb-3 text-gray-800 flex items-center">
                                     <i data-feather="user" class="text-orange-500 mr-2 w-5 h-5"></i>
@@ -322,31 +348,26 @@
                                 </div>
                             </div>
 
-                            <!-- Lực lượng ứng phó -->
                             <div class="bg-gray-50 rounded-xl p-4">
                                 <h4 class="font-semibold text-lg mb-3 text-gray-800 flex items-center">
                                     <i data-feather="users" class="text-red-500 mr-2 w-5 h-5"></i>
                                     Lực Lượng Ứng Phó
                                 </h4>
                                 <div class="space-y-2" id="modal-response-teams">
-                                    <!-- Sẽ được cập nhật bằng JavaScript -->
-                                </div>
+                                    </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Tiến trình xử lý -->
                     <div class="mt-6 bg-gray-50 rounded-xl p-4">
                         <h4 class="font-semibold text-lg mb-3 text-gray-800 flex items-center">
                             <i data-feather="clock" class="text-indigo-500 mr-2 w-5 h-5"></i>
                             Tiến Trình Xử Lý
                         </h4>
                         <div class="space-y-3" id="modal-timeline">
-                            <!-- Sẽ được cập nhật bằng JavaScript -->
-                        </div>
+                            </div>
                     </div>
 
-                    <!-- Nút hành động -->
                     <div class="mt-6 flex flex-wrap gap-3 justify-end">
                         <button id="modal-close-btn" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition">
                             Đóng
@@ -375,6 +396,5 @@
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="assets/js/main.js"></script>
-    <script src="assets/js/map.js"></script>
 </body>
 </html>

@@ -1,0 +1,73 @@
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap');
+:root {
+    --primary: #ef4444;
+    --primary-light: #fee2e2;
+    --dark: #1e293b;
+    --light: #f8fafc;
+}
+body {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    background-color: var(--light);
+    color: var(--dark);
+    scroll-behavior: smooth;
+}
+.nav-link {
+    position: relative;
+}
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--primary);
+    transition: width 0.3s ease;
+}
+.nav-link:hover::after {
+    width: 100%;
+}
+/* Cải thiện responsive */
+@media (max-width: 768px) {
+    .grid-cols-3 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+}
+
+
+/* Custom styles cho trang Báo Tin */
+.emergency-btn {
+    animation: pulse 1.5s infinite cubic-bezier(0.4, 0, 0.6, 1);
+    transition: all 0.3s ease;
+}
+@keyframes pulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+    50% { transform: scale(1.03); box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); }
+}
+.hero-section {
+    background: linear-gradient(135deg, rgba(254, 226, 226, 0.8) 0%, rgba(255, 255, 255, 1) 100%);
+}
+/* Style cho multi-step form */
+.step { 
+    display: none; 
+}
+.step.active { 
+    display: block; 
+}
+.progress-bar { 
+    height: 4px; 
+    background: #ef4444; 
+    transition: width 0.3s ease; 
+}
+/* Draft notification styles */
+.draft-notification {
+    animation: slideInDown 0.3s ease-out;
+}
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

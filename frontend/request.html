@@ -6,12 +6,13 @@
     <title>Bản Tin Khẩn Cấp - Hệ Thống Cứu Hộ Quốc Gia</title>
     <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
     <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/request.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/feather-icons"></script>
 </head>
 <body class="bg-gray-50">
     <!-- Navbar -->
-  <div id="navbar-container"></div>
+    <div id="navbar-container"></div>
 
 
     <!-- News Section -->
@@ -21,7 +22,7 @@
                 <h2 class="text-4xl font-bold mb-4 bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">Bản Tin Khẩn Cấp</h2>
                 <p class="text-gray-600 max-w-2xl mx-auto text-lg">Cập nhật thông tin mới nhất về các sự cố, cảnh báo và hoạt động cứu hộ trên toàn quốc. Dữ liệu được cập nhật tự động từ nguồn uy tín.</p>
             </div>
-
+            
             <!-- Filter and Search -->
             <div class="flex flex-col md:flex-row justify-between mb-8 space-y-4 md:space-y-0 md:space-x-4">
                 <input type="text" id="search-news" placeholder="Tìm kiếm bản tin..." class="w-full md:w-1/3 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
@@ -53,12 +54,14 @@
                 </button>
             </div>
 
+            <!-- News Grid -->
             <div id="news-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- News Cards sẽ được thêm động -->
             </div>
-            
+
+            <!-- Pagination -->
             <div class="text-center mt-12 flex justify-center space-x-4" id="pagination">
-                <!-- Pagination buttons sẽ được thêm động -->
+                <!-- Pagination sẽ được thêm động -->
             </div>
         </div>
     </section>
@@ -92,8 +95,9 @@
     </div>
 
     <!-- Footer -->
-  <div id="footer-container"></div>
- <script>
+    <div id="footer-container"></div>
+
+    <script>
         // Load navbar và footer
         document.addEventListener('DOMContentLoaded', function() {
             // Load navbar
@@ -121,8 +125,12 @@
                 .then(response => response.text())
                 .then(data => {
                     document.getElementById('footer-container').innerHTML = data;
+                    feather.replace();
                 })
                 .catch(error => console.error('Lỗi khi tải footer:', error));
+
+            // Khởi tạo feather icons
+            feather.replace();
         });
     </script>
     <script src="assets/js/news.js"></script>

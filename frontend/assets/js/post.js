@@ -1,18 +1,9 @@
-
-// Multi-step form logic
+// === LOGIC CỐ ĐỊNH CHO FORM ĐA BƯỚC ===
 let currentStep = 1;
-const progressBar = document.getElementById('progress-bar');
 const totalSteps = 3;
 
-// Initialize the form
-document.addEventListener('DOMContentLoaded', function() {
-    updateProgress();
-    feather.replace();
-    loadComponents();
-    setupEventListeners();
-});
-
 function updateProgress() {
+    const progressBar = document.getElementById('progress-bar');
     if (progressBar) {
         const width = (currentStep / totalSteps) * 100;
         progressBar.style.width = `${width}%`;
@@ -21,6 +12,7 @@ function updateProgress() {
 
 function showStep(step) {
     document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+
     const stepElement = document.getElementById(`step-${step}`);
     if (stepElement) {
         stepElement.classList.add('active');
@@ -44,35 +36,32 @@ function prevStep(step) {
 
 function validateStep(step) {
     const stepElement = document.getElementById(`step-${step}`);
-    if (!stepElement) return false;
-    
+    if (!stepElement) return true;
+
     const inputs = stepElement.querySelectorAll('input[required], select[required], textarea[required]');
     let valid = true;
-    
+    let firstInvalid = null;
+
     inputs.forEach(input => {
-        if (!input.value.trim()) {
-            input.classList.add('input-error');
+        if (!input.value.trim() || (input.type === 'tel' && !validatePhone(input.value.trim()))) {
+            input.classList.add('border-red-500', 'input-error');
             valid = false;
+            if (!firstInvalid) firstInvalid = input;
         } else {
-            input.classList.remove('input-error');
-        }
-        
-        // Special validation for phone number
-        if (input.id === 'emergency-phone' && input.value.trim()) {
-            const phoneRegex = /^(0[3|5|7|8|9])+([0-9]{8})$/;
-            if (!phoneRegex.test(input.value.trim())) {
-                input.classList.add('input-error');
-                valid = false;
-                showError('Số điện thoại không hợp lệ. Vui lòng nhập số điện thoại Việt Nam (10 số, bắt đầu bằng 0).');
-            }
+            input.classList.remove('border-red-500', 'input-error');
         }
     });
-    
-    if (!valid) {
-        showError('Vui lòng điền đầy đủ thông tin bắt buộc (*).');
+
+    if (!valid && firstInvalid) {
+        showError('Vui lòng điền đầy đủ và đúng thông tin bắt buộc (*).');
+        firstInvalid.focus();
     }
-    
     return valid;
+}
+
+function validatePhone(phone) {
+    const phoneRegex = /^(0[3|5|7|8|9])+([0-9]{8})$/;
+    return phoneRegex.test(phone);
 }
 
 // Media preview functionality
@@ -107,7 +96,7 @@ function setupMediaPreview() {
                 const removeBtn = document.createElement('button');
                 removeBtn.type = 'button';
                 removeBtn.className = 'remove-btn';
-                removeBtn.innerHTML = feather.icons.x.toSvg();
+                removeBtn.innerHTML = '×';
                 removeBtn.onclick = function() {
                     div.remove();
                     // Remove file from input
@@ -121,8 +110,6 @@ function setupMediaPreview() {
                 
                 preview.appendChild(div);
             });
-            
-            feather.replace();
         });
         
         // Drag and drop functionality
@@ -170,13 +157,13 @@ function setupRealTimeValidation() {
     document.querySelectorAll('input[required], select[required], textarea[required]').forEach(input => {
         input.addEventListener('input', function() {
             if (this.value.trim()) {
-                this.classList.remove('input-error');
+                this.classList.remove('border-red-500', 'input-error');
             }
         });
         
         input.addEventListener('blur', function() {
             if (this.value.trim()) {
-                this.classList.remove('input-error');
+                this.classList.remove('border-red-500', 'input-error');
             }
         });
     });
@@ -186,13 +173,12 @@ function setupRealTimeValidation() {
     if (phoneInput) {
         phoneInput.addEventListener('blur', function() {
             const phone = this.value.trim();
-            const phoneRegex = /^(0[3|5|7|8|9])+([0-9]{8})$/;
             
-            if (phone && !phoneRegex.test(phone)) {
-                this.classList.add('input-error');
+            if (phone && !validatePhone(phone)) {
+                this.classList.add('border-red-500', 'input-error');
                 showError('Số điện thoại không hợp lệ. Vui lòng nhập số điện thoại Việt Nam (10 số, bắt đầu bằng 0).');
             } else {
-                this.classList.remove('input-error');
+                this.classList.remove('border-red-500', 'input-error');
             }
         });
     }
@@ -210,7 +196,7 @@ function setupFormSubmission() {
         
         const submitBtn = this.querySelector('button[type="submit"]');
         const originalText = submitBtn.innerHTML;
-        submitBtn.innerHTML = '<i data-feather="loader" class="animate-spin mr-2 w-4 h-4"></i> Đang gửi...';
+        submitBtn.innerHTML = '<span class="animate-spin mr-2">⟳</span> Đang gửi...';
         submitBtn.disabled = true;
         
         try {
@@ -233,28 +219,79 @@ function setupFormSubmission() {
             showError('❌ Có lỗi xảy ra khi gửi báo cáo. Vui lòng thử lại.');
             submitBtn.innerHTML = originalText;
             submitBtn.disabled = false;
-            feather.replace();
         }
     });
 }
 
-// Create report data
+// === HELPER MAPPING FUNCTIONS ===
+function getEmergencyTypeText(type) {
+    const typeMap = {
+        'fire': 'Hỏa hoạn',
+        'flood': 'Ngập lụt',
+        'traffic': 'Tai nạn giao thông',
+        'medical': 'Cấp cứu y tế',
+        'disaster': 'Thiên tai',
+        'other': 'Sự cố khác'
+    };
+    return typeMap[type] || 'Sự cố khẩn cấp';
+}
+
+function getSeverityText(severity) {
+    const severityMap = {
+        'low': 'Thấp',
+        'medium': 'Trung bình',
+        'high': 'Cao',
+        'critical': 'Rất cao (Khẩn cấp)'
+    };
+    return severityMap[severity] || 'Không xác định';
+}
+
+function mapEmergencyTypeToNewsType(emergencyType) {
+    const typeMap = {
+        'fire': 'tai-nan',
+        'flood': 'thien-tai', 
+        'traffic': 'tai-nan',
+        'medical': 'cuu-ho',
+        'disaster': 'thien-tai',
+        'other': 'canh-bao'
+    };
+    return typeMap[emergencyType] || 'canh-bao';
+}
+
+function generateLocationCode(locationText) {
+    if (!locationText) return 'toan-quoc';
+    return locationText.split(',')[0]
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, '-')
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
+// === LOGIC GỬI VÀ LƯU BÁO CÁO ===
 async function createReportData() {
     const emergencyType = document.getElementById('emergency-type').value;
     const locationText = document.getElementById('emergency-location').value;
+    const reportId = 'user_' + Date.now();
+    
+    // Get media files
+    let imageUrl = 'https://images.unsplash.com/photo-1614732414444-096e5f1122d5?w=600&h=400&fit=crop'; 
+    const mediaFiles = document.getElementById('emergency-media').files;
+    if (mediaFiles.length > 0) {
+        imageUrl = URL.createObjectURL(mediaFiles[0]);
+    }
     
     return {
-        id: 'user_report_' + Date.now(),
+        id: reportId,
         title: `[BÁO CÁO] ${getEmergencyTypeText(emergencyType)} tại ${locationText}`,
         date: new Date().toISOString().split('T')[0],
         type: mapEmergencyTypeToNewsType(emergencyType),
         location: generateLocationCode(locationText),
         location_full: locationText,
-        img: 'https://images.unsplash.com/photo-1614732414444-096e5f1122d5?w=600&h=400&fit=crop',
+        img: imageUrl,
         content: `
             <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">
                 <div class="flex">
-                    <i data-feather="alert-circle" class="text-yellow-400 mr-2"></i>
+                    <div class="text-yellow-400 mr-2">⚠️</div>
                     <div>
                         <p class="text-sm text-yellow-700 font-medium">BÁO CÁO TỪ NGƯỜI DÂN - CHỜ XÁC MINH</p>
                         <p class="text-xs text-yellow-600">Thông tin chưa được kiểm chứng bởi cơ quan chức năng</p>
@@ -276,7 +313,7 @@ async function createReportData() {
         isUserReport: true,
         status: 'pending',
         severity: document.getElementById('emergency-severity').value,
-        peopleInvolved: parseInt(document.getElementById('emergency-people').value),
+        peopleInvolved: parseInt(document.getElementById('emergency-people').value) || 0,
         reporter: {
             name: document.getElementById('emergency-name').value,
             phone: document.getElementById('emergency-phone').value,
@@ -319,49 +356,6 @@ function saveReportToNewsPage(reportData) {
     }
 }
 
-// Utility functions
-function getEmergencyTypeText(type) {
-    const typeMap = {
-        'fire': 'Hỏa hoạn',
-        'flood': 'Ngập lụt',
-        'traffic': 'Tai nạn giao thông',
-        'medical': 'Cấp cứu y tế',
-        'disaster': 'Thiên tai',
-        'other': 'Sự cố khác'
-    };
-    return typeMap[type] || 'Sự cố khẩn cấp';
-}
-
-function getSeverityText(severity) {
-    const severityMap = {
-        'low': 'Thấp',
-        'medium': 'Trung bình',
-        'high': 'Cao',
-        'critical': 'Rất cao (Khẩn cấp)'
-    };
-    return severityMap[severity] || 'Không xác định';
-}
-
-function mapEmergencyTypeToNewsType(emergencyType) {
-    const typeMap = {
-        'fire': 'tai-nan',
-        'flood': 'thien-tai', 
-        'traffic': 'tai-nan',
-        'medical': 'cuu-ho',
-        'disaster': 'thien-tai',
-        'other': 'canh-bao'
-    };
-    return typeMap[emergencyType] || 'canh-bao';
-}
-
-function generateLocationCode(locationText) {
-    return locationText.split(',')[0]
-        .trim()
-        .toLowerCase()
-        .replace(/\s+/g, '-')
-        .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-}
-
 // Notification functions
 function showError(message) {
     showNotification(message, 'error');
@@ -389,13 +383,12 @@ function showNotification(message, type = 'info') {
         <div class="flex items-center justify-between">
             <span>${message}</span>
             <button class="ml-4 text-white hover:text-gray-200 close-notification">
-                ${feather.icons.x.toSvg()}
+                ×
             </button>
         </div>
     `;
     
     document.body.appendChild(notification);
-    feather.replace();
 
     // Auto remove after 5 seconds
     setTimeout(() => {
@@ -410,34 +403,6 @@ function showNotification(message, type = 'info') {
     });
 }
 
-// Load components
-function loadComponents() {
-    Promise.all([
-        fetch('components/navbar.html')
-            .then(res => {
-                if (!res.ok) throw new Error('Không thể tải navbar.html');
-                return res.text();
-            }),
-        fetch('components/footer.html')
-            .then(res => {
-                if (!res.ok) throw new Error('Không thể tải footer.html');
-                return res.text();
-            })
-    ])
-    .then(([navbar, footer]) => {
-        document.getElementById('navbar-container').innerHTML = navbar;
-        document.getElementById('footer-container').innerHTML = footer;
-        feather.replace();
-    })
-    .catch(err => {
-        console.error('❌ Lỗi tải component:', err);
-        document.getElementById('navbar-container').innerHTML =
-            `<div class="bg-red-100 text-red-600 p-4 text-center">
-                ⚠️ Không thể tải thanh điều hướng (navbar). Hãy chạy bằng localhost.
-            </div>`;
-    });
-}
-
 // Setup all event listeners
 function setupEventListeners() {
     setupMediaPreview();
@@ -448,3 +413,24 @@ function setupEventListeners() {
 // Make functions globally available for onclick handlers
 window.nextStep = nextStep;
 window.prevStep = prevStep;
+window.showStep = showStep;
+
+// === MAIN INITIALIZATION ===
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize the first step
+    showStep(1);
+    
+    // Setup all event listeners
+    setupEventListeners();
+    
+    // Setup step navigation buttons
+    const nextStep1 = document.getElementById('next-step-1');
+    const prevStep2 = document.getElementById('prev-step-2');
+    const nextStep2 = document.getElementById('next-step-2');
+    const prevStep3 = document.getElementById('prev-step-3');
+    
+    if (nextStep1) nextStep1.addEventListener('click', () => nextStep(2));
+    if (prevStep2) prevStep2.addEventListener('click', () => prevStep(1));
+    if (nextStep2) nextStep2.addEventListener('click', () => nextStep(3));
+    if (prevStep3) prevStep3.addEventListener('click', () => prevStep(2));
+});
