@@ -18,7 +18,6 @@
 
 .line-clamp-2 {
     display: -webkit-box;
-    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -27,7 +26,6 @@
 
 .line-clamp-3 {
     display: -webkit-box;
-    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -67,6 +65,22 @@
 /* Modal styles */
 .modal {
     backdrop-filter: blur(4px);
+    transition: opacity 0.3s ease;
+}
+
+#news-modal {
+    backdrop-filter: blur(5px);
+}
+
+#news-modal > div {
+    transform: scale(0.9);
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+#news-modal:not(.hidden) > div {
+    transform: scale(1);
+    opacity: 1;
 }
 
 /* Filter styles */
@@ -123,26 +137,133 @@ select:focus {
     font-weight: 500;
 }
 
+.filter-active {
+    background-color: #fef2f2;
+    border-color: #ef4444;
+    color: #ef4444;
+}
 
+.urgent-news {
+    border-left: 4px solid #ef4444;
+}
 
+.assistance-news {
+    border-left: 4px solid #3b82f6;
+}
 
+.volunteer-news {
+    border-left: 4px solid #10b981;
+}
 
+.loading {
+    display: none;
+    text-align: center;
+    padding: 2rem;
+}
 
- .modal {
-        transition: opacity 0.3s ease;
-    }
-    
-    #news-modal {
-        backdrop-filter: blur(5px);
-    }
-    
-    #news-modal > div {
-        transform: scale(0.9);
-        opacity: 0;
-        transition: all 0.3s ease;
-    }
-    
-    #news-modal:not(.hidden) > div {
-        transform: scale(1);
-        opacity: 1;
-    }
+.loading-spinner {
+    border: 4px solid #f3f4f6;
+    border-top: 4px solid #ef4444;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: #6b7280;
+}
+
+.priority-high-bg {
+    background: linear-gradient(to right, #fef2f2, #fff);
+}
+
+.priority-medium-bg {
+    background: linear-gradient(to right, #fffbeb, #fff);
+}
+
+.priority-low-bg {
+    background: linear-gradient(to right, #f0f9ff, #fff);
+}
+
+.map-preview {
+    height: 200px;
+    background: #f3f4f6;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 1rem 0;
+    color: #6b7280;
+}
+
+.progress-bar {
+    height: 8px;
+    background: #e5e7eb;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 0.5rem 0;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #10b981;
+    transition: width 0.3s ease;
+}
+
+.donation-info {
+    background: #f0f9ff;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+.volunteer-status {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.status-en-route {
+    background: #fffbeb;
+    color: #d97706;
+}
+
+.status-arrived {
+    background: #f0f9ff;
+    color: #0369a1;
+}
+
+.status-active {
+    background: #f0fdf4;
+    color: #15803d;
+}
+
+/* Mobile menu animation */
+#mobile-menu {
+    transition: all 0.3s ease;
+}
+
+/* News card priority indicators */
+.news-card.priority-high {
+    border-top: 3px solid #ef4444;
+}
+
+.news-card.priority-medium {
+    border-top: 3px solid #f97316;
+}
+
+.news-card.priority-low {
+    border-top: 3px solid #3b82f6;
+}

@@ -1,143 +1,145 @@
-    <!DOCTYPE html>
-    <html lang="vi">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Đăng Nhập - Hệ Thống Cứu Hộ Quốc Gia</title>
-        <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
-        <script src="https://cdn.tailwindcss.com"></script>
-        <script src="https://unpkg.com/feather-icons"></script>
-        <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="assets/css/styles.css">
-    </head>
-    <body>
-        <!-- Navigation -->
-        <nav class="bg-white shadow-md sticky top-0 z-50 ">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between h-20 items-center">
-                    <div class="flex items-center space-x-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                        </svg>
-                        <span class="text-2xl font-bold bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">CỨU HỘ QUỐC GIA</span>
-                    </div>
-                    <div class="hidden md:flex items-center space-x-8">
-                        <a href="index.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Trang chủ</a>
-                        <a href="map.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Bản đồ cứu hộ</a>
-                        <a href="request.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Bản tin</a>
-                        <a href="post.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Báo tin</a>
-                        <div class="flex space-x-4">
-                            <a href="login.html" class="bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-all shadow hover:shadow-lg">Đăng nhập</a>
-                        </div>
-                    </div>
-                    <div class="md:hidden flex items-center">
-                        <button id="menu-toggle" class="text-gray-700 hover:text-red-600" aria-label="Toggle menu">
-                            <i data-feather="menu"></i>
-                        </button>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Nhập - Hệ Thống Cứu Hộ Quốc Gia</title>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md sticky top-0 z-50 ">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex items-center space-x-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                    <span class="text-2xl font-bold bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">CỨU HỘ QUỐC GIA</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Trang chủ</a>
+                    <a href="map.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Bản đồ cứu hộ</a>
+                    <a href="request.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Bản tin</a>
+                    <a href="post.html#report" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Báo tin</a>
+                    <div class="flex space-x-4">
+                        <a href="login.html" class="bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-all shadow hover:shadow-lg">Đăng nhập</a>
                     </div>
                 </div>
+                <div class="md:hidden flex items-center">
+                    <button id="menu-toggle" class="text-gray-700 hover:text-red-600" aria-label="Toggle menu">
+                        <i data-feather="menu"></i>
+                    </button>
+                </div>
             </div>
-            <div id="mobile-menu" class="hidden md:hidden bg-white py-2 px-4 shadow-lg">
-                <a href="index.html#home" class="block py-2 text-gray-700 hover:text-red-600 transition">Trang chủ</a>
-                <a href="map.html" class="block py-2 text-gray-700 hover:text-red-600 transition">Bản đồ cứu hộ</a>
-                <a href="request.html" class="block py-2 text-red-600 font-bold transition">Bản tin</a>
-                <a href="post.html" class="block py-2 text-gray-700 hover:text-red-600 transition">Báo tin</a>
-                <a href="login.html" class="block py-2 text-white bg-red-600 rounded-md text-center mt-2">Đăng nhập</a>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-white py-2 px-4 shadow-lg">
+            <a href="index.html#home" class="block py-2 text-gray-700 hover:text-red-600 transition">Trang chủ</a>
+            <a href="map.html" class="block py-2 text-gray-700 hover:text-red-600 transition">Bản đồ cứu hộ</a>
+            <a href="request.html" class="block py-2 text-red-600 font-bold transition">Bản tin</a>
+            <a href="post.html#report" class="block py-2 text-gray-700 hover:text-red-600 transition">Báo tin</a>
+            <a href="login.html" class="block py-2 text-white bg-red-600 rounded-md text-center mt-2">Đăng nhập</a>
+        </div>
+    </nav>
+    
+    <!-- Login Page -->
+    <div class="login-container">
+        <div class="login-card wide">
+            <div class="login-header">
+                <div class="login-logo">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                </div>
+                <h1 class="text-3xl font-bold">CỨU HỘ QUỐC GIA</h1>
+                <p class="mt-2 opacity-90">Trung tâm điều hành</p>
             </div>
-        </nav>
-        <!-- Login Page -->
-        <div class="login-container">
-            <div class="login-card wide">
-                <div class="login-header">
-                    <div class="login-logo">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                        </svg>
-                    </div>
-                    <h1 class="text-3xl font-bold">CỨU HỘ QUỐC GIA</h1>
-                    <p class="mt-2 opacity-90">Trung tâm điều hành</p>
+            
+            <div class="login-body">
+                <!-- Tabs -->
+                <div class="form-tabs">
+                    <div class="form-tab active" data-tab="login">Đăng Nhập</div>
+                    <div class="form-tab" data-tab="register">Đăng Ký</div>
+                </div>
+
+                <!-- Alert Message -->
+                <div id="login-alert" class="alert alert-error">
+                    <i data-feather="alert-circle" class="mr-2 w-5 h-5"></i>
+                    <span id="alert-message">Tên đăng nhập hoặc mật khẩu không đúng</span>
                 </div>
                 
-                <div class="login-body">
-                    <!-- Tabs -->
-                    <div class="form-tabs">
-                        <div class="form-tab active" data-tab="login">Đăng Nhập</div>
-                        <div class="form-tab" data-tab="register">Đăng Ký</div>
-                    </div>
-
-                    <!-- Alert Message -->
-                    <div id="login-alert" class="alert alert-error">
-                        <i data-feather="alert-circle" class="mr-2 w-5 h-5"></i>
-                        <span id="alert-message">Tên đăng nhập hoặc mật khẩu không đúng</span>
+                <!-- Login Form -->
+                <form id="login-form" class="form-content active">
+                    <div class="form-group">
+                        <label for="username" class="form-label">Tên đăng nhập, Email hoặc Số điện thoại</label>
+                        <div class="relative">
+                            <i data-feather="user" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"></i>
+                            <input type="text" id="username" class="form-input pl-12" placeholder="Nhập tên đăng nhập, email hoặc số điện thoại" required>
+                        </div>
+                        <div class="error-message" id="username-error"></div>
                     </div>
                     
-                    <!-- Login Form -->
-                    <form id="login-form" class="form-content active">
+                    <div class="form-group">
+                        <label for="password" class="form-label">Mật khẩu</label>
+                        <div class="relative password-container">
+                            <i data-feather="lock" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"></i>
+                            <input type="password" id="password" class="form-input pl-12 pr-10" placeholder="Nhập mật khẩu" required>
+                            <button type="button" class="toggle-password" data-target="password">
+                                <i data-feather="eye"></i>
+                            </button>
+                        </div>
+                        <div class="error-message" id="password-error"></div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between mb-6">
+                        <label class="flex items-center">
+                            <input type="checkbox" id="remember-me" class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded">
+                            <span class="ml-2 text-sm text-gray-600">Ghi nhớ đăng nhập</span>
+                        </label>
+                        <a href="#" class="text-sm text-red-600 hover:text-red-800 font-medium">Quên mật khẩu?</a>
+                    </div>
+                    
+                    <button type="submit" class="btn-login mb-4" id="login-btn">
+                        <div class="loading-spinner" id="login-spinner"></div>
+                        <i data-feather="log-in" class="mr-2 w-5 h-5"></i>
+                        <span id="login-text">Đăng Nhập</span>
+                    </button>
+
+                    <div class="text-center">
+                        <p class="text-sm text-gray-600">
+                            Chưa có tài khoản? 
+                            <a href="#" class="text-red-600 hover:text-red-800 font-medium switch-to-register">Đăng ký ngay</a>
+                        </p>
+                    </div>
+                </form>
+
+                <!-- Register Form -->
+                <form id="register-form" class="form-content">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="form-group">
-                            <label for="username" class="form-label">Tên đăng nhập</label>
+                            <label for="reg-fullname" class="form-label">Họ và tên *</label>
                             <div class="relative">
                                 <i data-feather="user" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"></i>
-                                <input type="text" id="username" class="form-input pl-12" placeholder="Nhập tên đăng nhập" required>
+                                <input type="text" id="reg-fullname" class="form-input pl-12" placeholder="Nguyễn Văn A" required>
                             </div>
-                            <div class="error-message" id="username-error"></div>
+                            <div class="error-message" id="reg-fullname-error"></div>
                         </div>
                         
                         <div class="form-group">
-                            <label for="password" class="form-label">Mật khẩu</label>
-                            <div class="relative password-container">
-                                <i data-feather="lock" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"></i>
-                                <input type="password" id="password" class="form-input pl-12 pr-10" placeholder="Nhập mật khẩu" required>
-                                <button type="button" class="toggle-password" data-target="password">
-                                    <i data-feather="eye"></i>
-                                </button>
+                            <label for="reg-username" class="form-label">Tên đăng nhập *</label>
+                            <div class="relative">
+                                <i data-feather="at-sign" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"></i>
+                                <input type="text" id="reg-username" class="form-input pl-12" placeholder="username" required>
                             </div>
-                            <div class="error-message" id="password-error"></div>
+                            <div class="error-message" id="reg-username-error"></div>
                         </div>
-                        
-                        <div class="flex items-center justify-between mb-6">
-                            <label class="flex items-center">
-                                <input type="checkbox" id="remember-me" class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded">
-                                <span class="ml-2 text-sm text-gray-600">Ghi nhớ đăng nhập</span>
-                            </label>
-                            <a href="#" class="text-sm text-red-600 hover:text-red-800 font-medium">Quên mật khẩu?</a>
-                        </div>
-                        
-                        <button type="submit" class="btn-login mb-4" id="login-btn">
-                            <div class="loading-spinner" id="login-spinner"></div>
-                            <i data-feather="log-in" class="mr-2 w-5 h-5"></i>
-                            <span id="login-text">Đăng Nhập</span>
-                        </button>
+                    </div>
 
-                        <div class="text-center">
-                            <p class="text-sm text-gray-600">
-                                Chưa có tài khoản? 
-                                <a href="#" class="text-red-600 hover:text-red-800 font-medium switch-to-register">Đăng ký ngay</a>
-                            </p>
-                        </div>
-                    </form>
-
-                    <!-- Register Form -->
-                    <form id="register-form" class="form-content">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="form-group">
-                                <label for="reg-fullname" class="form-label">Họ và tên *</label>
-                                <div class="relative">
-                                    <i data-feather="user" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"></i>
-                                    <input type="text" id="reg-fullname" class="form-input pl-12" placeholder="Nguyễn Văn A" required>
-                                </div>
-                                <div class="error-message" id="reg-fullname-error"></div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="reg-username" class="form-label">Tên đăng nhập *</label>
-                                <div class="relative">
-                                    <i data-feather="at-sign" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"></i>
-                                    <input type="text" id="reg-username" class="form-input pl-12" placeholder="username" required>
-                                </div>
-                                <div class="error-message" id="reg-username-error"></div>
-                            </div>
-                        </div>
-
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="form-group">
                             <label for="reg-email" class="form-label">Email *</label>
                             <div class="relative">
@@ -147,100 +149,102 @@
                             <div class="error-message" id="reg-email-error"></div>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="form-group">
-                                <label for="reg-password" class="form-label">Mật khẩu *</label>
-                                <div class="relative password-container">
-                                    <i data-feather="lock" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"></i>
-                                    <input type="password" id="reg-password" class="form-input pl-12 pr-10" placeholder="Mật khẩu" required>
-                                    <button type="button" class="toggle-password" data-target="reg-password">
-                                        <i data-feather="eye"></i>
-                                    </button>
-                                </div>
-                                <div class="password-strength">
-                                    <div class="password-strength-bar" id="password-strength-bar"></div>
-                                </div>
-                                <div class="password-requirements">
-                                    <div class="requirement unmet" id="req-length">
-                                        <i data-feather="circle"></i> Ít nhất 8 ký tự
-                                    </div>
-                                    <div class="requirement unmet" id="req-lowercase">
-                                        <i data-feather="circle"></i> Chữ thường
-                                    </div>
-                                    <div class="requirement unmet" id="req-uppercase">
-                                        <i data-feather="circle"></i> Chữ hoa
-                                    </div>
-                                    <div class="requirement unmet" id="req-number">
-                                        <i data-feather="circle"></i> Số
-                                    </div>
-                                    <div class="requirement unmet" id="req-special">
-                                        <i data-feather="circle"></i> Ký tự đặc biệt
-                                    </div>
-                                </div>
-                                <div class="error-message" id="reg-password-error"></div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="reg-confirm-password" class="form-label">Xác nhận mật khẩu *</label>
-                                <div class="relative password-container">
-                                    <i data-feather="lock" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"></i>
-                                    <input type="password" id="reg-confirm-password" class="form-input pl-12 pr-10" placeholder="Xác nhận mật khẩu" required>
-                                    <button type="button" class="toggle-password" data-target="reg-confirm-password">
-                                        <i data-feather="eye"></i>
-                                    </button>
-                                </div>
-                                <div class="error-message" id="reg-confirm-password-error"></div>
-                            </div>
-                        </div>
-
                         <div class="form-group">
-                            <label for="reg-role" class="form-label">Vai trò *</label>
-                            <select id="reg-role" class="form-input" required>
-                                <option value="">Chọn vai trò</option>
-                                <option value="rescuer">Nhân viên cứu hộ</option>
-                                <option value="moderator">Điều phối viên</option>
-                                <option value="viewer">Người xem</option>
-                            </select>
-                            <div class="error-message" id="reg-role-error"></div>
+                            <label for="reg-phone" class="form-label">Số điện thoại *</label>
+                            <div class="relative">
+                                <i data-feather="phone" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"></i>
+                                <input type="tel" id="reg-phone" class="form-input pl-12" placeholder="0912345678" required>
+                            </div>
+                            <div class="error-message" id="reg-phone-error"></div>
                         </div>
-
-                        <div class="form-group">
-                            <label for="reg-organization" class="form-label">Tổ chức/Đơn vị</label>
-                            <input type="text" id="reg-organization" class="form-input" placeholder="Tên tổ chức (nếu có)">
-                        </div>
-
-                        <div class="flex items-center mb-6">
-                            <input type="checkbox" id="accept-terms" class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded" required>
-                            <label for="accept-terms" class="ml-2 text-sm text-gray-600">
-                                Tôi đồng ý với <a href="#" class="text-red-600 hover:text-red-800">Điều khoản dịch vụ</a> và <a href="#" class="text-red-600 hover:text-red-800">Chính sách bảo mật</a>
-                            </label>
-                        </div>
-                        <div class="error-message" id="accept-terms-error"></div>
-                        
-                        <button type="submit" class="btn-login mb-4" id="register-btn">
-                            <div class="loading-spinner" id="register-spinner"></div>
-                            <i data-feather="user-plus" class="mr-2 w-5 h-5"></i>
-                            <span id="register-text">Đăng Ký Tài Khoản</span>
-                        </button>
-
-                        <div class="text-center">
-                            <p class="text-sm text-gray-600">
-                                Đã có tài khoản? 
-                                <a href="#" class="text-red-600 hover:text-red-800 font-medium switch-to-login">Đăng nhập ngay</a>
-                            </p>
-                        </div>
-                    </form>
-                    
-                    <div class="login-footer">
-                        <p>Hệ thống quản trị cứu hộ quốc gia</p>
-                        <p class="mt-1">Phiên bản 2.4.1</p>
                     </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="form-group">
+                            <label for="reg-password" class="form-label">Mật khẩu *</label>
+                            <div class="relative password-container">
+                                <i data-feather="lock" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"></i>
+                                <input type="password" id="reg-password" class="form-input pl-12 pr-10" placeholder="Mật khẩu" required>
+                                <button type="button" class="toggle-password" data-target="reg-password">
+                                    <i data-feather="eye"></i>
+                                </button>
+                            </div>
+                            <div class="password-strength">
+                                <div class="password-strength-bar" id="password-strength-bar"></div>
+                            </div>
+                            <div class="error-message" id="reg-password-error"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="reg-confirm-password" class="form-label">Xác nhận mật khẩu *</label>
+                            <div class="relative password-container">
+                                <i data-feather="lock" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"></i>
+                                <input type="password" id="reg-confirm-password" class="form-input pl-12 pr-10" placeholder="Xác nhận mật khẩu" required>
+                                <button type="button" class="toggle-password" data-target="reg-confirm-password">
+                                    <i data-feather="eye"></i>
+                                </button>
+                            </div>
+                            <div class="error-message" id="reg-confirm-password-error"></div>
+                        </div>
+                    </div>
+
+                    <!-- Nút tạo mật khẩu tự động -->
+                    <div class="form-group mb-4">
+                        <button type="button" id="generate-password" class="text-sm text-red-600 hover:text-red-800 font-medium flex items-center">
+                            <i data-feather="refresh-cw" class="w-4 h-4 mr-2"></i>
+                            Tạo mật khẩu mạnh tự động
+                        </button>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reg-role" class="form-label">Vai trò *</label>
+                        <select id="reg-role" class="form-input" required>
+                            <option value="">Chọn vai trò</option>
+                            <option value="rescuer">Nhân viên cứu hộ</option>
+                            <option value="coordinator">Điều hành viên</option>
+                            <option value="viewer">Người xem</option>
+                        </select>
+                        <div class="error-message" id="reg-role-error"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reg-organization" class="form-label">Tổ chức/Đơn vị</label>
+                        <input type="text" id="reg-organization" class="form-input" placeholder="Tên tổ chức (nếu có)">
+                        <div class="error-message" id="reg-organization-error"></div>
+                    </div>
+
+                    <div class="flex items-center mb-6">
+                        <input type="checkbox" id="accept-terms" class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded" required>
+                        <label for="accept-terms" class="ml-2 text-sm text-gray-600">
+                            Tôi đồng ý với <a href="#" class="text-red-600 hover:text-red-800">Điều khoản dịch vụ</a> và <a href="#" class="text-red-600 hover:text-red-800">Chính sách bảo mật</a>
+                        </label>
+                    </div>
+                    <div class="error-message" id="accept-terms-error"></div>
+                    
+                    <button type="submit" class="btn-login mb-4" id="register-btn">
+                        <div class="loading-spinner" id="register-spinner"></div>
+                        <i data-feather="user-plus" class="mr-2 w-5 h-5"></i>
+                        <span id="register-text">Đăng Ký Tài Khoản</span>
+                    </button>
+
+                    <div class="text-center">
+                        <p class="text-sm text-gray-600">
+                            Đã có tài khoản? 
+                            <a href="#" class="text-red-600 hover:text-red-800 font-medium switch-to-login">Đăng nhập ngay</a>
+                        </p>
+                    </div>
+                </form>
+                
+                <div class="login-footer">
+                    <p>Hệ thống quản trị cứu hộ quốc gia</p>
+                    <p class="mt-1">Phiên bản 2.4.1</p>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Footer -->
-        <footer class="bg-gray-900 text-white py-16">
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
                 <div>
@@ -285,8 +289,11 @@
             </div>
         </div>
     </footer>
-        <script src="assets/js/user-manager.js"></script>
-        <script src="assets/js/login.js"></script>
-        <script src="assets/js/main.js"></script>
-    </body>
-    </html>
+
+    <!-- Thêm file security-manager.js -->
+    <script src="assets/js/security-manager.js"></script>
+    <script src="assets/js/user-manager.js"></script>
+    <script src="assets/js/login.js"></script>
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

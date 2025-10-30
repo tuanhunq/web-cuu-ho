@@ -9,12 +9,9 @@
     <link rel="stylesheet" href="assets/css/request.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/feather-icons"></script>
-    <style>
-       
-    </style>
 </head>
 <body class="bg-gray-50">
-    <nav class="bg-white shadow-md sticky top-0 z-50 ">
+    <nav class="bg-white shadow-md sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20 items-center">
                 <div class="flex items-center space-x-2">
@@ -27,7 +24,7 @@
                     <a href="index.html#home" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Trang chủ</a>
                     <a href="map.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Bản đồ cứu hộ</a>
                     <a href="request.html" class="nav-link text-red-500 font-bold transition">Bản tin</a>
-                    <a href="post.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Báo tin</a>
+                    <a href="post.html#report" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Báo tin</a>
                     <div class="flex space-x-4"> 
                         <a href="login.html" class="bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-all shadow hover:shadow-lg">Đăng nhập</a>
                     </div>
@@ -43,52 +40,74 @@
             <a href="index.html" class="block py-2 text-gray-700 hover:text-red-600 transition">Trang chủ</a>
             <a href="map.html" class="block py-2 text-gray-700 hover:text-red-600 transition">Bản đồ cứu hộ</a>
             <a href="request.html" class="block py-2 text-red-600 font-bold transition">Bản tin</a>
-            <a href="post.html" class="block py-2 text-gray-700 hover:text-red-600 transition">Báo tin</a> 
+            <a href="post.html#report" class="block py-2 text-gray-700 hover:text-red-600 transition">Báo tin</a> 
             <a href="login.html" class="block py-2 text-white bg-red-600 rounded-md text-center mt-2">Đăng nhập</a>
         </div>
     </nav>
 
-    <section id="news-section" class="py-20 bg-white">
+    <section id="news-section" class="py-12 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Page Header -->
+            <div class="mb-8 text-center">
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Bản Tin Khẩn Cấp</h1>
+                <p class="text-gray-600 max-w-3xl mx-auto">Cập nhật thông tin khẩn cấp, cứu trợ và hoạt động thiện nguyện trên toàn quốc</p>
+            </div>
             
             <!-- Filter and Search -->
             <div class="flex flex-col md:flex-row justify-between mb-8 space-y-4 md:space-y-0 md:space-x-4">
-                <select id="filter-type" class="w-full md:w-1/3 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
-                    <option value="all">Tất cả loại sự cố</option>
-                    <option value="thien-tai">Thiên tai</option>
-                    <option value="tai-nan">Tai nạn</option>
-                    <option value="cuu-ho">Cứu hộ</option>
-                    <option value="canh-bao">Cảnh báo</option>
-                    <option value="an-ninh">An ninh</option>
-                    <option value="quoc-phong">Quốc phòng</option>
-                </select>
-                <select id="filter-source" class="w-full md:w-1/3 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
-                    <option value="all">Tất cả nguồn tin</option>
-                    <option value="bo-cong-an">Bộ Công An</option>
-                    <option value="bo-quoc-phong">Bộ Quốc Phòng</option>
-                    <option value="chinh-phu">Văn phòng Chính phủ</option>
-                    <option value="ban-chi-dao">Ban Chỉ đạo Quốc gia</option>
-                    <option value="bao-nhan-dan">Báo Nhân Dân</option>
-                </select>
-                <select id="filter-location" class="w-full md:w-1/3 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
-                    <option value="all">Tất cả khu vực</option>
-                    <option value="ha-noi">Hà Nội</option>
-                    <option value="tp-hcm">TP.HCM</option>
-                    <option value="da-nang">Đà Nẵng</option>
-                    <option value="mien-bac">Miền Bắc</option>
-                    <option value="mien-trung">Miền Trung</option>
-                    <option value="tay-nguyen">Tây Nguyên</option>
-                    <option value="dak-lak">Đắk Lắk</option>
-                    <option value="binh-dinh">Bình Định</option>
-                    <option value="thai-nguyen">Thái Nguyên</option>
-                </select>
-                <select id="sort-by" class="w-full md:w-1/4 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
-                    <option value="newest">Mới nhất</option>
-                    <option value="oldest">Cũ nhất</option>
-                </select>
-                <button id="refresh-news" class="flex items-center px-4 py-2 border border-red-600 text-red-600 rounded-md hover:bg-red-50 transition font-medium">
-                    <i data-feather="refresh-cw" class="mr-2 w-4 h-4"></i> Làm mới
-                </button>
+                <div class="flex flex-col md:flex-row w-full space-y-4 md:space-y-0 md:space-x-4">
+                    <select id="filter-type" class="w-full md:w-1/3 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+                        <option value="all">Tất cả loại tin</option>
+                        <option value="emergency">Sự cố khẩn cấp</option>
+                        <option value="assistance">Kêu gọi cứu trợ</option>
+                        <option value="volunteer">Đoàn thiện nguyện</option>
+                    </select>
+                    <select id="filter-location" class="w-full md:w-1/3 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+                        <option value="all">Tất cả khu vực</option>
+                        <option value="ha-noi">Hà Nội</option>
+                        <option value="tp-hcm">TP.HCM</option>
+                        <option value="da-nang">Đà Nẵng</option>
+                        <option value="mien-bac">Miền Bắc</option>
+                        <option value="mien-trung">Miền Trung</option>
+                        <option value="tay-nguyen">Tây Nguyên</option>
+                        <option value="dak-lak">Đắk Lắk</option>
+                        <option value="binh-dinh">Bình Định</option>
+                        <option value="thai-nguyen">Thái Nguyên</option>
+                    </select>
+                </div>
+                <div class="flex flex-col md:flex-row w-full md:w-auto space-y-4 md:space-y-0 md:space-x-4">
+                    <select id="sort-by" class="w-full md:w-auto px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+                        <option value="newest">Mới nhất</option>
+                        <option value="oldest">Cũ nhất</option>
+                        <option value="priority">Ưu tiên cao</option>
+                    </select>
+                    <button id="refresh-news" class="flex items-center justify-center px-4 py-3 border border-red-600 text-red-600 rounded-md hover:bg-red-50 transition font-medium">
+                        <i data-feather="refresh-cw" class="mr-2 w-4 h-4"></i> Làm mới
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quick Filter Tabs -->
+            <div class="mb-6 overflow-x-auto">
+                <div class="flex space-x-2 pb-2">
+                    <button class="filter-tab px-4 py-2 rounded-full border border-gray-300 text-sm font-medium whitespace-nowrap filter-active" data-filter="all">Tất cả</button>
+                    <button class="filter-tab px-4 py-2 rounded-full border border-gray-300 text-sm font-medium whitespace-nowrap" data-filter="emergency">Sự cố khẩn cấp</button>
+                    <button class="filter-tab px-4 py-2 rounded-full border border-gray-300 text-sm font-medium whitespace-nowrap" data-filter="assistance">Kêu gọi cứu trợ</button>
+                    <button class="filter-tab px-4 py-2 rounded-full border border-gray-300 text-sm font-medium whitespace-nowrap" data-filter="volunteer">Đoàn thiện nguyện</button>
+                </div>
+            </div>
+
+            <!-- Loading Indicator -->
+            <div id="loading-indicator" class="loading">
+                <div class="loading-spinner"></div>
+                <p class="mt-4 text-gray-600">Đang tải dữ liệu...</p>
+            </div>
+
+            <!-- Empty State -->
+            <div id="empty-state" class="empty-state hidden">
+                <i data-feather="inbox" class="w-16 h-16 mx-auto mb-4 text-gray-400"></i>
+                <h3 class="text-xl font-medium text-gray-500 mb-2">Không có bản tin nào</h3>
+                <p class="text-gray-400">Không tìm thấy bản tin nào phù hợp với bộ lọc của bạn.</p>
             </div>
 
             <!-- News Grid -->
@@ -115,6 +134,7 @@
             <div id="modal-content" class="space-y-6"></div>
         </div>
     </div>
+
     <!-- Footer -->
     <footer class="bg-gray-900 text-white py-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -162,8 +182,7 @@
         </div>
     </footer>
 
-    <script src="assets/js/main.js"></script>
-    <script src="assets/js/login.js"></script>
-    <script src="assets/js/request.js"></script> 
+    <script src="assets/js/request.js"></script>
+    <script src="assets/js/recent-incidents.js"></script>
 </body>
 </html>

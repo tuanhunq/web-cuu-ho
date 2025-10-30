@@ -263,3 +263,11 @@ document.addEventListener('DOMContentLoaded', () => {
 window.nextStep = nextStep;
 window.prevStep = prevStep;
 window.showStep = showStep;
+
+
+
+
+
+
+
+

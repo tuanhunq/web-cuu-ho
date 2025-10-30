@@ -25,7 +25,7 @@
                     <a href="index.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Trang chủ</a>
                     <a href="map.html" class="nav-link text-red-500 font-bold transition">Bản đồ cứu hộ</a>
                     <a href="request.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Bản tin</a>
-                    <a href="post.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Báo tin</a>
+                    <a href="post.html#report" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Báo tin</a>
                     <div class="flex space-x-4">
                         <a href="login.html" class="bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-all shadow hover:shadow-lg">Đăng nhập</a>
                     </div>
@@ -41,7 +41,7 @@
             <a href="index.html#home" class="block py-2 text-gray-700 hover:text-red-600 transition">Trang chủ</a>
             <a href="map.html" class="block py-2 text-gray-700 hover:text-red-600 transition">Bản đồ cứu hộ</a>
             <a href="request.html" class="block py-2 text-red-600 font-bold transition">Bản tin</a>
-            <a href="post.html" class="block py-2 text-gray-700 hover:text-red-600 transition">Báo tin</a>
+            <a href="post.html#report" class="block py-2 text-gray-700 hover:text-red-600 transition">Báo tin</a>
             <a href="login.html" class="block py-2 text-white bg-red-600 rounded-md text-center mt-2">Đăng nhập</a>
         </div>
     </nav>
@@ -67,30 +67,11 @@
                             <p class="text-sm opacity-90 mt-1">Theo dõi và lọc các sự cố khẩn cấp</p>
                         </div>
                         
-                        <div class="panel-tabs">
-                            <div class="panel-tab active" data-tab="filter">
-                                <i data-feather="filter" class="w-4 h-4 mr-1"></i>
-                                Bộ Lọc
-                            </div>
-                            <div class="panel-tab" data-tab="stats">
-                                <i data-feather="bar-chart-2" class="w-4 h-4 mr-1"></i>
-                                Thống Kê
-                            </div>
-                        </div>
                         
                         <div class="panel-content">
                             <!-- Tab Bộ Lọc -->
                             <div class="tab-content active" id="filter-tab">
-                                <div class="filter-section">
-                                    <label class="filter-title">
-                                        <i data-feather="search" class="w-4 h-4"></i>
-                                        Tìm kiếm
-                                    </label>
-                                    <div class="search-box">
-                                        <input type="text" id="search-input" placeholder="Nhập từ khóa tìm kiếm..." class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
-                                        <i data-feather="search" class="w-4 h-4"></i>
-                                    </div>
-                                </div>
+                               
                                 
                                 <div class="filter-section">
                                     <label class="filter-title">
@@ -142,13 +123,7 @@
                                         <option value="disaster">Thiên tai</option>
                                     </select>
                                     
-                                    <div class="incident-type-filter">
-                                        <button class="type-filter-btn active" data-type="all">Tất cả</button>
-                                        <button class="type-filter-btn" data-type="fire">🔥 Hỏa hoạn</button>
-                                        <button class="type-filter-btn" data-type="flood">💧 Ngập lụt</button>
-                                        <button class="type-filter-btn" data-type="accident">🚗 Tai nạn</button>
-                                        <button class="type-filter-btn" data-type="disaster">🌪️ Thiên tai</button>
-                                    </div>
+                                  
                                 </div>
                                 
                                 <div class="filter-section">
@@ -288,7 +263,7 @@
 
                 <!-- Bên phải: Bản đồ -->
                 <div class="lg:w-2/3">
-                    <div id="map" class="map-container"></div>
+                    <div id="incident-map" class="map-container"></div>
                     
                     <div class="mt-4 flex flex-wrap gap-3 items-center justify-between">
                         <div class="flex flex-wrap gap-2">
@@ -346,7 +321,7 @@
                             <div class="text-2xl font-bold text-green-600" id="recent-resolved-incidents">0</div>
                             <div class="text-sm text-green-700">Đã giải quyết</div>
                         </div>
-                        <div class="bg-blue-50 rounded-xl p-4 text-center border border-blue-100">
+                        <div class="bg-blue-50 rounded-xl p-4 text-center border border-blue-100">  
                             <div class="text-2xl font-bold text-blue-600" id="recent-today-incidents">0</div>
                             <div class="text-sm text-blue-700">Hôm nay</div>
                         </div>
@@ -552,6 +527,9 @@
     </div>
 
     <script src="assets/js/map.js"></script>
-  
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/recent-incidents.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </body>
 </html>

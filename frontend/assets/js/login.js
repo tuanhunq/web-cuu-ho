@@ -52,6 +52,12 @@ class AuthSystem {
             passwordInput.addEventListener('input', (e) => this.validatePasswordStrength(e.target.value));
         }
 
+        // Generate password button
+        const generatePasswordBtn = document.getElementById('generate-password');
+        if (generatePasswordBtn) {
+            generatePasswordBtn.addEventListener('click', () => this.generatePassword());
+        }
+
         // Real-time form validation
         this.setupRealTimeValidation();
     }
@@ -67,6 +73,12 @@ class AuthSystem {
         const emailInput = document.getElementById('reg-email');
         if (emailInput) {
             emailInput.addEventListener('blur', () => this.validateEmail());
+        }
+
+        // Phone validation
+        const phoneInput = document.getElementById('reg-phone');
+        if (phoneInput) {
+            phoneInput.addEventListener('blur', () => this.validatePhone());
         }
 
         // Fullname validation
@@ -89,13 +101,19 @@ class AuthSystem {
         const password = document.getElementById('password').value;
         const rememberMe = document.getElementById('remember-me').checked;
 
+        // Basic validation
+        if (!username || !password) {
+            this.showAlert('Vui lòng nhập đầy đủ thông tin đăng nhập', 'error');
+            return;
+        }
+
         // Show loading state
         this.setLoadingState('login', true);
 
         // Simulate API call delay
         await new Promise(resolve => setTimeout(resolve, 1000));
 
-        const result = UserManager.authenticate(username, password);
+        const result = userManager.authenticate(username, password);
 
         if (result.success) {
             this.login(result.user, rememberMe);
@@ -112,12 +130,20 @@ class AuthSystem {
             fullname: document.getElementById('reg-fullname').value,
             username: document.getElementById('reg-username').value,
             email: document.getElementById('reg-email').value,
+            phone: document.getElementById('reg-phone').value,
             password: document.getElementById('reg-password').value,
             confirmPassword: document.getElementById('reg-confirm-password').value,
             role: document.getElementById('reg-role').value,
             organization: document.getElementById('reg-organization').value,
             acceptTerms: document.getElementById('accept-terms').checked
         };
+
+        // Sanitize inputs
+        Object.keys(formData).forEach(key => {
+            if (typeof formData[key] === 'string') {
+                formData[key] = SecurityManager.sanitizeInput(formData[key]);
+            }
+        });
 
         // Validate form
         if (!this.validateRegistration(formData)) {
@@ -131,8 +157,8 @@ class AuthSystem {
         await new Promise(resolve => setTimeout(resolve, 1500));
 
         try {
-            const newUser = UserManager.registerUser(formData);
-            this.showAlert('Đăng ký thành công! Tài khoản của bạn đang chờ được kích hoạt.', 'success');
+            const newUser = userManager.registerUser(formData);
+            this.showAlert('Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.', 'success');
             
             // Switch to login tab after successful registration
             setTimeout(() => {
@@ -140,10 +166,10 @@ class AuthSystem {
                 this.setLoadingState('register', false);
                 // Pre-fill username
                 document.getElementById('username').value = formData.username;
-            }, 2000);
+            }, 3000);
 
         } catch (error) {
-            this.showAlert('Có lỗi xảy ra khi đăng ký. Vui lòng thử lại.', 'error');
+            this.showAlert(error.message, 'error');
             this.setLoadingState('register', false);
         }
     }
@@ -164,7 +190,7 @@ class AuthSystem {
         if (!SecurityManager.validateUsername(formData.username)) {
             this.showError('reg-username', 'Tên đăng nhập phải từ 3-20 ký tự và chỉ chứa chữ cái, số và dấu gạch dưới');
             isValid = false;
-        } else if (UserManager.usernameExists(formData.username)) {
+        } else if (userManager.usernameExists(formData.username)) {
             this.showError('reg-username', 'Tên đăng nhập đã tồn tại');
             isValid = false;
         }
@@ -173,14 +199,23 @@ class AuthSystem {
         if (!SecurityManager.validateEmail(formData.email)) {
             this.showError('reg-email', 'Email không hợp lệ');
             isValid = false;
-        } else if (UserManager.emailExists(formData.email)) {
+        } else if (userManager.emailExists(formData.email)) {
             this.showError('reg-email', 'Email đã được sử dụng');
+            isValid = false;
+        }
+
+        // Validate phone
+        if (!SecurityManager.validatePhone(formData.phone)) {
+            this.showError('reg-phone', 'Số điện thoại không hợp lệ');
+            isValid = false;
+        } else if (userManager.phoneExists(formData.phone)) {
+            this.showError('reg-phone', 'Số điện thoại đã được sử dụng');
             isValid = false;
         }
 
         // Validate password
         const passwordValidation = SecurityManager.validatePassword(formData.password);
-        if (passwordValidation.strength < 3) {
+        if (!passwordValidation.isValid) {
             this.showError('reg-password', 'Mật khẩu không đủ mạnh');
             isValid = false;
         }
@@ -197,6 +232,12 @@ class AuthSystem {
             isValid = false;
         }
 
+        // Validate organization
+        if (!SecurityManager.validateOrganization(formData.organization)) {
+            this.showError('reg-organization', 'Tên tổ chức không được vượt quá 100 ký tự');
+            isValid = false;
+        }
+
         // Validate terms
         if (!formData.acceptTerms) {
             this.showError('accept-terms', 'Bạn phải đồng ý với điều khoản dịch vụ');
@@ -208,13 +249,12 @@ class AuthSystem {
 
     validateUsername() {
         const username = document.getElementById('reg-username').value;
-        const errorElement = document.getElementById('reg-username-error');
         
         if (!username) return;
 
         if (!SecurityManager.validateUsername(username)) {
             this.showError('reg-username', 'Tên đăng nhập phải từ 3-20 ký tự và chỉ chứa chữ cái, số và dấu gạch dưới');
-        } else if (UserManager.usernameExists(username)) {
+        } else if (userManager.usernameExists(username)) {
             this.showError('reg-username', 'Tên đăng nhập đã tồn tại');
         } else {
             this.showSuccess('reg-username');
@@ -223,16 +263,29 @@ class AuthSystem {
 
     validateEmail() {
         const email = document.getElementById('reg-email').value;
-        const errorElement = document.getElementById('reg-email-error');
         
         if (!email) return;
 
         if (!SecurityManager.validateEmail(email)) {
             this.showError('reg-email', 'Email không hợp lệ');
-        } else if (UserManager.emailExists(email)) {
+        } else if (userManager.emailExists(email)) {
             this.showError('reg-email', 'Email đã được sử dụng');
         } else {
             this.showSuccess('reg-email');
+        }
+    }
+
+    validatePhone() {
+        const phone = document.getElementById('reg-phone').value;
+        
+        if (!phone) return;
+
+        if (!SecurityManager.validatePhone(phone)) {
+            this.showError('reg-phone', 'Số điện thoại không hợp lệ (định dạng: 09xxxxxxxx hoặc 03xxxxxxxx)');
+        } else if (userManager.phoneExists(phone)) {
+            this.showError('reg-phone', 'Số điện thoại đã được sử dụng');
+        } else {
+            this.showSuccess('reg-phone');
         }
     }
 
@@ -300,6 +353,18 @@ class AuthSystem {
         feather.replace();
     }
 
+    generatePassword() {
+        const strongPassword = SecurityManager.generateStrongPassword();
+        document.getElementById('reg-password').value = strongPassword;
+        document.getElementById('reg-confirm-password').value = strongPassword;
+        this.validatePasswordStrength(strongPassword);
+        this.showSuccess('reg-password');
+        this.showSuccess('reg-confirm-password');
+        
+        // Hiển thị thông báo
+        this.showAlert('Đã tạo mật khẩu mạnh tự động!', 'success');
+    }
+
     login(user, rememberMe = false) {
         this.currentUser = user;
         
@@ -313,12 +378,28 @@ class AuthSystem {
         // Update UI
         this.updateUI();
 
-        // Show success message and redirect
+        // Show success message and redirect based on role
         this.showAlert(`Đăng nhập thành công! Chào mừng ${user.fullname}`, 'success');
         
         setTimeout(() => {
-            window.location.href = 'index.html';
+            this.redirectBasedOnRole(user.role);
         }, 1500);
+    }
+
+    redirectBasedOnRole(role) {
+        switch(role) {
+            case 'admin':
+                window.location.href = 'admin-dashboard.html';
+                break;
+            case 'rescuer':
+            case 'moderator':
+            case 'coordinator':
+                window.location.href = 'rescuer-dashboard.html';
+                break;
+            case 'viewer':
+            default:
+                window.location.href = 'index.html?login=success';
+        }
     }
 
     logout() {
@@ -344,6 +425,7 @@ class AuthSystem {
 
     updateUI() {
         // This will be implemented in main.js for navigation updates
+        console.log('UI updated for user:', this.currentUser);
     }
 
     switchTab(tabName) {
@@ -461,9 +543,6 @@ let authSystem;
 document.addEventListener('DOMContentLoaded', function() {
     authSystem = new AuthSystem();
 });
-
-
-
 
 //request.js// Login functionality
 document.addEventListener('DOMContentLoaded', function() {

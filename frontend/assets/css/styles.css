@@ -55,22 +55,19 @@
 .nav-link {
     position: relative;
 }
-
 .nav-link::after {
-    content: '';
+    content: '';    
     position: absolute;
-    bottom: -5px;
+    bottom: -2px;
     left: 0;
     width: 0;
     height: 2px;
-    background: linear-gradient(90deg, #ef4444, #f97316);
+    background-color: var(--primary);
     transition: width 0.3s ease;
 }
-
 .nav-link:hover::after {
     width: 100%;
 }
-
 /* Map Container Styling */
 #map {
     border-radius: 16px;
@@ -645,7 +642,6 @@ body {
 .nav-link {
     position: relative;
 }
-
 .nav-link::after {
     content: '';
     position: absolute;
@@ -656,7 +652,6 @@ body {
     background-color: var(--primary);
     transition: width 0.3s ease;
 }
-
 .nav-link:hover::after {
     width: 100%;
 }
@@ -849,7 +844,6 @@ body {
 .nav-link {
     position: relative;
 }
-
 .nav-link::after {
     content: '';
     position: absolute;
@@ -860,7 +854,6 @@ body {
     background-color: var(--primary);
     transition: width 0.3s ease;
 }
-
 .nav-link:hover::after {
     width: 100%;
 }
@@ -1182,7 +1175,6 @@ body {
 .nav-link {
     position: relative;
 }
-
 .nav-link::after {
     content: '';
     position: absolute;
@@ -1193,7 +1185,6 @@ body {
     background-color: var(--primary);
     transition: width 0.3s ease;
 }
-
 .nav-link:hover::after {
     width: 100%;
 }
@@ -1385,4 +1376,1193 @@ select:focus,
 textarea:focus {
     outline: 2px solid #ef4444;
     outline-offset: 2px;
+}
+
+
+
+
+
+/* đăng nhập-đăng xuất index+login*/
+/* Toast message styles */
+.toast-enter {
+    transform: translateX(100%);
+}
+
+.toast-enter-active {
+    transform: translateX(0);
+    transition: transform 0.3s ease-out;
+}
+
+.toast-exit {
+    transform: translateX(0);
+}
+
+.toast-exit-active {
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in;
+}
+
+/* User avatar styles */
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ef4444 0%, #f97316 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+/* Navigation transitions */
+.nav-transition {
+    transition: all 0.3s ease;
+}
+
+
+
+
+
+
+/*  map */
+/* Thêm các style này vào phần CSS */
+.custom-popup .leaflet-popup-content-wrapper {
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.status-active {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
+.status-resolved {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.priority-high {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+.priority-medium {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
+.priority-low {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+/* Animation cho marker */
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+    }
+}
+
+/* Style cho các loại sự cố */
+.incident-fire {
+    border-left: 4px solid #ef4444;
+}
+
+.incident-flood {
+    border-left: 4px solid #3b82f6;
+}
+
+.incident-accident {
+    border-left: 4px solid #f97316;
+}
+
+.incident-disaster {
+    border-left: 4px solid #8b5cf6;
+}
+
+
+
+
+
+
+
+/* header*/
+/* Đảm bảo header có nền trong suốt khi ở top */
+#navbar.bg-transparent {
+    background: transparent !important;
+}
+
+#navbar.bg-white {
+    background: white !important;
+}
+
+/* Hero section cần padding top để tránh bị header che */
+.hero-section {
+    margin-top: -80px; /* Bù trừ cho chiều cao header */
+    padding-top: 80px; /* Tạo khoảng trống cho header */
+}
+
+/* Đảm bảo overlay không bị ảnh hưởng */
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+}
+
+
+
+
+
+
+
+
+/* map-index */
+
+/* Map Container */
+.map-container {
+    height: 600px;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    border: 1px solid #e5e7eb;
+    position: relative;
+}
+
+.map-container.loading::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.map-container.loading::after {
+    content: 'Đang tải bản đồ...';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1001;
+    background: #ef4444;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Combined Panel Styles */
+.combined-panel {
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e5e7eb;
+    overflow: hidden;
+}
+
+.panel-header {
+    background: linear-gradient(135deg, #ef4444, #f97316);
+    color: white;
+    padding: 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.panel-header h3 {
+    color: white;
+    margin: 0;
+    font-size: 1.25rem;
+}
+
+.panel-header p {
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0.25rem 0 0 0;
+    font-size: 0.875rem;
+}
+
+.panel-content {
+    padding: 1.5rem;
+}
+
+/* Tab Styles */
+.panel-tabs {
+    display: flex;
+    border-bottom: 1px solid #e5e7eb;
+    background: #f8fafc;
+}
+
+.panel-tab {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    text-align: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    color: #6b7280;
+    transition: all 0.2s ease;
+    border-bottom: 2px solid transparent;
+}
+
+.panel-tab:hover {
+    color: #374151;
+    background: #f1f5f9;
+}
+
+.panel-tab.active {
+    color: #ef4444;
+    border-bottom-color: #ef4444;
+    background: white;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Filter Section Styles */
+.filter-section {
+    margin-bottom: 1.5rem;
+}
+
+.filter-title {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.filter-title i {
+    margin-right: 0.5rem;
+}
+
+.incident-type-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+.type-filter-btn {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    background: white;
+    color: #374151;
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    flex: 1;
+    min-width: 60px;
+    text-align: center;
+}
+
+.type-filter-btn:hover {
+    border-color: #ef4444;
+    color: #ef4444;
+}
+
+.type-filter-btn.active {
+    background: #ef4444;
+    border-color: #ef4444;
+    color: white;
+}
+
+/* Statistics Styles */
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.stats-card {
+    padding: 1rem;
+    border-radius: 0.75rem;
+    text-align: center;
+}
+
+.stats-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.stats-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.quick-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+}
+
+.quick-stat {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    background: #f8fafc;
+    border-radius: 0.5rem;
+    border: 1px solid #e5e7eb;
+}
+
+.quick-stat-icon {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.75rem;
+    color: white;
+}
+
+.quick-stat-info {
+    flex: 1;
+}
+
+.quick-stat-count {
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.quick-stat-label {
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin-top: 0.125rem;
+}
+
+/* Map Legend Styles */
+.legend-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid #e5e7eb;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.legend-item:hover {
+    background: #f8fafc;
+    transform: translateY(-1px);
+}
+
+.legend-icon {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.75rem;
+    color: white;
+}
+
+.legend-info {
+    flex: 1;
+}
+
+.legend-title {
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.legend-description {
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
+/* Map Controls */
+.map-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.control-btn {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    background: white;
+    color: #374151;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.control-btn:hover {
+    border-color: #ef4444;
+    color: #ef4444;
+}
+
+.control-btn i {
+    margin-right: 0.5rem;
+}
+
+/* Status Indicators */
+.status-indicators {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.status-dot {
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+    margin-right: 0.5rem;
+}
+
+.status-dot.active {
+    background: #ef4444;
+    animation: pulse 2s infinite;
+}
+
+.status-dot.resolved {
+    background: #10b981;
+}
+
+/* Recent Incidents Section */
+.recent-incidents-section {
+    margin-top: 3rem;
+}
+
+.section-header {
+    display: flex;
+    justify-content: between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.section-title i {
+    margin-right: 0.5rem;
+    color: #ef4444;
+}
+
+/* Quick Stats Grid */
+.quick-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .quick-stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.quick-stat-card {
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    text-align: center;
+    border: 1px solid #e5e7eb;
+}
+
+.quick-stat-value {
+    font-size: 1.875rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+}
+
+.quick-stat-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+/* Filter Bar */
+.filter-bar {
+    background: #f8fafc;
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.filter-row {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+@media (min-width: 768px) {
+    .filter-row {
+        flex-direction: row;
+        align-items: end;
+    }
+}
+
+.filter-group {
+    flex: 1;
+}
+
+.filter-group label {
+    display: block;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+}
+
+/* Recent Incidents Grid */
+.recent-incidents-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+    .recent-incidents-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.incident-card {
+    background: white;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    border: 1px solid #e5e7eb;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.incident-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.incident-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+}
+
+.incident-card.incident-fire::before {
+    background: #ef4444;
+}
+
+.incident-card.incident-flood::before {
+    background: #3b82f6;
+}
+
+.incident-card.incident-accident::before {
+    background: #f97316;
+}
+
+.incident-card.incident-disaster::before {
+    background: #8b5cf6;
+}
+
+/* Status Badges */
+.status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.status-active {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.status-resolved {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.priority-high {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.priority-medium {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.priority-low {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 2rem;
+}
+
+.pagination-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    background: white;
+    color: #374151;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.pagination-btn:hover {
+    border-color: #ef4444;
+    color: #ef4444;
+}
+
+.pagination-btn.active {
+    background: #ef4444;
+    border-color: #ef4444;
+    color: white;
+}
+
+.pagination-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Leaflet Customizations */
+.leaflet-container {
+    font-family: inherit;
+    border-radius: 1rem;
+}
+
+.leaflet-popup-content-wrapper {
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.leaflet-popup-content {
+    margin: 0;
+    line-height: 1.5;
+}
+
+.incident-popup {
+    min-width: 280px;
+}
+
+.incident-marker-container {
+    background: transparent !important;
+    border: none !important;
+}
+
+.incident-marker {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 3px solid;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.incident-marker.active {
+    animation: pulse 2s infinite;
+}
+
+.incident-marker.resolved {
+    opacity: 0.7;
+    transform: scale(0.9);
+}
+
+.incident-marker.fire {
+    background-color: #ef4444;
+    border-color: #ef4444;
+}
+
+.incident-marker.flood {
+    background-color: #3b82f6;
+    border-color: #3b82f6;
+}
+
+.incident-marker.accident {
+    background-color: #f97316;
+    border-color: #f97316;
+}
+
+.incident-marker.disaster {
+    background-color: #8b5cf6;
+    border-color: #8b5cf6;
+}
+
+/* Animations */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+    }
+    70% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .map-container {
+        height: 400px;
+        border-radius: 0.5rem;
+    }
+    
+    .combined-panel {
+        margin-bottom: 1rem;
+    }
+    
+    .panel-content {
+        padding: 1rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .quick-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .filter-row {
+        flex-direction: column;
+    }
+    
+    .recent-incidents-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .map-controls {
+        flex-direction: column;
+    }
+    
+    .control-btn {
+        justify-content: center;
+    }
+    
+    .status-indicators {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+}
+
+/* Utility Classes */
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.line-clamp-3 {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.sticky-panel {
+    position: sticky;
+    top: 100px;
+}
+
+/* Loading States */
+.loading-skeleton {
+    background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Print Styles */
+@media print {
+    .map-container {
+        height: 400px;
+        break-inside: avoid;
+    }
+    
+    .combined-panel {
+        break-inside: avoid;
+    }
+    
+    .recent-incidents-section {
+        break-before: always;
+    }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+    .incident-marker {
+        border-width: 2px;
+        box-shadow: 0 0 0 2px white;
+    }
+    
+    .legend-item {
+        border-width: 2px;
+    }
+    
+    .control-btn {
+        border-width: 2px;
+    }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+    .incident-marker.active {
+        animation: none;
+    }
+    
+    .incident-card:hover {
+        transform: none;
+    }
+    
+    .legend-item:hover {
+        transform: none;
+    }
+    
+    .control-btn,
+    .type-filter-btn,
+    .pagination-btn {
+        transition: none;
+    }
+}
+
+
+
+
+
+
+/* header-không bị che */
+/* Header Fix Styles */
+#navbar {
+    background: white;
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+#navbar.scrolled {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Main content spacing to avoid header overlap */
+main {
+    position: relative;
+    z-index: 1;
+}
+
+/* Map section spacing */
+#map-section {
+    position: relative;
+    z-index: 1;
+    padding-top: 80px; /* Space for fixed header */
+    margin-top: -80px; /* Compensate for the padding */
+}
+
+/* Hero section spacing */
+.hero-section {
+    position: relative;
+    z-index: 2;
+}
+
+/* Combined panel spacing */
+.combined-panel {
+    position: relative;
+    z-index: 1;
+}
+
+/* Sticky panel with header consideration */
+.sticky-panel {
+    position: sticky;
+    top: 120px; /* Header height + some spacing */
+    z-index: 10;
+}
+
+/* Map container z-index fix */
+.map-container {
+    position: relative;
+    z-index: 1;
+}
+
+/* Leaflet map z-index fixes */
+.leaflet-container {
+    position: relative;
+    z-index: 1;
+}
+
+.leaflet-popup {
+    z-index: 1000;
+}
+
+.leaflet-top,
+.leaflet-bottom {
+    z-index: 1000;
+}
+
+/* Modal z-index fixes */
+.modal {
+    z-index: 9999;
+}
+
+/* Mobile menu z-index */
+#mobile-menu {
+    z-index: 1001;
+}
+
+/* Specific spacing for sections that come after header */
+section:first-of-type {
+    margin-top: 0;
+}
+
+/* Ensure content doesn't get hidden behind header */
+.content-section {
+    scroll-margin-top: 100px;
+}
+
+/* Smooth scrolling with header offset */
+html {
+    scroll-padding-top: 80px;
+}
+
+/* Fix for navigation links */
+.nav-link {
+    position: relative;
+    z-index: 1001;
+}
+
+/* Emergency button z-index */
+.emergency-btn {
+    position: relative;
+    z-index: 1;
+}
+
+/* Statistics panel z-index */
+.stats-panel {
+    position: relative;
+    z-index: 1;
+}
+
+/* Recent incidents section */
+.recent-incidents-section {
+    position: relative;
+    z-index: 1;
+}
+
+/* Loading overlay z-index */
+.loading-overlay {
+    z-index: 2000;
+}
+
+/* Toast/notification z-index */
+.toast-notification {
+    z-index: 9999;
+}
+
+/* Header height variables */
+:root {
+    --header-height: 80px;
+    --header-height-mobile: 70px;
+}
+
+/* Responsive header spacing */
+@media (max-width: 768px) {
+    #map-section {
+        padding-top: var(--header-height-mobile);
+        margin-top: calc(-1 * var(--header-height-mobile));
+    }
+    
+    .sticky-panel {
+        top: calc(var(--header-height-mobile) + 20px);
+    }
+    
+    html {
+        scroll-padding-top: var(--header-height-mobile);
+    }
+}
+
+/* Fix for iOS Safari */
+@supports (-webkit-touch-callout: none) {
+    .sticky-panel {
+        position: -webkit-sticky;
+    }
+}
+
+/* Ensure header is always on top */
+header,
+nav {
+    position: relative;
+    z-index: 1000 !important;
+}
+
+/* Fix for dropdown menus */
+.dropdown-menu {
+    z-index: 1002;
+}
+
+/* Fix for map controls */
+.leaflet-control-container {
+    position: relative;
+    z-index: 1000;
+}
+
+/* Additional safety margins */
+.section-spacing {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+/* Prevent content hiding */
+.content-wrapper {
+    position: relative;
+    z-index: 1;
+    min-height: calc(100vh - var(--header-height));
+}
+
+/* Footer z-index */
+footer {
+    position: relative;
+    z-index: 1;
+}
+
+/* Emergency overlay fixes */
+.emergency-overlay {
+    z-index: 9998;
+}
+
+/* Modal backdrop */
+.modal-backdrop {
+    z-index: 9997;
+}
+
+/* Debug borders for development */
+.debug-border {
+    border: 1px solid red;
+}
+
+.debug-border-2 {
+    border: 1px solid blue;
+}
+
+.debug-border-3 {
+    border: 1px solid green;
 }

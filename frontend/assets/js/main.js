@@ -707,3 +707,490 @@ const Utils = {
         console.log(`${type.toUpperCase()}: ${message}`);
     }
 };
+
+
+
+
+//login+index đăng nhập-đăng xuất
+// Main Application Script
+class MainApp {
+    constructor() {
+        this.currentUser = null;
+        this.init();
+    }
+
+    init() {
+        this.loadCurrentUser();
+        this.updateNavigation();
+        this.bindEvents();
+        
+        // Kiểm tra chuyển hướng sau khi đăng nhập
+        this.checkRedirectAfterLogin();
+        
+        feather.replace();
+    }
+
+    loadCurrentUser() {
+        const userData = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
+        if (userData) {
+            this.currentUser = JSON.parse(userData);
+        }
+    }
+
+    updateNavigation() {
+        const loginButton = document.querySelector('a[href="login.html"]');
+        const mobileLoginButton = document.querySelector('#mobile-menu a[href="login.html"]');
+        
+        if (this.currentUser) {
+            // Thay thế nút đăng nhập bằng thông tin user và nút đăng xuất
+            if (loginButton) {
+                loginButton.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-8 h-8 bg-gradient-to-r from-red-500 to-orange-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                                ${this.getUserInitials()}
+                            </div>
+                            <span class="text-gray-700 font-medium">${this.currentUser.fullname}</span>
+                        </div>
+                        <button id="logout-btn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1 rounded-lg font-medium transition-all text-sm">
+                            Đăng xuất
+                        </button>
+                    </div>
+                `;
+                loginButton.href = "#";
+                loginButton.classList.remove('bg-gradient-to-r', 'from-red-500', 'to-orange-500', 'hover:from-red-600', 'hover:to-orange-600', 'text-white');
+                loginButton.classList.add('bg-transparent', 'hover:bg-transparent');
+            }
+
+            // Cập nhật mobile menu
+            if (mobileLoginButton) {
+                mobileLoginButton.innerHTML = `
+                    <div class="flex items-center justify-between w-full">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-6 h-6 bg-gradient-to-r from-red-500 to-orange-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                                ${this.getUserInitials()}
+                            </div>
+                            <span>${this.currentUser.fullname}</span>
+                        </div>
+                        <button id="mobile-logout-btn" class="text-red-600 font-medium text-sm">
+                            Đăng xuất
+                        </button>
+                    </div>
+                `;
+                mobileLoginButton.href = "#";
+                mobileLoginButton.classList.remove('text-white', 'bg-red-600');
+                mobileLoginButton.classList.add('text-gray-700', 'bg-transparent');
+            }
+
+            // Thêm sự kiện cho nút đăng xuất
+            this.bindLogoutEvents();
+
+            // Thêm nút vào Dashboard nếu user có quyền
+            this.addDashboardLinks();
+        }
+    }
+
+    checkRedirectAfterLogin() {
+        if (this.currentUser) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const loginSuccess = urlParams.get('login') === 'success';
+            
+            if (loginSuccess) {
+                // Nếu đăng nhập thành công và user có quyền admin/rescuer, chuyển hướng đến dashboard
+                if (this.shouldRedirectToDashboard()) {
+                    this.showLoginSuccessMessage();
+                    
+                    setTimeout(() => {
+                        this.redirectToDashboard();
+                    }, 2000);
+                } else {
+                    // Nếu là viewer, hiển thị thông báo đăng nhập thành công
+                    this.showLoginSuccessMessage('Đăng nhập thành công!', false);
+                }
+            }
+        }
+    }
+
+    shouldRedirectToDashboard() {
+        if (!this.currentUser) return false;
+        
+        return this.currentUser.role === 'admin' || 
+               ['rescuer', 'moderator', 'coordinator'].includes(this.currentUser.role);
+    }
+
+    redirectToDashboard() {
+        if (this.currentUser.role === 'admin') {
+            window.location.href = 'admin-dashboard.html';
+        } else {
+            window.location.href = 'rescuer-dashboard.html';
+        }
+    }
+
+    showLoginSuccessMessage(message = null, showRedirect = true) {
+        const successMessage = message || 'Đăng nhập thành công! Đang chuyển hướng đến trang quản trị...';
+        
+        const toast = document.createElement('div');
+        toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300';
+        toast.innerHTML = `
+            <div class="flex items-center space-x-2">
+                <i data-feather="check-circle" class="w-5 h-5"></i>
+                <span>${successMessage}</span>
+            </div>
+        `;
+        document.body.appendChild(toast);
+
+        // Hiển thị toast
+        setTimeout(() => {
+            toast.classList.remove('translate-x-full');
+        }, 100);
+
+        // Ẩn toast sau 3s
+        setTimeout(() => {
+            toast.classList.add('translate-x-full');
+            setTimeout(() => {
+                if (document.body.contains(toast)) {
+                    document.body.removeChild(toast);
+                }
+            }, 300);
+        }, 3000);
+
+        feather.replace();
+    }
+
+    addDashboardLinks() {
+        // Thêm link đến dashboard trong navigation nếu user có quyền
+        if (this.shouldRedirectToDashboard()) {
+            const navLinks = document.querySelector('.hidden.md\\:flex.items-center.space-x-8');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            if (navLinks) {
+                const dashboardLink = document.createElement('a');
+                dashboardLink.href = this.currentUser.role === 'admin' ? 'admin-dashboard.html' : 'rescuer-dashboard.html';
+                dashboardLink.className = 'nav-link text-gray-700 hover:text-red-500 font-medium transition';
+                dashboardLink.innerHTML = `
+                    <i data-feather="layout" class="w-4 h-4 mr-1 inline"></i>
+                    Dashboard
+                `;
+                
+                // Chèn trước nút đăng nhập
+                const loginButton = navLinks.querySelector('a[href="login.html"]');
+                if (loginButton) {
+                    navLinks.insertBefore(dashboardLink, loginButton);
+                }
+            }
+
+            // Thêm vào mobile menu
+            if (mobileMenu) {
+                const mobileDashboardLink = document.createElement('a');
+                mobileDashboardLink.href = this.currentUser.role === 'admin' ? 'admin-dashboard.html' : 'rescuer-dashboard.html';
+                mobileDashboardLink.className = 'block py-2 text-gray-700 hover:text-red-600 transition flex items-center';
+                mobileDashboardLink.innerHTML = `
+                    <i data-feather="layout" class="w-4 h-4 mr-2"></i>
+                    Dashboard
+                `;
+                
+                // Chèn trước nút đăng nhập trong mobile menu
+                const mobileLoginButton = mobileMenu.querySelector('a[href="login.html"]');
+                if (mobileLoginButton) {
+                    mobileMenu.insertBefore(mobileDashboardLink, mobileLoginButton);
+                }
+            }
+
+            feather.replace();
+        }
+    }
+
+    getUserInitials() {
+        if (!this.currentUser || !this.currentUser.fullname) return 'U';
+        return this.currentUser.fullname
+            .split(' ')
+            .map(word => word[0])
+            .join('')
+            .toUpperCase()
+            .substring(0, 2);
+    }
+
+    bindLogoutEvents() {
+        // Desktop logout
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.logout();
+            });
+        }
+
+        // Mobile logout
+        const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
+        if (mobileLogoutBtn) {
+            mobileLogoutBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.logout();
+            });
+        }
+
+        // Ngăn sự kiện click trên toàn bộ phần tử login
+        const loginButton = document.querySelector('a[href="login.html"]');
+        if (loginButton && this.currentUser) {
+            loginButton.addEventListener('click', (e) => {
+                e.preventDefault();
+            });
+        }
+    }
+
+    bindEvents() {
+        // Menu toggle for mobile
+        const menuToggle = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        if (menuToggle && mobileMenu) {
+            menuToggle.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+                const icon = menuToggle.querySelector('i');
+                if (mobileMenu.classList.contains('hidden')) {
+                    icon.setAttribute('data-feather', 'menu');
+                } else {
+                    icon.setAttribute('data-feather', 'x');
+                }
+                feather.replace();
+            });
+        }
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (mobileMenu && !mobileMenu.contains(e.target) && menuToggle && !menuToggle.contains(e.target)) {
+                mobileMenu.classList.add('hidden');
+                const icon = menuToggle.querySelector('i');
+                icon.setAttribute('data-feather', 'menu');
+                feather.replace();
+            }
+        });
+
+        // Xử lý scroll cho navbar
+        this.handleNavbarScroll();
+    }
+
+    handleNavbarScroll() {
+        const navbar = document.getElementById('navbar');
+        if (!navbar) return;
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 0) {
+                navbar.classList.add('bg-white', 'shadow-md');
+                navbar.classList.remove('bg-transparent');
+            } else {
+                navbar.classList.remove('bg-white', 'shadow-md');
+                navbar.classList.add('bg-transparent');
+            }
+        });
+
+        // Khởi tạo ban đầu
+        if (window.scrollY === 0) {
+            navbar.classList.add('bg-transparent');
+            navbar.classList.remove('bg-white', 'shadow-md');
+        }
+    }
+
+    logout() {
+        // Xóa thông tin user
+        localStorage.removeItem('currentUser');
+        sessionStorage.removeItem('currentUser');
+        this.currentUser = null;
+
+        // Hiển thị thông báo
+        this.showLogoutMessage();
+
+        // Reload page để cập nhật UI
+        setTimeout(() => {
+            window.location.reload();
+        }, 1000);
+    }
+
+    showLogoutMessage() {
+        // Tạo toast message
+        const toast = document.createElement('div');
+        toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300';
+        toast.innerHTML = `
+            <div class="flex items-center space-x-2">
+                <i data-feather="check-circle" class="w-5 h-5"></i>
+                <span>Đã đăng xuất thành công</span>
+            </div>
+        `;
+        document.body.appendChild(toast);
+
+        // Hiển thị toast
+        setTimeout(() => {
+            toast.classList.remove('translate-x-full');
+        }, 100);
+
+        // Ẩn toast sau 3s
+        setTimeout(() => {
+            toast.classList.add('translate-x-full');
+            setTimeout(() => {
+                if (document.body.contains(toast)) {
+                    document.body.removeChild(toast);
+                }
+            }, 300);
+        }, 3000);
+
+        feather.replace();
+    }
+
+    // Kiểm tra quyền truy cập cho các trang
+    checkAccess(requiredRole = null) {
+        if (!this.currentUser) {
+            window.location.href = 'login.html';
+            return false;
+        }
+
+        if (requiredRole && this.currentUser.role !== requiredRole) {
+            this.showAccessDenied();
+            return false;
+        }
+
+        return true;
+    }
+
+    showAccessDenied() {
+        alert('Bạn không có quyền truy cập trang này!');
+        window.location.href = 'index.html';
+    }
+
+    // Lấy thông tin user hiện tại
+    getCurrentUser() {
+        return this.currentUser;
+    }
+
+    // Kiểm tra đã đăng nhập chưa
+    isLoggedIn() {
+        return this.currentUser !== null;
+    }
+
+    // Lấy role của user
+    getUserRole() {
+        return this.currentUser ? this.currentUser.role : null;
+    }
+
+    // Phương thức tiện ích để kiểm tra role
+    isAdmin() {
+        return this.currentUser && this.currentUser.role === 'admin';
+    }
+
+    isRescuer() {
+        return this.currentUser && ['rescuer', 'moderator', 'coordinator'].includes(this.currentUser.role);
+    }
+
+    isViewer() {
+        return this.currentUser && this.currentUser.role === 'viewer';
+    }
+}
+
+// Khởi tạo ứng dụng
+let mainApp;
+
+document.addEventListener('DOMContentLoaded', function() {
+    mainApp = new MainApp();
+    
+    // Cập nhật feather icons
+    feather.replace();
+});
+
+// Khởi tạo ứng dụng
+
+
+
+
+
+
+// header
+ window.addEventListener('scroll', function() {
+        const navbar = document.getElementById('navbar');
+        const heroSection = document.querySelector('.hero-section');
+        const heroHeight = heroSection.offsetHeight;
+        
+        if (window.scrollY > heroHeight * 0.1) {
+            navbar.classList.add('bg-white', 'shadow-md');
+            navbar.classList.remove('bg-transparent');
+        } else {
+            navbar.classList.remove('bg-white', 'shadow-md');
+            navbar.classList.add('bg-transparent');
+        }
+    });
+
+    // Khởi tạo ban đầu - đảm bảo header trong suốt
+    document.addEventListener('DOMContentLoaded', function() {
+        const navbar = document.getElementById('navbar');
+        navbar.classList.add('bg-transparent');
+        navbar.classList.remove('bg-white', 'shadow-md');
+    });
+
+
+
+
+// form đăng ký
+document.addEventListener('DOMContentLoaded', function() {
+    // Khởi tạo Feather Icons
+    if (typeof feather !== 'undefined') {
+        feather.replace();
+    }
+    
+    // Xử lý form đăng ký
+    const registrationForm = document.getElementById('rescue-registration-form');
+    const successMessage = document.getElementById('success-message');
+    
+    if (registrationForm) {
+        registrationForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Thu thập dữ liệu form
+            const formData = new FormData(registrationForm);
+            const data = {
+                fullname: formData.get('fullname'),
+                phone: formData.get('phone'),
+                email: formData.get('email'),
+                id_number: formData.get('id_number'),
+                province: formData.get('province'),
+                district: formData.get('district'),
+                address: formData.get('address'),
+                role: formData.get('role'),
+                experience: formData.get('experience'),
+                equipment: formData.getAll('equipment'),
+                agreement: formData.get('agreement')
+            };
+            
+            // Gửi dữ liệu đến admin (ở đây chỉ mô phỏng)
+            console.log('Dữ liệu đăng ký:', data);
+            
+            // Hiển thị thông báo thành công
+            if (successMessage) {
+                successMessage.classList.remove('hidden');
+                registrationForm.reset();
+                
+                // Cuộn đến thông báo thành công
+                successMessage.scrollIntoView({ behavior: 'smooth' });
+            }
+            
+            // Ở đây bạn có thể thêm code để gửi dữ liệu đến server
+            // fetch('/api/register-rescuer', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //     },
+            //     body: JSON.stringify(data)
+            // })
+            // .then(response => response.json())
+            // .then(data => {
+            //     console.log('Success:', data);
+            //     successMessage.classList.remove('hidden');
+            //     registrationForm.reset();
+            //     successMessage.scrollIntoView({ behavior: 'smooth' });
+            // })
+            // .catch((error) => {
+            //     console.error('Error:', error);
+            //     alert('Có lỗi xảy ra khi gửi đăng ký. Vui lòng thử lại.');
+            // });
+        });
+    }
+});

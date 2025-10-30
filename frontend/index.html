@@ -26,7 +26,7 @@
                 <a href="index.html" class="nav-link text-red-500 font-bold transition">Trang chủ</a>
                 <a href="map.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Bản đồ cứu hộ</a>
                 <a href="request.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Bản tin</a>
-                <a href="post.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Báo tin</a>
+                <a href="post.html#report" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Báo tin</a>
                 <div class="flex space-x-4">
                     <a href="login.html" class="bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-all shadow hover:shadow-lg">Đăng nhập</a>
                 </div>
@@ -42,7 +42,7 @@
         <a href="index.html#home" class="block py-2 text-gray-700 hover:text-red-600 transition">Trang chủ</a>
         <a href="map.html" class="block py-2 text-gray-700 hover:text-red-600 transition">Bản đồ cứu hộ</a>
         <a href="request.html" class="block py-2 text-red-600 font-bold transition">Bản tin</a>
-        <a href="post.html" class="block py-2 text-gray-700 hover:text-red-600 transition">Báo tin</a>
+        <a href="post.html#report" class="block py-2 text-gray-700 hover:text-red-600 transition">Báo tin</a>
         <a href="login.html" class="block py-2 text-white bg-red-600 rounded-md text-center mt-2">Đăng nhập</a>
     </div>
 </nav>
@@ -61,7 +61,7 @@
                     Kết nối người dân với lực lượng cứu hộ trong các tình huống khẩn cấp như thiên tai, hỏa hoạn, tai nạn giao thông và các sự cố đe dọa tính mạng.
                 </p>
                 <div class="flex space-x-4">
-                    <a href="post.html" class="emergency-btn bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white px-6 py-3 rounded-lg font-medium transition-all shadow-lg flex items-center">
+                    <a href="post.html#report" class="emergency-btn bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white px-6 py-3 rounded-lg font-medium transition-all shadow-lg flex items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                         </svg>
@@ -143,78 +143,110 @@
     </div>
 </div>
 
-    <!-- Map Section -->
-    <section id="map-section" class="py-20 bg-gradient-to-b from-gray-50 to-white">
+       <!-- Map Section -->
+    <section class="py-8 bg-gradient-to-b from-gray-50 to-white relative">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12">
-                <h2 class="text-4xl font-bold mb-4 bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">
-                    Bản Đồ Cứu Hộ
-                </h2>
-                <p class="text-gray-600 max-w-2xl mx-auto text-lg">
-                    Theo dõi các điểm cứu hộ, sự cố và lực lượng ứng phó trong thời gian thực
-                </p>
-            </div>
-
-            <!-- Bộ lọc và tìm kiếm -->
-            <div class="mb-6 bg-white rounded-2xl shadow-lg p-6">
-                <div class="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
-                    <!-- Tìm kiếm -->
-                    <div class="flex-1 w-full lg:w-auto">
-                        <div class="relative">
-                            <i data-feather="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"></i>
-                            <input 
-                                type="text" 
-                                id="search-incidents" 
-                                placeholder="Tìm kiếm sự cố, địa điểm..." 
-                                class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
-                            >
-                        </div>
-                    </div>
-
-                    <!-- Bộ lọc tỉnh thành -->
-                    <div class="w-full lg:w-64">
-                        <select id="province-filter" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
-                            <option value="all">Tất cả tỉnh thành</option>
-                            <option value="hanoi">Hà Nội</option>
-                            <option value="hcm">TP.Hồ Chí Minh</option>
-                            <option value="danang">Đà Nẵng</option>
-                            <option value="hue">Thừa Thiên Huế</option>
-                            <option value="nghean">Nghệ An</option>
-                            <option value="thanhhoa">Thanh Hóa</option>
-                            <option value="haiphong">Hải Phòng</option>
-                            <option value="cantho">Cần Thơ</option>
-                        </select>
-                    </div>
-
-                    <!-- Bộ lọc loại sự cố -->
-                    <div class="w-full lg:w-64">
-                        <select id="type-filter" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
-                            <option value="all">Tất cả loại sự cố</option>
-                            <option value="fire">Hỏa hoạn</option>
-                            <option value="flood">Ngập lụt</option>
-                            <option value="accident">Tai nạn giao thông</option>
-                            <option value="disaster">Thiên tai</option>
-                        </select>
-                    </div>
-
-                    <!-- Nút reset -->
-                    <button id="reset-filters" class="px-6 py-3 border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-xl transition flex items-center whitespace-nowrap">
-                        <i data-feather="refresh-cw" class="mr-2 w-4 h-4"></i> Đặt lại
-                    </button>
-                </div>
+            <div class="text-center mb-8">
+                <h1 class="text-4xl font-bold mb-4 bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">
+                    Bản Đồ Cứu Hộ Trực Tuyến
+                </h1>
+                <p class="text-gray-600 max-w-2xl mx-auto">Theo dõi và quản lý các sự cố khẩn cấp trên toàn quốc</p>
             </div>
 
             <div class="flex flex-col lg:flex-row gap-8">
-                <!-- 🗺️ Bản đồ -->
-                <div class="lg:w-2/3">
-                    <div id="map" class="h-[600px] w-full rounded-2xl shadow-xl border border-gray-200"></div>
+                <!-- Bên trái: Panel kết hợp Bộ Lọc & Thống Kê -->
+                <div class="lg:w-1/3">
+                    <div class="combined-panel sticky-panel">
+                        <div class="panel-header">
+                            <h3 class="text-xl font-bold flex items-center">
+                                <i data-feather="activity" class="mr-2 w-5 h-5"></i>
+                                Quản Lý Sự Cố
+                            </h3>
+                            <p class="text-sm opacity-90 mt-1">Theo dõi và lọc các sự cố khẩn cấp</p>
+                        </div>
+                        
+                        
+                        <div class="panel-content">
+                            <!-- Tab Bộ Lọc -->
+                            <div class="tab-content active" id="filter-tab">
+                               
+                                
+                                <div class="filter-section">
+                                    <label class="filter-title">
+                                        <i data-feather="map-pin" class="w-4 h-4"></i>
+                                        Tỉnh/Thành phố
+                                    </label>
+                                    <select id="province-filter" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                                        <option value="all">Tất cả tỉnh thành</option>
+                                        <option value="hanoi">Hà Nội</option>
+                                        <option value="hcm">TP.Hồ Chí Minh</option>
+                                        <option value="danang">Đà Nẵng</option>
+                                        <option value="hue">Thừa Thiên Huế</option>
+                                        <option value="nghean">Nghệ An</option>
+                                        <option value="thanhhoa">Thanh Hóa</option>
+                                        <option value="haiphong">Hải Phòng</option>
+                                        <option value="cantho">Cần Thơ</option>
+                                        <option value="bacninh">Bắc Ninh</option>
+                                        <option value="haiduong">Hải Dương</option>
+                                        <option value="quangninh">Quảng Ninh</option>
+                                        <option value="thuathienhue">Thừa Thiên Huế</option>
+                                        <option value="binhdinh">Bình Định</option>
+                                        <option value="khanhhoa">Khánh Hòa</option>
+                                        <option value="lamdong">Lâm Đồng</option>
+                                        <option value="dongnai">Đồng Nai</option>
+                                        <option value="baria-vungtau">Bà Rịa - Vũng Tàu</option>
+                                        <option value="tiengiang">Tiền Giang</option>
+                                        <option value="bentre">Bến Tre</option>
+                                        <option value="soc trang">Sóc Trăng</option>
+                                        <option value="camau">Cà Mau</option>
+                                        <option value="quangnam">Quảng Nam</option>
+                                        <option value="ninhthuan">Ninh Thuận</option>
+                                        <option value="namdinh">Nam Định</option>
+                                        <option value="longan">Long An</option>
+                                        <option value="laocai">Lào Cai</option>
+                                        <option value="thainguyen">Thái Nguyên</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="filter-section">
+                                    <label class="filter-title">
+                                        <i data-feather="alert-triangle" class="w-4 h-4"></i>
+                                        Loại sự cố
+                                    </label>
+                                    <select id="type-filter" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                                        <option value="all">Tất cả loại sự cố</option>
+                                        <option value="fire">Hỏa hoạn</option>
+                                        <option value="flood">Ngập lụt</option>
+                                        <option value="accident">Tai nạn giao thông</option>
+                                        <option value="disaster">Thiên tai</option>
+                                    </select>
+                                    
+                                   
+                                </div>
+                                
+                                <div class="filter-section">
+                                    <div class="flex gap-2">
+                                        <button id="reset-filters" class="flex-1 px-4 py-3 border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-xl transition flex items-center justify-center">
+                                            <i data-feather="refresh-cw" class="mr-2 w-4 h-4"></i> Đặt lại
+                                        </button>
+                                        <button id="locate-btn" class="flex-1 px-4 py-3 bg-red-500 text-white hover:bg-red-600 rounded-xl transition flex items-center justify-center">
+                                            <i data-feather="map-pin" class="mr-2 w-4 h-4"></i> Vị trí tôi
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        
+                        </div>
+                    </div>
+                </div>
 
-                    <!-- Controls -->
+                <!-- Bên phải: Bản đồ -->
+                <div class="lg:w-2/3">
+                    <div id="incident-map" class="map-container"></div>
+                    
                     <div class="mt-4 flex flex-wrap gap-3 items-center justify-between">
                         <div class="flex flex-wrap gap-2">
-                            <button id="locate-btn" class="bg-white border border-gray-300 px-4 py-2 rounded-lg flex items-center hover:bg-gray-50 transition shadow-sm">
-                                <i data-feather="map-pin" class="mr-2 w-4 h-4"></i> Vị trí của tôi
-                            </button>
                             <button id="zoom-in-btn" class="bg-white border border-gray-300 px-4 py-2 rounded-lg flex items-center hover:bg-gray-50 transition shadow-sm">
                                 <i data-feather="zoom-in" class="mr-2 w-4 h-4"></i> Phóng to
                             </button>
@@ -235,117 +267,167 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- 🔥 Panel thông tin -->
-                <div class="lg:w-1/3">
-                    <div class="bg-white rounded-2xl shadow-xl overflow-hidden sticky top-4">
-                        <!-- Header -->
-                        <div class="bg-gradient-to-r from-red-500 to-orange-500 p-6 text-white">
-                            <h3 class="text-xl font-bold mb-2 flex items-center">
-                                <i data-feather="activity" class="mr-2 w-5 h-5"></i>
-                                Thống Kê Sự Cố
-                            </h3>
-                            <p class="text-red-100 text-sm">Cập nhật lúc: <span id="last-update">--:--:--</span></p>
-                        </div>
-
-                        <!-- Thống kê -->
-                        <div class="p-6 border-b border-gray-200">
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="text-center p-4 bg-red-50 rounded-xl">
-                                    <div class="text-2xl font-bold text-red-600" id="active-incidents">0</div>
-                                    <div class="text-sm text-red-700 font-medium">Đang xử lý</div>
-                                </div>
-                                <div class="text-center p-4 bg-green-50 rounded-xl">
-                                    <div class="text-2xl font-bold text-green-600" id="resolved-incidents">0</div>
-                                    <div class="text-sm text-green-700 font-medium">Đã giải quyết</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Chú thích -->
-                        <div class="p-6">
-                            <h4 class="font-bold mb-4 text-gray-800 flex items-center">
-                                <i data-feather="map" class="text-red-500 mr-2 w-4 h-4"></i>
-                                Chú Thích Bản Đồ
-                            </h4>
-
-                            <div class="space-y-3">
-                                <!-- Hỏa hoạn -->
-                                <div class="flex items-center p-3 bg-red-50 rounded-lg border border-red-200 hover:bg-red-100 transition cursor-pointer" data-type="fire">
-                                    <div class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center mr-3">
-                                        <i data-feather="flame" class="text-white w-4 h-4"></i>
-                                    </div>
-                                    <div class="flex-1">
-                                        <span class="font-semibold text-red-700">🔥 Hỏa hoạn</span>
-                                        <p class="text-sm text-red-600">Cháy nhà, cháy rừng, nổ</p>
-                                    </div>
-                                    <div class="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold" id="count-fire">0</div>
-                                </div>
-
-                                <!-- Ngập lụt -->
-                                <div class="flex items-center p-3 bg-blue-50 rounded-lg border border-blue-200 hover:bg-blue-100 transition cursor-pointer" data-type="flood">
-                                    <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center mr-3">
-                                        <i data-feather="droplet" class="text-white w-4 h-4"></i>
-                                    </div>
-                                    <div class="flex-1">
-                                        <span class="font-semibold text-blue-700">💧 Ngập lụt</span>
-                                        <p class="text-sm text-blue-600">Ngập nước, lũ quét</p>
-                                    </div>
-                                    <div class="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-bold" id="count-flood">0</div>
-                                </div>
-
-                                <!-- Tai nạn giao thông -->
-                                <div class="flex items-center p-3 bg-orange-50 rounded-lg border border-orange-200 hover:bg-orange-100 transition cursor-pointer" data-type="accident">
-                                    <div class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center mr-3">
-                                        <i data-feather="activity" class="text-white w-4 h-4"></i>
-                                    </div>
-                                    <div class="flex-1">
-                                        <span class="font-semibold text-orange-700">🚗 Tai nạn giao thông</span>
-                                        <p class="text-sm text-orange-600">TNGT đường bộ, đường sắt</p>
-                                    </div>
-                                    <div class="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center text-white text-xs font-bold" id="count-accident">0</div>
-                                </div>
-
-                                <!-- Thiên tai -->
-                                <div class="flex items-center p-3 bg-purple-50 rounded-lg border border-purple-200 hover:bg-purple-100 transition cursor-pointer" data-type="disaster">
-                                    <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center mr-3">
-                                        <i data-feather="alert-octagon" class="text-white w-4 h-4"></i>
-                                    </div>
-                                    <div class="flex-1">
-                                        <span class="font-semibold text-purple-700">🌪️ Thiên tai</span>
-                                        <p class="text-sm text-purple-600">Bão lụt, sạt lở, động đất</p>
-                                    </div>
-                                    <div class="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center text-white text-xs font-bold" id="count-disaster">0</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </section>
        
-   <!-- News Section -->
-<section id="news-section" class="py-16 bg-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+ <!-- Registration Section -->
+<section id="registration-section" class="py-16 bg-white">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-12">
-            <h2 class="text-3xl font-bold mb-3 bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">Bản Tin Khẩn Cấp</h2>
-            <p class="text-gray-600 max-w-xl mx-auto text-base">Cập nhật thông tin mới nhất về các sự cố, cảnh báo và hoạt động cứu hộ trên toàn quốc.</p>
+            <h2 class="text-3xl font-bold mb-3 bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">Đăng Ký Tham Gia Cứu Hộ</h2>
+            <p class="text-gray-600 max-w-xl mx-auto text-base">Đăng ký trở thành người cứu hộ hoặc quản trị viên để hỗ trợ cộng đồng trong các tình huống khẩn cấp.</p>
         </div>
 
-        <div id="news-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <!-- News Cards sẽ được render động -->
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <div class="bg-gradient-to-r from-red-500 to-orange-500 p-6 text-white">
+                <h3 class="text-xl font-bold mb-2 flex items-center">
+                    <i data-feather="user-plus" class="mr-2 w-5 h-5"></i>
+                    Thông Tin Đăng Ký
+                </h3>
+                <p class="text-red-100 text-sm">Thông tin của bạn sẽ được gửi tới quản trị viên để xét duyệt</p>
+            </div>
+
+            <form id="rescue-registration-form" class="p-6 space-y-6">
+                <!-- Thông tin cá nhân -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="fullname" class="block text-sm font-medium text-gray-700 mb-1">Họ và tên *</label>
+                        <input type="text" id="fullname" name="fullname" required 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                    </div>
+                    <div>
+                        <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Số điện thoại *</label>
+                        <input type="tel" id="phone" name="phone" required 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                        <input type="email" id="email" name="email" required 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                    </div>
+                    <div>
+                        <label for="id-number" class="block text-sm font-medium text-gray-700 mb-1">Số CMND/CCCD *</label>
+                        <input type="text" id="id-number" name="id_number" required 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                    </div>
+                </div>
+
+                <!-- Địa chỉ -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div>
+                        <label for="province" class="block text-sm font-medium text-gray-700 mb-1">Tỉnh/Thành phố *</label>
+                        <select id="province" name="province" required 
+                                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                            <option value="">Chọn tỉnh/thành phố</option>
+                            <option value="hanoi">Hà Nội</option>
+                            <option value="hcm">TP.Hồ Chí Minh</option>
+                            <option value="danang">Đà Nẵng</option>
+                            <option value="hue">Thừa Thiên Huế</option>
+                            <option value="nghean">Nghệ An</option>
+                            <option value="thanhhoa">Thanh Hóa</option>
+                            <option value="haiphong">Hải Phòng</option>
+                            <option value="cantho">Cần Thơ</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="district" class="block text-sm font-medium text-gray-700 mb-1">Quận/Huyện *</label>
+                        <input type="text" id="district" name="district" required 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                    </div>
+                    <div>
+                        <label for="address" class="block text-sm font-medium text-gray-700 mb-1">Địa chỉ chi tiết *</label>
+                        <input type="text" id="address" name="address" required 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                    </div>
+                </div>
+
+                <!-- Loại đăng ký -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-3">Vai trò đăng ký *</label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <label class="flex items-center p-4 border border-gray-300 rounded-xl cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="role" value="rescuer" class="text-red-500 focus:ring-red-500" required>
+                            <div class="ml-3">
+                                <span class="font-medium text-gray-900">Người cứu hộ</span>
+                                <p class="text-sm text-gray-500">Tham gia trực tiếp cứu hộ, cứu nạn</p>
+                            </div>
+                        </label>
+                        <label class="flex items-center p-4 border border-gray-300 rounded-xl cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="role" value="admin" class="text-red-500 focus:ring-red-500" required>
+                            <div class="ml-3">
+                                <span class="font-medium text-gray-900">Quản trị viên</span>
+                                <p class="text-sm text-gray-500">Quản lý hệ thống và điều phối cứu hộ</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Kinh nghiệm và kỹ năng -->
+                <div>
+                    <label for="experience" class="block text-sm font-medium text-gray-700 mb-1">Kinh nghiệm/Kỹ năng</label>
+                    <textarea id="experience" name="experience" rows="4" 
+                              placeholder="Mô tả kinh nghiệm, kỹ năng cứu hộ, chứng chỉ liên quan (nếu có)..."
+                              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"></textarea>
+                </div>
+
+                <!-- Thiết bị có sẵn -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-3">Thiết bị cứu hộ có sẵn</label>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <label class="flex items-center">
+                            <input type="checkbox" name="equipment" value="first_aid" class="text-red-500 focus:ring-red-500 rounded">
+                            <span class="ml-2 text-sm text-gray-700">Túi cứu thương</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" name="equipment" value="fire_extinguisher" class="text-red-500 focus:ring-red-500 rounded">
+                            <span class="ml-2 text-sm text-gray-700">Bình chữa cháy</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" name="equipment" value="rope" class="text-red-500 focus:ring-red-500 rounded">
+                            <span class="ml-2 text-sm text-gray-700">Dây thừng</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" name="equipment" value="boat" class="text-red-500 focus:ring-red-500 rounded">
+                            <span class="ml-2 text-sm text-gray-700">Thuyền cứu hộ</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Cam kết -->
+                <div class="bg-gray-50 p-4 rounded-xl">
+                    <label class="flex items-start">
+                        <input type="checkbox" id="agreement" name="agreement" required 
+                               class="mt-1 text-red-500 focus:ring-red-500 rounded">
+                        <span class="ml-3 text-sm text-gray-700">
+                            Tôi cam kết thông tin cung cấp là chính xác và sẵn sàng tham gia hỗ trợ cứu hộ khi có yêu cầu. 
+                            Tôi hiểu rằng việc đăng ký cần được xét duyệt và có thể bị từ chối nếu không đáp ứng yêu cầu.
+                        </span>
+                    </label>
+                </div>
+
+                <!-- Nút gửi -->
+                <div class="flex justify-center pt-4">
+                    <button type="submit" 
+                            class="bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white px-8 py-3 rounded-xl font-medium transition-all shadow-lg flex items-center">
+                        <i data-feather="send" class="mr-2 w-4 h-4"></i>
+                        Gửi Đăng Ký
+                    </button>
+                </div>
+            </form>
         </div>
 
-        <div class="text-center mt-10">
-            <a href="request.html" class="inline-flex items-center px-6 py-3 border border-red-600 text-red-600 rounded-md hover:bg-red-50 transition font-medium">
-                Xem tất cả bản tin
-                <i data-feather="chevron-right" class="ml-2 w-4 h-4"></i>
-            </a>
+        <!-- Thông báo thành công -->
+        <div id="success-message" class="hidden mt-6 p-4 bg-green-50 border border-green-200 rounded-xl text-green-700 text-center">
+            <i data-feather="check-circle" class="w-6 h-6 mx-auto mb-2"></i>
+            <p class="font-medium">Đăng ký thành công! Thông tin của bạn đã được gửi tới quản trị viên.</p>
+            <p class="text-sm mt-1">Chúng tôi sẽ liên hệ với bạn trong thời gian sớm nhất.</p>
         </div>
     </div>
 </section>
-
 <!-- Modal for news details -->
 <div id="news-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 p-4 modal">
     <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-screen overflow-y-auto p-6">
@@ -360,7 +442,7 @@
             <a id="map-link" href="#" class="text-blue-600 hover:text-blue-800 flex items-center">
                 <i data-feather="map-pin" class="mr-2 w-4 h-4"></i> Xem trên bản đồ
             </a>
-            <a href="post.html" class="text-orange-600 hover:text-orange-700 flex items-center">
+            <a href="post.html#report" class="text-orange-600 hover:text-orange-700 flex items-center">
                 <i data-feather="alert-triangle" class="mr-2 w-4 h-4"></i> Báo tin bổ sung
             </a>
             <button id="share-news" class="text-green-600 hover:text-green-700 flex items-center">
@@ -425,7 +507,8 @@
     <script src="assets/js/main.js"></script>
     <script src="assets/js/map.js"></script>
     <script src="assets/js/news.js"></script>
-    <!-- Thêm script mới -->
-<script src="assets/js/latest-news.js"></script>
+    <script src="assets/js/auth-manager.js"></script>   
+    <script src="assets/js/user-manager.js"></script>
+    <script src="assets/js/security-manager.js"></script>
 </body>
 </html>
