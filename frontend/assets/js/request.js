@@ -1,678 +1,897 @@
+// Dữ liệu mẫu cho bản tin từ chính phủ
+ const newsData = [
+            {
+                id: 1,
+                title: "CẢNH BÁO: Bão số 5 Noru di chuyển nhanh hướng vào miền Trung",
+                summary: "Bão Noru dự báo sẽ đổ bộ vào các tỉnh từ Đà Nẵng đến Phú Yên với sức gió mạnh cấp 13-14, giật cấp 16.",
+                content: `
+                    <div class="mb-4">
+                        <img src="https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Bão Noru" class="w-full h-64 object-cover rounded-lg">
+                    </div>
+                    <p class="text-lg font-semibold text-red-600 mb-4">THÔNG BÁO KHẨN CẤP từ Ban Chỉ đạo Quốc gia về Phòng chống thiên tai</p>
+                    <p class="mb-4">Theo Trung tâm Dự báo Khí tượng Thủy văn Quốc gia, hồi 07 giờ ngày 26/9, vị trí tâm bão ở vào khoảng 14,8 độ Vĩ Bắc; 119,5 độ Kinh Đông, cách đảo Lu-dông (Philippines) khoảng 320km về phía Đông. Sức gió mạnh nhất vùng gần tâm bão mạnh cấp 14 (150-166km/giờ), giật cấp 17.</p>
+                    <p class="mb-4">Dự báo trong 24 giờ tới, bão di chuyển chủ yếu theo hướng Tây Tây Bắc, mỗi giờ đi được 20-25km. Đến 07 giờ ngày 27/9, vị trí tâm bão ở khoảng 16,0 độ Vĩ Bắc; 115,7 độ Kinh Đông, cách quần đảo Hoàng Sa khoảng 430km về phía Đông Đông Nam. Sức gió mạnh nhất vùng gần tâm bão mạnh cấp 14 (150-166km/giờ), giật cấp 17.</p>
+                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">
+                        <p class="font-semibold">CẢNH BÁO:</p>
+                        <ul class="list-disc ml-5 mt-2">
+                            <li>Khu vực từ Đà Nẵng đến Phú Yên cần khẩn trương triển khai các biện pháp phòng chống bão</li>
+                            <li>Sẵn sàng sơ tán người dân ở khu vực nguy hiểm, vùng trũng thấp</li>
+                            <li>Chủ động cắt điện tại các khu vực có nguy cơ cao để đảm bảo an toàn</li>
+                            <li>Tạm dừng các hoạt động trên biển, đưa tàu thuyền về nơi tránh trú an toàn</li>
+                        </ul>
+                    </div>
+                `,
+                type: "thien-tai",
+                source: "ban-chi-dao",
+                location: "mien-trung",
+                date: "2023-09-26",
+                time: "07:30",
+                priority: "high",
+                official: true
+            },
+            {
+                id: 2,
+                title: "SẠT LỞ ĐẤT: 3 hộ dân bị vùi lấp tại huyện Mù Cang Chải",
+                summary: "Mưa lớn kéo dài gây sạt lở đất tại xã La Pán Tẩn, huyện Mù Cang Chải, tỉnh Yên Bái.",
+                content: `
+                    <div class="mb-4">
+                        <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Sạt lở đất" class="w-full h-64 object-cover rounded-lg">
+                    </div>
+                    <p class="text-lg font-semibold text-red-600 mb-4">THÔNG BÁO KHẨN CẤP từ Ban Chỉ huy PCTT&TKCN tỉnh Yên Bái</p>
+                    <p class="mb-4">Vào lúc 03h30 sáng nay, một vụ sạt lở đất đã xảy ra tại thôn Pá Mỳ, xã La Pán Tẩn, huyện Mù Cang Chải, tỉnh Yên Bái.</p>
+                    <p class="mb-4">Theo thông tin ban đầu, có 3 hộ dân với 12 nhân khẩu bị vùi lấp. Lực lượng cứu hộ đang khẩn trương tìm kiếm, cứu nạn.</p>
+                    <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-4">
+                        <p class="font-semibold">YÊU CẦU:</p>
+                        <ul class="list-disc ml-5 mt-2">
+                            <li>Người dân trong khu vực cần sơ tán ngay lập tức</li>
+                            <li>Tạm dừng mọi hoạt động qua khu vực sạt lở</li>
+                            <li>Lực lượng cứu hộ tiếp tục tìm kiếm người mất tích</li>
+                        </ul>
+                    </div>
+                `,
+                type: "thien-tai",
+                source: "bo-cong-an",
+                location: "mien-bac",
+                date: "2023-09-25",
+                time: "04:15",
+                priority: "high",
+                official: true
+            },
+            {
+                id: 3,
+                title: "CHÁY LỚN: Kho hàng tại KCN Bắc Thăng Long bốc cháy dữ dội",
+                summary: "Một kho hàng tại Khu công nghiệp Bắc Thăng Long, Hà Nội bất ngờ bốc cháy vào rạng sáng.",
+                content: `
+                    <div class="mb-4">
+                        <img src="https://images.unsplash.com/photo-1584824486537-52f60c5da8a0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Cháy kho hàng" class="w-full h-64 object-cover rounded-lg">
+                    </div>
+                    <p class="text-lg font-semibold mb-4">THÔNG BÁO từ Cảnh sát PCCC Hà Nội</p>
+                    <p class="mb-4">Vào lúc 02h30 sáng nay, một kho hàng chứa vật liệu xây dựng tại Khu công nghiệp Bắc Thăng Long, huyện Đông Anh, Hà Nội đã bốc cháy.</p>
+                    <p class="mb-4">Lực lượng cảnh sát PCCC đã huy động 10 xe chữa cháy và 50 cán bộ, chiến sĩ đến hiện trường khống chế đám cháy.</p>
+                    <div class="bg-orange-50 border-l-4 border-orange-400 p-4 mb-4">
+                        <p class="font-semibold">THÔNG TIN THÊM:</p>
+                        <ul class="list-disc ml-5 mt-2">
+                            <li>Khu vực xung quanh đã được sơ tán an toàn</li>
+                            <li>Chưa ghi nhận thiệt hại về người</li>
+                            <li>Nguyên nhân vụ cháy đang được điều tra</li>
+                        </ul>
+                    </div>
+                `,
+                type: "tai-nan",
+                source: "bo-cong-an",
+                location: "ha-noi",
+                date: "2023-09-25",
+                time: "03:00",
+                priority: "high",
+                official: true
+            },
+            {
+                id: 4,
+                title: "CỨU HỘ: Tàu cá gặp nạn trên vùng biển Quảng Bình",
+                summary: "Tàu cá QB 12345TS gặp nạn do sóng lớn trên vùng biển Quảng Bình, 5 ngư dân mất tích.",
+                content: `
+                    <div class="mb-4">
+                        <img src="https://images.unsplash.com/photo-1540959733332-0b2d969c5e16?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Tàu cá gặp nạn" class="w-full h-64 object-cover rounded-lg">
+                    </div>
+                    <p class="text-lg font-semibold mb-4">THÔNG BÁO từ Bộ Tư lệnh Vùng Cảnh sát biển 2</p>
+                    <p class="mb-4">Vào lúc 18h30 tối qua, tàu cá QB 12345TS đang hoạt động trên vùng biển Quảng Bình thì gặp sóng lớn và bị lật.</p>
+                    <p class="mb-4">Lực lượng cảnh sát biển đã cử 2 tàu cùng trực thăng tìm kiếm cứu nạn. Hiện đã cứu được 3 ngư dân, 5 người còn lại đang mất tích.</p>
+                `,
+                type: "cuu-ho",
+                source: "bo-quoc-phong",
+                location: "mien-trung",
+                date: "2023-09-24",
+                time: "20:45",
+                priority: "high",
+                official: true
+            },
+            {
+                id: 5,
+                title: "CẢNH BÁO: Nguy cơ ngập úng tại TP.HCM do triều cường",
+                summary: "Triều cường kết hợp mưa lớn có thể gây ngập úng nhiều khu vực tại TP.HCM trong 3 ngày tới.",
+                content: `
+                    <div class="mb-4">
+                        <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Ngập úng" class="w-full h-64 object-cover rounded-lg">
+                    </div>
+                    <p class="text-lg font-semibold text-red-600 mb-4">CẢNH BÁO từ Ban Chỉ huy PCTT&TKCN TP.HCM</p>
+                    <p class="mb-4">Trong 3 ngày tới (26-28/9), TP.HCM sẽ chịu ảnh hưởng của đợt triều cường với mực nước đỉnh triều có thể lên đến 1,6m.</p>
+                    <p class="mb-4">Kết hợp với dự báo mưa lớn, nhiều khu vực có nguy cơ ngập úng nghiêm trọng.</p>
+                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">
+                        <p class="font-semibold">KHU VỰC CẢNH BÁO:</p>
+                        <ul class="list-disc ml-5 mt-2">
+                            <li>Quận 1, 4, 7, 8</li>
+                            <li>Quận Bình Thạnh, Phú Nhuận</li>
+                            <li>Huyện Bình Chánh, Nhà Bè, Cần Giờ</li>
+                        </ul>
+                    </div>
+                `,
+                type: "canh-bao",
+                source: "chinh-phu",
+                location: "tp-hcm",
+                date: "2023-09-24",
+                time: "09:30",
+                priority: "medium",
+                official: true
+            },
+            {
+                id: 6,
+                title: "AN NINH: Tăng cường tuần tra dịp Quốc khánh 2/9",
+                summary: "Lực lượng công an tăng cường tuần tra, kiểm soát đảm bảo an ninh trật tự dịp nghỉ lễ.",
+                content: `
+                    <div class="mb-4">
+                        <img src="https://images.unsplash.com/photo-1591288442738-8ae5ca91eab3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Tuần tra an ninh" class="w-full h-64 object-cover rounded-lg">
+                    </div>
+                    <p class="text-lg font-semibold mb-4">THÔNG BÁO từ Bộ Công An</p>
+                    <p class="mb-4">Để đảm bảo an ninh trật tự trong dịp nghỉ lễ Quốc khánh 2/9, Bộ Công An đã chỉ đạo lực lượng công an các địa phương tăng cường tuần tra, kiểm soát.</p>
+                    <p class="mb-4">Trọng tâm là các khu vực đông người, di tích lịch sử, bến xe, nhà ga, sân bay.</p>
+                `,
+                type: "an-ninh",
+                source: "bo-cong-an",
+                location: "all",
+                date: "2023-09-23",
+                time: "14:20",
+                priority: "medium",
+                official: true
+            },
+            {
+                id: 7,
+                title: "QUỐC PHÒNG: Diễn tập phòng thủ trên không khu vực Biển Đông",
+                summary: "Không quân tiến hành diễn tập phòng thủ trên không tại khu vực Biển Đông.",
+                content: `
+                    <div class="mb-4">
+                        <img src="https://images.unsplash.com/photo-1584824486537-52f60c5da8a0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Diễn tập quốc phòng" class="w-full h-64 object-cover rounded-lg">
+                    </div>
+                    <p class="text-lg font-semibold mb-4">THÔNG BÁO từ Bộ Quốc phòng</p>
+                    <p class="mb-4">Trong 2 ngày 24-25/9, Bộ Quốc phòng đã tổ chức diễn tập phòng thủ trên không tại khu vực Biển Đông.</p>
+                    <p class="mb-4">Cuộc diễn tập nhằm nâng cao khả năng sẵn sàng chiến đấu, bảo vệ vùng trời Tổ quốc.</p>
+                `,
+                type: "quoc-phong",
+                source: "bo-quoc-phong",
+                location: "all",
+                date: "2023-09-23",
+                time: "11:00",
+                priority: "medium",
+                official: true
+            },
+            {
+                id: 8,
+                title: "TAI NẠN: Xe khách lao xuống vực tại đèo Lò Xo, Kon Tum",
+                summary: "Xe khách lao xuống vực tại đèo Lò Xo, Kon Tum, nhiều người thương vong.",
+                content: `
+                    <div class="mb-4">
+                        <img src="https://images.unsplash.com/photo-1558618666-fcd25856cd61?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Tai nạn giao thông" class="w-full h-64 object-cover rounded-lg">
+                    </div>
+                    <p class="text-lg font-semibold text-red-600 mb-4">THÔNG BÁO KHẨN từ Ban ATGT tỉnh Kon Tum</p>
+                    <p class="mb-4">Khoảng 10h sáng nay, một xe khách biển số 51B-123.45 đã lao xuống vực tại km25+500 đèo Lò Xo, huyện Đắk Glei, tỉnh Kon Tum.</p>
+                    <p class="mb-4">Theo thông tin ban đầu, vụ tai nạn khiến 5 người tử vong, 15 người bị thương nặng.</p>
+                `,
+                type: "tai-nan",
+                source: "bo-cong-an",
+                location: "tay-nguyen",
+                date: "2023-09-22",
+                time: "11:30",
+                priority: "high",
+                official: true
+            },
+            {
+                id: 9,
+                title: "CỨU HỘ: Giải cứu thành công 12 công nhân mắc kẹt trong hầm mỏ",
+                summary: "Lực lượng cứu hộ đã giải cứu thành công 12 công nhân mắc kẹt trong hầm mỏ than tại Quảng Ninh.",
+                content: `
+                    <div class="mb-4">
+                        <img src="https://images.unsplash.com/photo-1540959733332-0b2d969c5e16?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Giải cứu hầm mỏ" class="w-full h-64 object-cover rounded-lg">
+                    </div>
+                    <p class="text-lg font-semibold mb-4">THÔNG BÁO từ Tập đoàn Công nghiệp Than - Khoáng sản Việt Nam</p>
+                    <p class="mb-4">Sau 36 giờ nỗ lực cứu hộ, lực lượng chức năng đã giải cứu thành công 12 công nhân bị mắc kẹt trong hầm mỏ than tại Cẩm Phả, Quảng Ninh.</p>
+                    <p class="mb-4">Tất cả các công nhân đã được đưa đến bệnh viện kiểm tra sức khỏe, tình trạng sức khỏe ổn định.</p>
+                `,
+                type: "cuu-ho",
+                source: "chinh-phu",
+                location: "mien-bac",
+                date: "2023-09-22",
+                time: "16:45",
+                priority: "medium",
+                official: true
+            },
+            {
+                id: 10,
+                title: "CẢNH BÁO: Mưa lớn kéo dài tại các tỉnh Tây Nguyên",
+                summary: "Mưa lớn kéo dài nhiều ngày tại các tỉnh Tây Nguyên có thể gây lũ quét, sạt lở đất.",
+                content: `
+                    <div class="mb-4">
+                        <img src="https://images.unsplash.com/photo-1590065480002-72b6f8b308cf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Mưa lớn Tây Nguyên" class="w-full h-64 object-cover rounded-lg">
+                    </div>
+                    <p class="text-lg font-semibold text-red-600 mb-4">CẢNH BÁO từ Trung tâm Dự báo Khí tượng Thủy văn Quốc gia</p>
+                    <p class="mb-4">Từ ngày 23-26/9, các tỉnh Tây Nguyên tiếp tục có mưa vừa, mưa to, có nơi mưa rất to.</p>
+                    <p class="mb-4">Nguy cơ cao xảy ra lũ quét, sạt lở đất tại các tỉnh: Đắk Lắk, Đắk Nông, Gia Lai, Kon Tum, Lâm Đồng.</p>
+                `,
+                type: "canh-bao",
+                source: "ban-chi-dao",
+                location: "tay-nguyen",
+                date: "2023-09-21",
+                time: "08:15",
+                priority: "medium",
+                official: true
+            },
+            {
+                id: 11,
+                title: "AN NINH: Triệt phá đường dây buôn lậu ma túy lớn tại biên giới",
+                summary: "Lực lượng biên phòng triệt phá thành công đường dây buôn lậu ma túy lớn tại biên giới Tây Nam.",
+                content: `
+                    <div class="mb-4">
+                        <img src="https://images.unsplash.com/photo-1591288442738-8ae5ca91eab3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Triệt phá ma túy" class="w-full h-64 object-cover rounded-lg">
+                    </div>
+                    <p class="text-lg font-semibold mb-4">THÔNG BÁO từ Bộ đội Biên phòng</p>
+                    <p class="mb-4">Lực lượng biên phòng vừa triệt phá thành công đường dây buôn lậu ma túy lớn tại khu vực biên giới Tây Nam.</p>
+                    <p class="mb-4">Thu giữ 50kg heroin, bắt giữ 5 đối tượng. Vụ việc đang được điều tra mở rộng.</p>
+                `,
+                type: "an-ninh",
+                source: "bo-cong-an",
+                location: "all",
+                date: "2023-09-21",
+                time: "19:30",
+                priority: "medium",
+                official: true
+            },
+            {
+                id: 12,
+                title: "QUỐC PHÒNG: Diễn tập phòng thủ bờ biển tại Đà Nẵng",
+                summary: "Hải quân diễn tập phòng thủ bờ biển tại vùng biển Đà Nẵng.",
+                content: `
+                    <div class="mb-4">
+                        <img src="https://images.unsplash.com/photo-1584824486537-52f60c5da8a0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Diễn tập hải quân" class="w-full h-64 object-cover rounded-lg">
+                    </div>
+                    <p class="text-lg font-semibold mb-4">THÔNG BÁO từ Bộ Quốc phòng</p>
+                    <p class="mb-4">Trong ngày 22/9, Hải quân đã tổ chức diễn tập phòng thủ bờ biển tại vùng biển Đà Nẵng.</p>
+                    <p class="mb-4">Cuộc diễn tập có sự tham gia của tàu chiến, tàu ngầm và các đơn vị phòng thủ bờ biển.</p>
+                `,
+                type: "quoc-phong",
+                source: "bo-quoc-phong",
+                location: "da-nang",
+                date: "2023-09-20",
+                time: "15:00",
+                priority: "medium",
+                official: true
+            },
+            {
+                id: 13,
+                title: "Cảnh báo sạt lở đất tại các tỉnh miền núi phía Bắc",
+                summary: "Ban Chỉ đạo Quốc gia cảnh báo nguy cơ sạt lở đất tại các tỉnh miền núi phía Bắc sau mưa lớn kéo dài.",
+                content: `
+                    <div class="mb-4">
+                        <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Sạt lở đất" class="w-full h-64 object-cover rounded-lg">
+                    </div>
+                    <p class="text-lg font-semibold text-red-600 mb-4">CẢNH BÁO từ Ban Chỉ đạo Quốc gia về Phòng chống thiên tai</p>
+                    <p class="mb-4">Do ảnh hưởng của không khí lạnh kết hợp với dải hội tụ nhiệt đới, từ đêm 28/9 đến ngày 30/9, các tỉnh miền núi phía Bắc có mưa vừa, mưa to.</p>
+                    <p class="mb-4">Nguy cơ sạt lở đất tại các tỉnh: Lào Cai, Yên Bái, Hà Giang, Tuyên Quang, Cao Bằng, Bắc Kạn ở mức CẢNH BÁO.</p>
+                `,
+                type: "thien-tai",
+                source: "ban-chi-dao",
+                location: "mien-bac",
+                date: "2023-09-28",
+                time: "08:15",
+                priority: "high",
+                official: true
+            },
+            {
+                id: 14,
+                title: "Diễn tập phòng chống cháy nổ tại các khu công nghiệp",
+                summary: "Bộ Công An tổ chức diễn tập phòng chống cháy nổ tại các khu công nghiệp trọng điểm.",
+                content: `
+                    <div class="mb-4">
+                        <img src="https://images.unsplash.com/photo-1584824486537-52f60c5da8a0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Diễn tập cháy nổ" class="w-full h-64 object-cover rounded-lg">
+                    </div>
+                    <p class="text-lg font-semibold mb-4">THÔNG BÁO từ Bộ Công An</p>
+                    <p class="mb-4">Trong tháng 10/2023, Bộ Công An sẽ tổ chức diễn tập phòng chống cháy nổ tại 15 khu công nghiệp trọng điểm trên toàn quốc.</p>
+                `,
+                type: "cuu-ho",
+                source: "bo-cong-an",
+                location: "all",
+                date: "2023-09-27",
+                time: "14:30",
+                priority: "medium",
+                official: true
+            },
+            {
+                id: 15,
+                title: "Cảnh báo gió mùa Đông Bắc gây rét đậm, rét hại",
+                summary: "Đợt gió mùa Đông Bắc đầu tiên sẽ gây rét đậm, rét hại tại các tỉnh miền Bắc.",
+                content: `
+                    <div class="mb-4">
+                        <img src="https://images.unsplash.com/photo-1570547990795-8742e8c4c8e3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Gió mùa Đông Bắc" class="w-full h-64 object-cover rounded-lg">
+                    </div>
+                    <p class="text-lg font-semibold text-red-600 mb-4">CẢNH BÁO từ Trung tâm Dự báo Khí tượng Thủy văn Quốc gia</p>
+                    <p class="mb-4">Đợt gió mùa Đông Bắc đầu tiên trong mùa đông năm 2023 sẽ ảnh hưởng đến các tỉnh miền Bắc từ ngày 5/10.</p>
+                `,
+                type: "canh-bao",
+                source: "ban-chi-dao",
+                location: "mien-bac",
+                date: "2023-10-01",
+                time: "09:45",
+                priority: "medium",
+                official: true
+            },
+            {
+                id: 16,
+                title: "Tăng cường an ninh tại các cảng hàng không quốc tế",
+                summary: "Bộ Công An tăng cường an ninh tại các cảng hàng không quốc tế dịp cao điểm cuối năm.",
+                content: `
+                    <div class="mb-4">
+                        <img src="https://images.unsplash.com/photo-1591288442738-8ae5ca91eab3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="An ninh sân bay" class="w-full h-64 object-cover rounded-lg">
+                    </div>
+                    <p class="text-lg font-semibold mb-4">THÔNG BÁO từ Bộ Công An</p>
+                    <p class="mb-4">Từ ngày 1/10/2023, Bộ Công An tăng cường các biện pháp an ninh tại các cảng hàng không quốc tế.</p>
+                `,
+                type: "an-ninh",
+                source: "bo-cong-an",
+                location: "all",
+                date: "2023-09-29",
+                time: "11:20",
+                priority: "medium",
+                official: true
+            },
+            {
+                id: 17,
+                title: "Diễn tập tìm kiếm cứu nạn trên biển tại Vịnh Bắc Bộ",
+                summary: "Lực lượng Hải quân diễn tập tìm kiếm cứu nạn trên biển tại khu vực Vịnh Bắc Bộ.",
+                content: `
+                    <div class="mb-4">
+                        <img src="https://images.unsplash.com/photo-1540959733332-0b2d969c5e16?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Diễn tập cứu nạn" class="w-full h-64 object-cover rounded-lg">
+                    </div>
+                    <p class="text-lg font-semibold mb-4">THÔNG BÁO từ Bộ Quốc phòng</p>
+                    <p class="mb-4">Trong 2 ngày 3-4/10/2023, Lực lượng Hải quân sẽ tổ chức diễn tập tìm kiếm cứu nạn trên biển tại khu vực Vịnh Bắc Bộ.</p>
+                `,
+                type: "quoc-phong",
+                source: "bo-quoc-phong",
+                location: "mien-bac",
+                date: "2023-10-02",
+                time: "10:00",
+                priority: "medium",
+                official: true
+            },
+            {
+                id: 18,
+                title: "Cảnh báo ngập úng đô thị tại Hải Phòng",
+                summary: "Thành phố Hải Phòng cảnh báo ngập úng tại nhiều khu vực do triều cường kết hợp mưa lớn.",
+                content: `
+                    <div class="mb-4">
+                        <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Ngập úng Hải Phòng" class="w-full h-64 object-cover rounded-lg">
+                    </div>
+                    <p class="text-lg font-semibold text-red-600 mb-4">CẢNH BÁO từ UBND TP Hải Phòng</p>
+                    <p class="mb-4">Do ảnh hưởng của triều cường kết hợp với mưa lớn, nhiều khu vực tại Hải Phòng có nguy cơ ngập úng.</p>
+                `,
+                type: "thien-tai",
+                source: "chinh-phu",
+                location: "mien-bac",
+                date: "2023-09-30",
+                time: "16:30",
+                priority: "high",
+                official: true
+            },
+            {
+                id: 19,
+                title: "Phòng chống dịch bệnh sau mưa lũ tại miền Trung",
+                summary: "Bộ Y tế triển khai các biện pháp phòng chống dịch bệnh sau mưa lũ tại các tỉnh miền Trung.",
+                content: `
+                    <div class="mb-4">
+                        <img src="https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Phòng chống dịch bệnh" class="w-full h-64 object-cover rounded-lg">
+                    </div>
+                    <p class="text-lg font-semibold mb-4">THÔNG BÁO từ Bộ Y tế</p>
+                    <p class="mb-4">Bộ Y tế triển khai các biện pháp phòng chống dịch bệnh sau mưa lũ tại các tỉnh miền Trung.</p>
+                `,
+                type: "canh-bao",
+                source: "chinh-phu",
+                location: "mien-trung",
+                date: "2023-10-03",
+                time: "08:45",
+                priority: "medium",
+                official: true
+            },
+            {
+                id: 20,
+                title: "Tăng cường tuần tra bảo vệ rừng tại Tây Nguyên",
+                summary: "Bộ Nông nghiệp tăng cường tuần tra bảo vệ rừng tại các tỉnh Tây Nguyên.",
+                content: `
+                    <div class="mb-4">
+                        <img src="https://images.unsplash.com/photo-1562556391-1d8b4684b1b7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Bảo vệ rừng" class="w-full h-64 object-cover rounded-lg">
+                    </div>
+                    <p class="text-lg font-semibold mb-4">THÔNG BÁO từ Bộ Nông nghiệp</p>
+                    <p class="mb-4">Bộ Nông nghiệp tăng cường tuần tra bảo vệ rừng tại các tỉnh Tây Nguyên trong mùa khô 2023-2024.</p>
+                `,
+                type: "canh-bao",
+                source: "chinh-phu",
+                location: "tay-nguyen",
+                date: "2023-10-04",
+                time: "14:15",
+                priority: "medium",
+                official: true
+            },
+            {
+                id: 21,
+                title: "Diễn tập ứng phó sự cố bức xạ hạt nhân",
+                summary: "Bộ Khoa học và Công nghệ tổ chức diễn tập ứng phó sự cố bức xạ hạt nhân.",
+                content: `
+                    <div class="mb-4">
+                        <img src="https://images.unsplash.com/photo-1584824486537-52f60c5da8a0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Diễn tập bức xạ" class="w-full h-64 object-cover rounded-lg">
+                    </div>
+                    <p class="text-lg font-semibold mb-4">THÔNG BÁO từ Bộ Khoa học và Công nghệ</p>
+                    <p class="mb-4">Bộ Khoa học và Công nghệ tổ chức diễn tập ứng phó sự cố bức xạ hạt nhân tại Hà Nội.</p>
+                `,
+                type: "cuu-ho",
+                source: "chinh-phu",
+                location: "ha-noi",
+                date: "2023-10-05",
+                time: "09:30",
+                priority: "medium",
+                official: true
+            },
+            {
+                id: 22,
+                title: "Cảnh báo mưa đá tại các tỉnh vùng núi phía Bắc",
+                summary: "Trung tâm Dự báo Khí tượng Thủy văn Quốc gia cảnh báo mưa đá tại các tỉnh vùng núi phía Bắc.",
+                content: `
+                    <div class="mb-4">
+                        <img src="https://images.unsplash.com/photo-1590065480002-72b6f8b308cf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Mưa đá" class="w-full h-64 object-cover rounded-lg">
+                    </div>
+                    <p class="text-lg font-semibold text-red-600 mb-4">CẢNH BÁO từ Trung tâm Dự báo Khí tượng Thủy văn Quốc gia</p>
+                    <p class="mb-4">Trong các ngày 6-7/10/2023, các tỉnh vùng núi phía Bắc có khả năng xảy ra mưa đá.</p>
+                `,
+                type: "thien-tai",
+                source: "ban-chi-dao",
+                location: "mien-bac",
+                date: "2023-10-06",
+                time: "13:20",
+                priority: "medium",
+                official: true
+            },
+            {
+                id: 23,
+                title: "Tăng cường an ninh mạng quốc gia",
+                summary: "Bộ Thông tin và Truyền thông tăng cường an ninh mạng quốc gia.",
+                content: `
+                    <div class="mb-4">
+                        <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="An ninh mạng" class="w-full h-64 object-cover rounded-lg">
+                    </div>
+                    <p class="text-lg font-semibold mb-4">THÔNG BÁO từ Bộ Thông tin và Truyền thông</p>
+                    <p class="mb-4">Bộ Thông tin và Truyền thông tăng cường các biện pháp bảo đảm an ninh mạng quốc gia.</p>
+                `,
+                type: "an-ninh",
+                source: "chinh-phu",
+                location: "all",
+                date: "2023-10-07",
+                time: "10:45",
+                priority: "medium",
+                official: true
+            },
+            {
+                id: 24,
+                title: "Diễn tập phòng thủ trên không",
+                summary: "Bộ Quốc phòng tổ chức diễn tập phòng thủ trên không tại các khu vực trọng điểm.",
+                content: `
+                    <div class="mb-4">
+                        <img src="https://images.unsplash.com/photo-1584824486537-52f60c5da8a0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Diễn tập phòng thủ" class="w-full h-64 object-cover rounded-lg">
+                    </div>
+                    <p class="text-lg font-semibold mb-4">THÔNG BÁO từ Bộ Quốc phòng</p>
+                    <p class="mb-4">Bộ Quốc phòng tổ chức diễn tập phòng thủ trên không tại các khu vực trọng điểm từ ngày 8-10/10/2023.</p>
+                `,
+                type: "quoc-phong",
+                source: "bo-quoc-phong",
+                location: "all",
+                date: "2023-10-08",
+                time: "11:30",
+                priority: "medium",
+                official: true
+            },
+            {
+                id: 25,
+                title: "Cảnh báo lũ ống, lũ quét tại các tỉnh miền núi",
+                summary: "Ban Chỉ đạo Quốc gia cảnh báo lũ ống, lũ quét tại các tỉnh miền núi.",
+                content: `
+                    <div class="mb-4">
+                        <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Lũ quét" class="w-full h-64 object-cover rounded-lg">
+                    </div>
+                    <p class="text-lg font-semibold text-red-600 mb-4">CẢNH BÁO từ Ban Chỉ đạo Quốc gia</p>
+                    <p class="mb-4">Ban Chỉ đạo Quốc gia cảnh báo lũ ống, lũ quét tại các tỉnh miền núi trong tháng 10/2023.</p>
+                `,
+                type: "thien-tai",
+                source: "ban-chi-dao",
+                location: "all",
+                date: "2023-10-09",
+                time: "15:15",
+                priority: "high",
+                official: true
+            },
+            {
+                id: 26,
+                title: "Phòng chống cháy nổ tại các chung cư cao tầng",
+                summary: "Bộ Xây dựng tăng cường phòng chống cháy nổ tại các chung cư cao tầng.",
+                content: `
+                    <div class="mb-4">
+                        <img src="https://images.unsplash.com/photo-1562556391-1d8b4684b1b7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Cháy nổ chung cư" class="w-full h-64 object-cover rounded-lg">
+                    </div>
+                    <p class="text-lg font-semibold mb-4">THÔNG BÁO từ Bộ Xây dựng</p>
+                    <p class="mb-4">Bộ Xây dựng tăng cường các biện pháp phòng chống cháy nổ tại các chung cư cao tầng.</p>
+                `,
+                type: "canh-bao",
+                source: "chinh-phu",
+                location: "all",
+                date: "2023-10-10",
+                time: "09:00",
+                priority: "medium",
+                official: true
+            },
+            {
+                id: 27,
+                title: "Diễn tập cứu hộ cứu nạn trên sông",
+                summary: "Bộ Giao thông Vận tải tổ chức diễn tập cứu hộ cứu nạn trên sông.",
+                content: `
+                    <div class="mb-4">
+                        <img src="https://images.unsplash.com/photo-1540959733332-0b2d969c5e16?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Cứu nạn trên sông" class="w-full h-64 object-cover rounded-lg">
+                    </div>
+                    <p class="text-lg font-semibold mb-4">THÔNG BÁO từ Bộ Giao thông Vận tải</p>
+                    <p class="mb-4">Bộ Giao thông Vận tải tổ chức diễn tập cứu hộ cứu nạn trên sông tại các tỉnh đồng bằng sông Cửu Long.</p>
+                `,
+                type: "cuu-ho",
+                source: "chinh-phu",
+                location: "all",
+                date: "2023-10-11",
+                time: "14:45",
+                priority: "medium",
+                official: true
+            },
+            {
+                id: 28,
+                title: "Cảnh báo giông lốc tại các tỉnh Nam Bộ",
+                summary: "Trung tâm Dự báo Khí tượng Thủy văn Quốc gia cảnh báo giông lốc tại các tỉnh Nam Bộ.",
+                content: `
+                    <div class="mb-4">
+                        <img src="https://images.unsplash.com/photo-1590065480002-72b6f8b308cf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Giông lốc" class="w-full h-64 object-cover rounded-lg">
+                    </div>
+                    <p class="text-lg font-semibold text-red-600 mb-4">CẢNH BÁO từ Trung tâm Dự báo Khí tượng Thủy văn Quốc gia</p>
+                    <p class="mb-4">Trong các ngày 12-13/10/2023, các tỉnh Nam Bộ có khả năng xảy ra giông lốc mạnh.</p>
+                `,
+                type: "thien-tai",
+                source: "ban-chi-dao",
+                location: "tp-hcm",
+                date: "2023-10-12",
+                time: "11:10",
+                priority: "medium",
+                official: true
+            },
+            {
+                id: 29,
+                title: "Tăng cường an ninh trật tự tại các khu du lịch",
+                summary: "Bộ Công An tăng cường an ninh trật tự tại các khu du lịch dịp cuối năm.",
+                content: `
+                    <div class="mb-4">
+                        <img src="https://images.unsplash.com/photo-1591288442738-8ae5ca91eab3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="An ninh du lịch" class="w-full h-64 object-cover rounded-lg">
+                    </div>
+                    <p class="text-lg font-semibold mb-4">THÔNG BÁO từ Bộ Công An</p>
+                    <p class="mb-4">Bộ Công An tăng cường an ninh trật tự tại các khu du lịch trong dịp cuối năm 2023.</p>
+                `,
+                type: "an-ninh",
+                source: "bo-cong-an",
+                location: "all",
+                date: "2023-10-13",
+                time: "16:20",
+                priority: "medium",
+                official: true
+            },
+            {
+                id: 30,
+                title: "Diễn tập phòng thủ bờ biển",
+                summary: "Bộ Quốc phòng tổ chức diễn tập phòng thủ bờ biển tại các tỉnh ven biển.",
+                content: `
+                    <div class="mb-4">
+                        <img src="https://images.unsplash.com/photo-1584824486537-52f60c5da8a0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Phòng thủ bờ biển" class="w-full h-64 object-cover rounded-lg">
+                    </div>
+                    <p class="text-lg font-semibold mb-4">THÔNG BÁO từ Bộ Quốc phòng</p>
+                    <p class="mb-4">Bộ Quốc phòng tổ chức diễn tập phòng thủ bờ biển tại các tỉnh ven biển từ ngày 14-16/10/2023.</p>
+                `,
+                type: "quoc-phong",
+                source: "bo-quoc-phong",
+                location: "all",
+                date: "2023-10-14",
+                time: "10:00",
+                priority: "medium",
+                official: true
+            }
+        ];
 
-// assets/js/news.js
+// Cấu hình phân trang
+const ITEMS_PER_PAGE = 9;
+let currentPage = 1;
+let filteredNews = [...newsData];
 
-let emergenciesData = [];
-
-// Hàm fetch dữ liệu từ JSON
-async function fetchEmergenciesData() {
-    try {
-        const response = await fetch('data/emergencies.json');
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        emergenciesData = data.emergencies;
-        return emergenciesData;
-    } catch (error) {
-        console.error('Error fetching emergencies data:', error);
-        return [];
-    }
-}
-
-// Hàm hiển thị tin tức lên grid
-function displayNews(newsArray) {
+// Hàm hiển thị bản tin với phân trang
+function displayNews(newsArray, page = 1) {
     const newsGrid = document.getElementById('news-grid');
-    
-    if (!newsGrid) return;
-
-    // Clear existing content
     newsGrid.innerHTML = '';
 
-    // Hiển thị 4 tin mới nhất
-    const latestNews = newsArray.slice(0, 4);
+    const startIndex = (page - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+    const newsToShow = newsArray.slice(startIndex, endIndex);
 
-    latestNews.forEach(emergency => {
-        const newsCard = createNewsCard(emergency);
-        newsGrid.appendChild(newsCard);
-    });
-}
-
-// Hàm tạo card tin tức
-function createNewsCard(emergency) {
-    const card = document.createElement('div');
-    card.className = 'bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer news-card';
-    card.setAttribute('data-id', emergency.id);
+    if (newsToShow.length === 0) {
+        newsGrid.innerHTML = `
+            <div class="col-span-3 text-center py-12">
+                <i data-feather="alert-circle" class="w-16 h-16 text-gray-400 mx-auto mb-4"></i>
+                <p class="text-gray-500 text-lg">Không tìm thấy bản tin nào phù hợp</p>
+            </div>
+        `;
+        feather.replace();
+        return;
+    }
+// Trong hàm displayNews, cập nhật phần tạo news card:
+newsToShow.forEach(news => {
+    const priorityColor = news.priority === 'high' ? 'priority-high' : 
+                        news.priority === 'medium' ? 'priority-medium' : 'priority-low';
     
-    // Map type to Vietnamese and colors
-    const typeMap = {
-        'fire': { name: 'Hỏa hoạn', color: 'red', icon: 'flame' },
-        'flood': { name: 'Ngập lụt', color: 'blue', icon: 'droplet' },
-        'accident': { name: 'Tai nạn', color: 'orange', icon: 'activity' },
-        'disaster': { name: 'Thiên tai', color: 'purple', icon: 'alert-octagon' },
-        'medical': { name: 'Y tế', color: 'green', icon: 'heart' }
-    };
+    const sourceBadge = news.source === 'bo-cong-an' ? 'Bộ Công An' :
+                      news.source === 'bo-quoc-phong' ? 'Bộ Quốc Phòng' :
+                      news.source === 'chinh-phu' ? 'Văn phòng Chính phủ' : 
+                      news.source === 'bao-nhan-dan' ? 'Báo Nhân Dân' : 'Ban Chỉ đạo Quốc gia';
 
-    const typeInfo = typeMap[emergency.type] || { name: 'Khẩn cấp', color: 'gray', icon: 'alert-triangle' };
-    
-    // Format date
-    const date = new Date(emergency.timestamp);
-    const formattedDate = date.toLocaleDateString('vi-VN', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
-
-    // Status badge
-    const statusMap = {
-        'active': { text: 'Đang xử lý', color: 'bg-red-100 text-red-800' },
-        'resolved': { text: 'Đã giải quyết', color: 'bg-green-100 text-green-800' },
-        'warning': { text: 'Cảnh báo', color: 'bg-yellow-100 text-yellow-800' }
-    };
-    const statusInfo = statusMap[emergency.status] || { text: 'Không xác định', color: 'bg-gray-100 text-gray-800' };
-
-    card.innerHTML = `
-        <div class="relative">
-            <img src="${emergency.image}" alt="${emergency.title}" class="w-full h-48 object-cover">
-            <div class="absolute top-4 left-4">
-                <span class="px-3 py-1 ${statusInfo.color} rounded-full text-xs font-medium">
-                    ${statusInfo.text}
-                </span>
+    const newsCard = document.createElement('div');
+    newsCard.className = 'news-card';
+    newsCard.innerHTML = `
+        <div class="p-6 flex-1">
+            <div class="flex justify-between items-start mb-2">
+                <span class="source-badge ${priorityColor}">${sourceBadge}</span>
+                <span class="text-xs text-gray-500">${news.date} ${news.time}</span>
             </div>
-            <div class="absolute top-4 right-4">
-                <span class="px-3 py-1 bg-${typeInfo.color}-100 text-${typeInfo.color}-800 rounded-full text-xs font-medium flex items-center">
-                    <i data-feather="${typeInfo.icon}" class="w-3 h-3 mr-1"></i>
-                    ${typeInfo.name}
-                </span>
+            <h3 class="text-xl font-bold mb-3 text-gray-800 line-clamp-2">${news.title}</h3>
+            <p class="text-gray-600 mb-4 line-clamp-3">${news.summary}</p>
+            <div class="flex justify-between items-center mt-auto">
+                <span class="type-label">${getTypeLabel(news.type)}</span>
+                <button class="view-details text-red-500 hover:text-red-700 font-medium flex items-center" data-id="${news.id}">
+                    Chi tiết <i data-feather="arrow-right" class="ml-1 w-4 h-4"></i>
+                </button>
             </div>
-        </div>
-        <div class="p-6">
-            <h3 class="font-bold text-lg mb-2 text-gray-800 line-clamp-2">${emergency.title}</h3>
-            <p class="text-gray-600 text-sm mb-4 line-clamp-2">${emergency.summary}</p>
-            <div class="flex items-center justify-between text-sm text-gray-500">
-                <div class="flex items-center">
-                    <i data-feather="map-pin" class="w-4 h-4 mr-1"></i>
-                    <span>${emergency.location}</span>
-                </div>
-                <div class="flex items-center">
-                    <i data-feather="clock" class="w-4 h-4 mr-1"></i>
-                    <span>${formattedDate}</span>
-                </div>
-            </div>
-            ${emergency.casualties > 0 ? `
-                <div class="mt-3 p-2 bg-red-50 rounded-lg">
-                    <div class="flex items-center text-red-700 text-sm">
-                        <i data-feather="alert-triangle" class="w-4 h-4 mr-2"></i>
-                        <span>${emergency.casualties} người bị thương</span>
-                    </div>
-                </div>
-            ` : ''}
         </div>
     `;
+    newsGrid.appendChild(newsCard);
+});
 
-    // Add click event
-    card.addEventListener('click', () => openNewsModal(emergency));
+    // Cập nhật feather icons
+    feather.replace();
+    
+    // Thêm sự kiện click cho các nút chi tiết
+    document.querySelectorAll('.view-details').forEach(button => {
+        button.addEventListener('click', function() {
+            const newsId = this.getAttribute('data-id');
+            showNewsDetails(newsId);
+        });
+    });
 
-    return card;
+    // Cập nhật thông tin phân trang
+    updatePagination(newsArray.length, page);
+    updateNewsStats(newsArray.length, page);
 }
 
-// Hàm mở modal chi tiết
-function openNewsModal(emergency) {
+// Hàm cập nhật phân trang
+function updatePagination(totalItems, currentPage) {
+    const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+    const pagination = document.getElementById('pagination');
+    pagination.innerHTML = '';
+
+    if (totalPages <= 1) return;
+
+    // Nút Previous
+    const prevButton = document.createElement('button');
+    prevButton.className = `pagination-btn ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}`;
+    prevButton.innerHTML = '<i data-feather="chevron-left" class="w-4 h-4"></i>';
+    prevButton.disabled = currentPage === 1;
+    prevButton.addEventListener('click', () => {
+        if (currentPage > 1) {
+            displayNews(filteredNews, currentPage - 1);
+        }
+    });
+    pagination.appendChild(prevButton);
+
+    // Các nút trang
+    const startPage = Math.max(1, currentPage - 2);
+    const endPage = Math.min(totalPages, currentPage + 2);
+
+    for (let i = startPage; i <= endPage; i++) {
+        const pageButton = document.createElement('button');
+        pageButton.className = `pagination-btn ${i === currentPage ? 'active' : ''}`;
+        pageButton.textContent = i;
+        pageButton.addEventListener('click', () => {
+            displayNews(filteredNews, i);
+        });
+        pagination.appendChild(pageButton);
+    }
+
+    // Nút Next
+    const nextButton = document.createElement('button');
+    nextButton.className = `pagination-btn ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}`;
+    nextButton.innerHTML = '<i data-feather="chevron-right" class="w-4 h-4"></i>';
+    nextButton.disabled = currentPage === totalPages;
+    nextButton.addEventListener('click', () => {
+        if (currentPage < totalPages) {
+            displayNews(filteredNews, currentPage + 1);
+        }
+    });
+    pagination.appendChild(nextButton);
+
+    feather.replace();
+}
+
+// Hàm cập nhật thông tin thống kê
+function updateNewsStats(totalItems, currentPage) {
+    const startItem = (currentPage - 1) * ITEMS_PER_PAGE + 1;
+    const endItem = Math.min(currentPage * ITEMS_PER_PAGE, totalItems);
+    
+    document.getElementById('news-count').textContent = 
+        `Đang hiển thị ${startItem}-${endItem} của ${totalItems} bản tin`;
+}
+
+// Hàm hiển thị chi tiết bản tin
+function showNewsDetails(newsId) {
+    const news = newsData.find(item => item.id == newsId);
+    if (!news) return;
+
     const modal = document.getElementById('news-modal');
     const modalTitle = document.getElementById('modal-title');
     const modalContent = document.getElementById('modal-content');
-    const mapLink = document.getElementById('map-link');
-    const relatedNews = document.querySelector('#related-news .space-y-2');
 
-    if (!modal || !modalTitle || !modalContent) return;
-
-    // Map type to Vietnamese
-    const typeMap = {
-        'fire': { name: 'Hỏa hoạn', color: 'red', icon: 'flame' },
-        'flood': { name: 'Ngập lụt', color: 'blue', icon: 'droplet' },
-        'accident': { name: 'Tai nạn giao thông', color: 'orange', icon: 'activity' },
-        'disaster': { name: 'Thiên tai', color: 'purple', icon: 'alert-octagon' },
-        'medical': { name: 'Y tế', color: 'green', icon: 'heart' }
-    };
-
-    const typeInfo = typeMap[emergency.type] || { name: 'Khẩn cấp', color: 'gray', icon: 'alert-triangle' };
-
-    // Format date
-    const date = new Date(emergency.timestamp);
-    const formattedDate = date.toLocaleDateString('vi-VN', {
-        weekday: 'long',
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
-
-    // Status badge
-    const statusMap = {
-        'active': { text: 'Đang xử lý', color: 'bg-red-100 text-red-800 border-red-200' },
-        'resolved': { text: 'Đã giải quyết', color: 'bg-green-100 text-green-800 border-green-200' },
-        'warning': { text: 'Cảnh báo', color: 'bg-yellow-100 text-yellow-800 border-yellow-200' }
-    };
-    const statusInfo = statusMap[emergency.status] || { text: 'Không xác định', color: 'bg-gray-100 text-gray-800 border-gray-200' };
-
-    // Set modal content
-    modalTitle.textContent = emergency.title;
+    modalTitle.textContent = news.title;
     
+    const sourceBadge = news.source === 'bo-cong-an' ? 'Bộ Công An' :
+                      news.source === 'bo-quoc-phong' ? 'Bộ Quốc Phòng' :
+                      news.source === 'chinh-phu' ? 'Văn phòng Chính phủ' : 
+                      news.source === 'bao-nhan-dan' ? 'Báo Nhân Dân' : 'Ban Chỉ đạo Quốc gia';
+
     modalContent.innerHTML = `
-        <div class="flex flex-wrap gap-2 mb-4">
-            <span class="px-3 py-1 ${statusInfo.color} border rounded-full text-sm font-medium">
-                ${statusInfo.text}
-            </span>
-            <span class="px-3 py-1 bg-${typeInfo.color}-100 text-${typeInfo.color}-800 border border-${typeInfo.color}-200 rounded-full text-sm font-medium flex items-center">
-                <i data-feather="${typeInfo.icon}" class="w-4 h-4 mr-1"></i>
-                ${typeInfo.name}
-            </span>
+        <div class="flex justify-between items-center mb-4">
+            <span class="px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm font-medium">${sourceBadge}</span>
+            <span class="text-gray-500">${news.date} ${news.time}</span>
         </div>
-
-        <div class="bg-gray-50 rounded-lg p-4 mb-4">
-            <div class="grid grid-cols-2 gap-4 text-sm">
-                <div class="flex items-center">
-                    <i data-feather="map-pin" class="w-4 h-4 mr-2 text-gray-600"></i>
-                    <span class="font-medium">Địa điểm:</span>
-                    <span class="ml-1">${emergency.location}</span>
-                </div>
-                <div class="flex items-center">
-                    <i data-feather="clock" class="w-4 h-4 mr-2 text-gray-600"></i>
-                    <span class="font-medium">Thời gian:</span>
-                    <span class="ml-1">${formattedDate}</span>
-                </div>
-                ${emergency.casualties > 0 ? `
-                    <div class="flex items-center">
-                        <i data-feather="alert-triangle" class="w-4 h-4 mr-2 text-red-600"></i>
-                        <span class="font-medium">Thương vong:</span>
-                        <span class="ml-1 text-red-600">${emergency.casualties} người</span>
-                    </div>
-                ` : ''}
-                <div class="flex items-center">
-                    <i data-feather="users" class="w-4 h-4 mr-2 text-blue-600"></i>
-                    <span class="font-medium">Lực lượng:</span>
-                    <span class="ml-1 text-blue-600">${emergency.rescue_teams} đội</span>
-                </div>
-            </div>
+        ${news.content}
+        <div class="flex items-center text-sm text-gray-600 mt-4">
+            <i data-feather="map-pin" class="mr-1 w-4 h-4"></i>
+            <span>Khu vực: ${getLocationLabel(news.location)}</span>
         </div>
-
-        <img src="${emergency.image}" alt="${emergency.title}" class="w-full h-64 object-cover rounded-lg mb-4">
-
-        <div class="prose max-w-none">
-            <p class="text-gray-700 leading-relaxed">${emergency.content}</p>
-        </div>
-
-        ${emergency.affected_areas && emergency.affected_areas.length > 0 ? `
-            <div class="mt-4 p-4 bg-blue-50 rounded-lg">
-                <h5 class="font-semibold text-blue-800 mb-2 flex items-center">
-                    <i data-feather="navigation" class="w-4 h-4 mr-2"></i>
-                    Khu vực ảnh hưởng:
-                </h5>
-                <div class="flex flex-wrap gap-2">
-                    ${emergency.affected_areas.map(area => `
-                        <span class="px-3 py-1 bg-white text-blue-700 rounded-full text-sm border border-blue-200">
-                            ${area}
-                        </span>
-                    `).join('')}
-                </div>
-            </div>
-        ` : ''}
     `;
 
-    // Set map link
-    if (mapLink) {
-        mapLink.href = `emergency_map.html?id=${emergency.id}&lat=${emergency.coordinates[0]}&lng=${emergency.coordinates[1]}`;
-    }
-
-    // Show related news
-    if (relatedNews) {
-        const related = getRelatedNews(emergency.id, emergency.type);
-        relatedNews.innerHTML = related.map(news => `
-            <div class="flex items-start p-3 hover:bg-gray-50 rounded-lg cursor-pointer" onclick="openNewsModalById(${news.id})">
-                <img src="${news.image}" alt="${news.title}" class="w-16 h-16 object-cover rounded mr-3">
-                <div class="flex-1">
-                    <h6 class="font-medium text-sm text-gray-800 line-clamp-2">${news.title}</h6>
-                    <p class="text-xs text-gray-500 mt-1">${new Date(news.timestamp).toLocaleDateString('vi-VN')}</p>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    // Show modal
     modal.classList.remove('hidden');
-    modal.classList.add('flex');
-
-    // Refresh icons
+    
+    // Cập nhật feather icons trong modal
     feather.replace();
 }
 
-// Hàm lấy tin liên quan
-function getRelatedNews(currentId, currentType) {
-    return emergenciesData
-        .filter(emergency => emergency.id !== currentId && emergency.type === currentType)
-        .slice(0, 3);
-}
-
-// Hàm mở modal bằng ID
-function openNewsModalById(id) {
-    const emergency = emergenciesData.find(emergency => emergency.id === id);
-    if (emergency) {
-        openNewsModal(emergency);
-    }
-}
-
-// Hàm đóng modal
-function setupModalClose() {
-    const modal = document.getElementById('news-modal');
-    const closeBtn = document.getElementById('close-modal');
-
-    if (closeBtn && modal) {
-        closeBtn.addEventListener('click', () => {
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        });
-
-        // Close modal when clicking outside
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            }
-        });
-    }
-}
-
-// Hàm chia sẻ tin tức
-function setupShareButton() {
-    const shareBtn = document.getElementById('share-news');
-    if (shareBtn) {
-        shareBtn.addEventListener('click', () => {
-            if (navigator.share) {
-                navigator.share({
-                    title: document.getElementById('modal-title').textContent,
-                    text: 'Thông tin sự cố khẩn cấp',
-                    url: window.location.href,
-                });
-            } else {
-                // Fallback: copy to clipboard
-                const modalTitle = document.getElementById('modal-title').textContent;
-                navigator.clipboard.writeText(modalTitle + ' - ' + window.location.href);
-                alert('Đã sao chép liên kết tin tức!');
-            }
-        });
-    }
-}
-
-// Hàm khởi tạo
-async function initNews() {
-    await fetchEmergenciesData();
-    displayNews(emergenciesData);
-    setupModalClose();
-    setupShareButton();
-    feather.replace();
-}
-
-// Khởi chạy khi DOM loaded
-document.addEventListener('DOMContentLoaded', initNews);
-// Dữ liệu tin tức (Nên đặt dữ liệu này trong assets/data hoặc fetch từ api.js/news.js nếu có API)
-const newsData = [
-    {
-        title: "Đà Nẵng: Chủ động ứng phó thiên tai những tháng cuối năm",
-        date: "2025-10-21",
-        type: "thien-tai",
-        location: "da-nang,mien-trung",
-        img: "https://media.daidoanket.vn/w1280/uploaded/images/2025/10/18/8898fcf6-b66a-433c-908c-72eb18bbdeb1.jpg",
-        content: "<p><strong>Tình hình:</strong> TP. Đà Nẵng đang hứng chịu thời tiết cực đoan, mưa lớn kéo dài...</p><a href='https://thiennhienmoitruong.vn/da-nang-chu-dong-ung-pho-thien-tai-nhung-thang-cuoi-nam.html' target='_blank'>Nguồn gốc</a>"
-    },
-    {
-        title: "Vai trò y tế cơ sở trong chăm sóc sức khỏe tinh thần cho cộng đồng sau thiên tai",
-        date: "2025-10-21",
-        type: "cuu-ho",
-        location: "lao-cai,thai-nguyen,mien-bac",
-        img: "https://benhvientamthanhanoi.com/wp-content/uploads/2025/10/image.jpeg",
-        content: "<p><strong>Tình hình:</strong> Sau thiên tai như bão lũ năm 2024 tại Lào Cai và Thái Nguyên, người dân đối mặt...</p><a href='https://vov2.vov.vn/suc-khoe/vai-tro-y-te-co-so-trong-cham-soc-suc-khoe-tinh-than-cho-cong-dong-sau-thien-tai-55411' target='_blank'>Nguồn gốc</a>"
-    },
-    {
-        title: "Tai nạn giao thông mới nhất 19/10/2025: xe cứu hộ gây tai nạn liên hoàn trên quốc lộ 26",
-        date: "2025-10-19",
-        type: "tai-nan",
-        location: "dak-lak,tp-hcm,binh-dinh,tay-nguyen",
-        img: "https://cdnphoto.dantri.com.vn/fT-JEopnjSnsEkgTdgpPSX-an_8=/thumb_w/1020/2025/10/19/z7132063905158f9b65fad4a12b3160200c0a32ca66181-edited-1760843872053.jpg",
-        content: "<p><strong>Tình hình:</strong> Ngày 19/10/2025, xảy ra ba vụ tai nạn giao thông nghiêm trọng: Xe cứu hộ gây tai nạn liên hoàn...</p><a href='https://baomoi.com/tai-nan-giao-thong-moi-nhat-19-10-2025-xe-cuu-ho-gay-tai-nan-lien-hoan-tren-quoc-lo-26-c53531244.epi' target='_blank'>Nguồn gốc</a>"
-    },
-    {
-        title: "Thiên tai đã vượt quá sức chịu đựng của người dân",
-        date: "2025-10-10",
-        type: "thien-tai",
-        location: "thai-nguyen,bac-ninh,cao-bang,lang-son,mien-bac,mien-trung",
-        img: "https://premedia.vneconomy.vn/files/uploads/2025/10/10/c999b83a970f40588b4d060116ebed76-20061.png?w=900",
-        content: "<p><strong>Tình hình:</strong> Năm 2025, Việt Nam xảy ra 20 loại hình thiên tai với diễn biến dồn dập, khốc liệt, bất thường...</p><a href='https://vneconomy.vn/thien-tai-da-vuot-qua-suc-chiu-dung-cua-nguoi-dan.htm' target='_blank'>Nguồn gốc</a>"
-    },
-    {
-        title: "Việt Nam kêu gọi quốc tế hỗ trợ khắc phục hậu quả thiên tai",
-        date: "2025-10-09",
-        type: "thien-tai",
-        location: "ha-noi,thai-nguyen,bac-ninh,cao-bang,lang-son,mien-bac,mien-trung",
-        img: "https://mediaptq.mediatech.vn/upload/image/202510/medium/82710_55315046013060509712616981946138100992575692n_1760004748097379436332_09221910.jpg?id=82710",
-        content: "<p><strong>Tình hình:</strong> 20 loại thiên tai, 11 cơn bão gây 238 chết, thiệt hại 35.000 tỷ đồng. Bộ Nông nghiệp họp đối tác quốc tế...</p><a href='https://vnexpress.net/viet-nam-keu-goi-quoc-te-ho-tro-khac-phuc-hau-qua-thien-tai-4949397.html' target='_blank'>Nguồn gốc</a>"
-    },
-    {
-        title: "Việt Nam kêu gọi cứu trợ khẩn cấp từ cộng đồng quốc tế",
-        date: "2025-10-09",
-        type: "cuu-ho",
-        location: "ha-noi,mien-bac,mien-trung",
-        img: "https://image.phunuonline.com.vn/fckeditor/upload/2025/20251009/images/lien-hop-quoc-keu-goi-ho-_241760006840.jpg",
-        content: "<p><strong>Tình hình:</strong> Trong hai tháng 9 và 10/2025, Việt Nam liên tiếp hứng chịu bão số 8, 9, 10 và 11...</p><a href='https://mae.gov.vn/viet-nam-keu-goi-cuu-tro-khan-cap-tu-cong-dong-quoc-te-19944.htm' target='_blank'>Nguồn gốc</a>"
-    },
-    {
-        title: "Thanh tra Chính phủ phát động quyên góp ủng hộ đồng bào bị thiệt hại nặng nề bởi thiên tai",
-        date: "2025-10-14",
-        type: "cuu-ho",
-        location: "ha-noi,mien-bac,mien-trung",
-        img: "https://bcp.cdnchinhphu.vn/334894974524682240/2025/10/14/phat-dong-3-17604142941321461810469.jpg",
-        content: "<p><strong>Tình hình:</strong> Trong tháng 9 và 10/2025, Việt Nam hứng chịu 5 cơn bão, đặc biệt bão số 10 (BUALOI) và số 11 (MATMO)...</p><a href='https://baochinhphu.vn/thanh-tra-chinh-phu-phat-dong-quyen-gop-ung-ho-dong-bao-bi-thiet-hai-nang-ne-boi-thien-tai-102251014110224359.htm' target='_blank'>Nguồn gốc</a>"
-    },
-    {
-        title: "Đoàn kết, chung sức vượt qua thiên tai",
-        date: "2025-10-21",
-        type: "thien-tai",
-        location: "toan-quoc,mien-bac,mien-trung",
-        img: "https://cdn.nhandan.vn/images/22f099ca8bc7ae81aa2a8d3416a84bf88164db7334089fd96cd92fb40ba5a5c416d1915411a36da149b3cda42b8716dd3d30e798dd294ae2e7036a1cdf939bd04bdf9eb112ac72b82740920805aa185fd637c5797f36c62cfeeadbce01c03c493c7c4f229359aba580a4e2f637103b66/z7138573067041-93f4e3ff2488379b42c2a1c06fb01e83-9502.jpg.webp",
-        content: "<p><strong>Tình hình:</strong> Năm 2025, Việt Nam hứng chịu khoảng 20 loại hình thiên tai, với các đợt “bão chồng bão, lũ chồng lũ”...</p><a href='https://nhandan.vn/doan-ket-chung-suc-vuot-qua-thien-tai-post916808.html' target='_blank'>Nguồn gốc</a>"
-    },
-    {
-        title: "Hơn 1.066 tỷ đồng hỗ trợ đồng bào gặp thiên tai, bão lũ",
-        date: "2025-10-22",
-        type: "cuu-ho",
-        location: "toan-quoc,mien-bac,mien-trung",
-        img: "https://cdnmedia.baotintuc.vn/Upload/DmtgOUlHWBO5POIHzIwr1A/files/2025/10/21/ho-tro-dong-bao-21102025-01.jpg",
-        content: "<p><strong>Tình hình:</strong> Tính đến 17 giờ ngày 21/10, Ban Vận động Cứu trợ Trung ương, Ủy ban Trung ương MTTQ Việt Nam đã nhận ủng hộ...</p><a href='https://baotintuc.vn/thoi-su/hon-1066-ty-dong-ho-tro-dong-bao-gap-thien-tai-bao-lu-20251021200854276.htm' target='_blank'>Nguồn gốc</a>"
-    },
-    {
-        title: "Lực lượng Công an nhân dân chủ động ứng phó với bão số 12 và nguy cơ mưa lớn",
-        date: "2025-10-20",
-        type: "canh-bao",
-        location: "mien-trung,mien-bac",
-        img: "https://dbnd.1cdn.vn/2025/10/20/dbqgxtnd202510201700-17609581259941101885533.jpg",
-        content: "<p><strong>Tình hình:</strong> Bão số 12 (Fengshen) đi vào Biển Đông chiều 19/10/2025, sức gió cấp 9 giật cấp 11...</p><a href='https://bocongan.gov.vn/bai-viet/luc-luong-cong-an-nhan-dan-chu-dong-ung-pho-voi-bao-so-12-va-nguy-co-mua-lon-dien-rong-1760964108' target='_blank'>Nguồn gốc</a>"
-    },
-    {
-        title: "Đoàn kết, chung sức vượt qua thiên tai - Báo An Giang",
-        date: "2025-10-21",
-        type: "thien-tai",
-        location: "toan-quoc,mien-nam",
-        img: "https://dangcongsan.org.vn/upload/2006988/20250624/881c364829c571ae3de256c3328d5fb01_2_.webp",
-        content: "<p><strong>Tình hình:</strong> Năm 2025, Việt Nam hứng chịu khoảng 20 loại hình thiên tai, với các đợt “bão chồng bão, lũ chồng lũ”...</p><a href='https://baoangiang.com.vn/doan-ket-chung-suc-vuot-qua-thien-tai-a464618.html' target='_blank'>Nguồn gốc</a>"
-    },
-    {
-        title: "Thiên tai cuối năm 2025 phức tạp: Bắc Bộ vẫn có thể chịu ảnh hưởng của bão",
-        date: "2025-10-08",
-        type: "canh-bao",
-        location: "mien-bac,mien-trung",
-        img: "https://c.baothanhhoa.vn/img/mobile/news/2540/177d4090408t1820l1-51.webp",
-        content: "<p><strong>Tình hình:</strong> Thiên tai cuối năm 2025 diễn biến phức tạp, với 2-4 cơn bão/áp thấp nhiệt đới trên Biển Đông...</p><a href='https://www.vietnamplus.vn/thien-tai-cuoi-nam-2025-phuc-tap-bac-bo-van-co-the-chiu-anh-huong-cua-bao-post1069070.vnp' target='_blank'>Nguồn gốc</a>"
-    },
-    {
-        title: "Thủ tướng Chính phủ yêu cầu chủ động ứng phó với bão số 12 và mưa lũ",
-        date: "2025-10-22",
-        type: "canh-bao",
-        location: "mien-trung,quang-tri,quang-ngai",
-        img: "https://nld.mediacdn.vn/291774122806476800/2025/10/22/pho-thu-tuong--1761126520218734304839.jpg",
-        content: "<p><strong>Tình hình:</strong> Bão Fengshen (bão số 12) diễn biến phức tạp, di chuyển hướng Tây Nam, ảnh hưởng vùng biển...</p><a href='https://baomoi.com/thu-tuong-chinh-phu-yeu-cau-chu-dong-ung-pho-voi-bao-fengshen-bao-so-12-va-mua-lu-c53546684.epi' target='_blank'>Nguồn gốc</a>"
-    },
-    {
-        title: "Các nước, tổ chức quốc tế chung tay hỗ trợ Việt Nam khắc phục hậu quả thiên tai",
-        date: "2025-10-15",
-        type: "cuu-ho",
-        location: "toan-quoc,mien-bac,mien-trung",
-        img: "https://bcp.cdnchinhphu.vn/334894974524682240/2025/10/15/base64-1760496468629305052261.png",
-        content: "<p><strong>Tình hình:</strong> Việt Nam liên tiếp hứng chịu thiên tai nghiêm trọng trong tháng 9 và 10/2025...</p><a href='https://baochinhphu.vn/cac-nuoc-to-chuc-quoc-te-chung-tay-ho-tro-viet-nam-khac-phuc-hau-qua-thien-tai-102251015091444105.htm' target='_blank'>Nguồn gốc</a>"
-    }
-];
-
-// Biến trạng thái
-const itemsPerPage = 6;
-let currentPage = 1;
-let debounceTimer;
-
-// === HELPER FUNCTIONS ===
-function timeAgo(dateString) {
-    const now = new Date();
-    const date = new Date(dateString);
-    const seconds = Math.floor((now - date) / 1000);
-    // Logic tính thời gian (giữ nguyên)
-    let interval = Math.floor(seconds / 31536000);
-    if (interval > 1) return `${interval} năm trước`;
-    interval = Math.floor(seconds / 2592000);
-    if (interval > 1) return `${interval} tháng trước`;
-    interval = Math.floor(seconds / 86400);
-    if (interval > 1) return `${interval} ngày trước`;
-    interval = Math.floor(seconds / 3600);
-    if (interval > 1) return `${interval} giờ trước`;
-    interval = Math.floor(seconds / 60);
-    if (interval > 1) return `${interval} phút trước`;
-    return "Vừa xong";
-}
-
-function showSkeleton() {
-    const grid = document.getElementById('news-grid');
-    grid.innerHTML = '';
-    for (let i = 0; i < itemsPerPage; i++) {
-        const skeletonCard = document.createElement('div');
-        skeletonCard.className = 'news-card bg-white rounded-xl overflow-hidden shadow-md';
-        skeletonCard.innerHTML = `
-            <div class="w-full h-48 skeleton"></div>
-            <div class="p-6">
-                <div class="h-4 w-24 skeleton mb-4"></div>
-                <div class="h-6 w-full skeleton mb-2"></div>
-                <div class="h-4 w-3/4 skeleton mb-4"></div>
-                <div class="h-4 w-32 skeleton"></div>
-            </div>
-        `;
-        grid.appendChild(skeletonCard);
-    }
-}
-
-// === RENDER FUNCTIONS ===
-function renderPagination(totalItems, page) {
-    const pagination = document.getElementById('pagination');
-    pagination.innerHTML = '';
-    const totalPages = Math.ceil(totalItems / itemsPerPage);
-    for (let i = 1; i <= totalPages; i++) {
-        const btn = document.createElement('button');
-        btn.textContent = i;
-        btn.className = `px-4 py-2 border ${i === page ? 'bg-red-600 text-white' : 'border-red-600 text-red-600'} rounded-md hover:bg-red-50 transition font-medium`;
-        btn.onclick = () => filterNews(i);
-        pagination.appendChild(btn);
-    }
-}
-
-function renderNews(filteredData = newsData, page = 1) {
-    const grid = document.getElementById('news-grid');
-    grid.innerHTML = '';
-    const start = (page - 1) * itemsPerPage;
-    const end = start + itemsPerPage;
-    const paginatedData = filteredData.slice(start, end);
-    
-    paginatedData.forEach(news => {
-        const badgeColor = news.type === 'thien-tai' ? 'bg-blue-600' : news.type === 'tai-nan' ? 'bg-red-600' : news.type === 'cuu-ho' ? 'bg-green-600' : 'bg-yellow-600';
-        const badgeText = news.type === 'thien-tai' ? 'Thiên tai' : news.type === 'tai-nan' ? 'Tai nạn' : news.type === 'cuu-ho' ? 'Cứu hộ' : 'Cảnh báo';
-        const locBadge = news.location.split(',')[0].replace('-', ' ').toUpperCase();
-        const card = document.createElement('div');
-        card.className = 'news-card bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300';
-        
-        // Cần tìm index của news trong mảng gốc newsData để truyền vào openModal
-        const originalIndex = newsData.findIndex(item => item.title === news.title && item.date === news.date); 
-        
-        card.innerHTML = `
-            <img src="${news.img}" alt="${news.title}" class="w-full h-48 object-cover" loading="lazy">
-            <span class="absolute top-4 left-4 ${badgeColor} text-white text-xs px-3 py-1 rounded-full font-bold">${badgeText}</span>
-            <span class="absolute top-4 right-4 bg-purple-600 text-white text-xs px-3 py-1 rounded-full font-bold">${locBadge}</span>
-            <div class="p-6">
-                <div class="flex items-center text-sm text-gray-500 mb-2">
-                    <i data-feather="clock" class="mr-1 w-4 h-4"></i>
-                    <span>${timeAgo(news.date)}</span>
-                </div>
-                <h3 class="text-xl font-bold mb-3">${news.title}</h3>
-                <p class="text-gray-600 mb-4">${news.content.replace(/<[^>]+>/g, '').substring(0, 100)}...</p>
-                <button onclick="openModal(${originalIndex})" class="text-red-600 hover:text-red-800 font-medium flex items-center">
-                    Xem chi tiết
-                    <i data-feather="arrow-right" class="ml-2 w-4 h-4"></i>
-                </button>
-            </div>
-        `;
-        grid.appendChild(card);
-    });
-    feather.replace();
-    renderPagination(filteredData.length, page);
-}
-
-// === MAIN LOGIC ===
-function filterNews(page = 1) {
-    const searchInput = document.getElementById('search-news');
-    const filterType = document.getElementById('filter-type');
-    const filterLocation = document.getElementById('filter-location');
-    const sortBy = document.getElementById('sort-by');
-
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(() => {
-        showSkeleton();
-        setTimeout(() => {
-            let filtered = newsData.slice();
-            const search = searchInput.value.toLowerCase();
-            const type = filterType.value;
-            const loc = filterLocation.value;
-            
-            // Filtering
-            filtered = filtered.filter(news => {
-                const titleMatch = news.title.toLowerCase().includes(search);
-                const typeMatch = type === 'all' || news.type === type;
-                const locMatch = loc === 'all' || news.location.split(',').some(l => l.trim() === loc);
-                return titleMatch && typeMatch && locMatch;
-            });
-            
-            // Sorting
-            if (sortBy.value === 'newest') {
-                filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
-            } else if (sortBy.value === 'oldest') {
-                filtered.sort((a, b) => new Date(a.date) - new Date(b.date));
-            }
-            
-            currentPage = page; 
-            renderNews(filtered, page);
-        }, 500);
-    }, 300);
-}
-
-function refreshNews() {
-    showSkeleton();
-    setTimeout(() => {
-        // Giả lập: reload với data hiện tại và giữ nguyên filter/sort/pagination
-        filterNews(currentPage); 
-    }, 1000);
-}
-
-// === MODAL LOGIC (Global scope cho onclick) ===
-window.openModal = function(index) {
-    const news = newsData[index];
-    const modal = document.getElementById('news-modal');
-    document.getElementById('modal-title').textContent = news.title;
-    document.getElementById('modal-content').innerHTML = `<img src="${news.img}" alt="${news.title}" class="w-full h-48 object-cover rounded-md mb-4">` + news.content;
-    document.getElementById('map-link').href = `map.html?location=${news.location.split(',')[0]}`;
-    
-    // Tin liên quan
-    const related = document.getElementById('related-news').querySelector('.space-y-2');
-    related.innerHTML = '';
-    newsData.filter((n, i) => i !== index && n.type === news.type).slice(0, 5).forEach(n => {
-        const link = document.createElement('a');
-        link.href = '#';
-        link.onclick = () => { closeModal(); openModal(newsData.indexOf(n)); return false; };
-        link.className = 'block text-sm text-gray-700 hover:text-red-600';
-        link.textContent = `→ ${n.title}`;
-        related.appendChild(link);
-    });
-    
-    // Share button
-    document.getElementById('share-news').onclick = () => {
-        if (navigator.share) {
-            navigator.share({
-                title: news.title,
-                text: news.content.replace(/<[^>]+>/g, '').substring(0, 100) + '...',
-                url: window.location.href
-            });
-        } else {
-            alert('Chức năng chia sẻ không được hỗ trợ trên thiết bị này.');
-        }
+// Hàm lấy nhãn loại tin
+function getTypeLabel(type) {
+    const typeLabels = {
+        'thien-tai': 'Thiên tai',
+        'tai-nan': 'Tai nạn',
+        'cuu-ho': 'Cứu hộ',
+        'canh-bao': 'Cảnh báo',
+        'an-ninh': 'An ninh',
+        'quoc-phong': 'Quốc phòng'
     };
-    modal.classList.remove('hidden');
+    return typeLabels[type] || type;
 }
 
-function closeModal() {
-    document.getElementById('news-modal').classList.add('hidden');
+// Hàm lấy nhãn địa điểm
+function getLocationLabel(location) {
+    const locationLabels = {
+        'all': 'Toàn quốc',
+        'ha-noi': 'Hà Nội',
+        'tp-hcm': 'TP.HCM',
+        'da-nang': 'Đà Nẵng',
+        'mien-bac': 'Miền Bắc',
+        'mien-trung': 'Miền Trung',
+        'tay-nguyen': 'Tây Nguyên',
+        'dak-lak': 'Đắk Lắk',
+        'binh-dinh': 'Bình Định',
+        'thai-nguyen': 'Thái Nguyên'
+    };
+    return locationLabels[location] || location;
 }
 
-// === INITIALIZATION & EVENT LISTENERS ===
-document.addEventListener('DOMContentLoaded', () => {
-    // Event listeners
-    document.getElementById('search-news').addEventListener('input', () => filterNews());
-    document.getElementById('filter-type').addEventListener('change', () => filterNews());
-    document.getElementById('filter-location').addEventListener('change', () => filterNews());
-    document.getElementById('sort-by').addEventListener('change', () => filterNews());
-    document.getElementById('refresh-news').addEventListener('click', refreshNews);
-    document.getElementById('close-modal').addEventListener('click', closeModal);
+// Hàm lọc bản tin
+function filterNews() {
+    const typeFilter = document.getElementById('filter-type').value;
+    const sourceFilter = document.getElementById('filter-source').value;
+    const locationFilter = document.getElementById('filter-location').value;
+    const sortBy = document.getElementById('sort-by').value;
 
-    // Auto refresh every 2 minutes
-    setInterval(refreshNews, 120000); 
+    filteredNews = newsData.filter(news => {
+        const matchesType = typeFilter === 'all' || news.type === typeFilter;
+        const matchesSource = sourceFilter === 'all' || news.source === sourceFilter;
+        const matchesLocation = locationFilter === 'all' || news.location === locationFilter;
 
-    // Mobile menu toggle (chuyển logic từ HTML vào đây)
-    document.getElementById('menu-toggle').addEventListener('click', function() {
-        const menu = document.getElementById('mobile-menu');
-        menu.classList.toggle('hidden');
-        const isHidden = menu.classList.contains('hidden');
-        this.innerHTML = isHidden ? feather.icons.menu.toSvg() : feather.icons.x.toSvg();
+        return matchesType && matchesSource && matchesLocation;
     });
 
-    // Smooth scrolling & mobile menu close (giữ nguyên)
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
-            const mobileMenu = document.getElementById('mobile-menu');
-            if (!mobileMenu.classList.contains('hidden')) {
-                mobileMenu.classList.add('hidden');
-                document.getElementById('menu-toggle').innerHTML = feather.icons.menu.toSvg();
+    // Sắp xếp
+    if (sortBy === 'newest') {
+        filteredNews.sort((a, b) => new Date(b.date + ' ' + b.time) - new Date(a.date + ' ' + a.time));
+    } else {
+        filteredNews.sort((a, b) => new Date(a.date + ' ' + a.time) - new Date(b.date + ' ' + b.time));
+    }
+
+    currentPage = 1;
+    displayNews(filteredNews, currentPage);
+}
+
+// Khởi tạo sự kiện
+document.addEventListener('DOMContentLoaded', function() {
+    // Hiển thị bản tin ban đầu
+    displayNews(newsData, currentPage);
+
+    // Thêm sự kiện cho các bộ lọc
+    document.getElementById('filter-type').addEventListener('change', filterNews);
+    document.getElementById('filter-source').addEventListener('change', filterNews);
+    document.getElementById('filter-location').addEventListener('change', filterNews);
+    document.getElementById('sort-by').addEventListener('change', filterNews);
+    document.getElementById('refresh-news').addEventListener('click', function() {
+        // Trong thực tế, đây sẽ là nơi gọi API để lấy dữ liệu mới
+        displayNews(newsData, 1);
+        alert('Đã làm mới dữ liệu bản tin');
+    });
+
+    // Đóng modal
+    document.getElementById('close-modal').addEventListener('click', function() {
+        document.getElementById('news-modal').classList.add('hidden');
+    });
+
+    // Đóng modal khi click bên ngoài
+    document.getElementById('news-modal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            this.classList.add('hidden');
+        }
+    });
+});
+
+
+
+
+// Xử lý đóng modal khi click vào nút X
+document.addEventListener('DOMContentLoaded', function() {
+    const closeModalBtn = document.getElementById('close-modal');
+    const newsModal = document.getElementById('news-modal');
+
+    if (closeModalBtn && newsModal) {
+        // Đóng modal khi click nút X
+        closeModalBtn.addEventListener('click', function() {
+            newsModal.classList.add('hidden');
+        });
+
+        // Đóng modal khi click bên ngoài nội dung modal
+        newsModal.addEventListener('click', function(event) {
+            if (event.target === newsModal) {
+                newsModal.classList.add('hidden');
             }
         });
-    });
 
-    // Initialize feather icons
-    feather.replace();
-
-    // Check for new report from post.html (sử dụng localStorage)
-    const newReport = localStorage.getItem('new_report');
-    if (newReport) {
-        const report = JSON.parse(newReport);
-        const reportTitle = report.title && report.title.trim() !== '' ? report.title : 'Báo cáo khẩn cấp mới';
-
-        const newsItem = {
-            title: reportTitle,
-            date: report.date || new Date().toISOString().substring(0, 10),
-            type: report.type || 'cuu-ho',
-            location: report.location || 'toan-quoc',
-            img: report.img || 'https://via.placeholder.com/640x360?text=Báo+cáo+mới',
-            content: `<p><strong>Địa điểm:</strong> ${report.location || 'Chưa xác định'}</p><p><strong>Thời gian:</strong> ${new Date(report.date || new Date()).toLocaleDateString('vi-VN')}</p><p><strong>Nội dung:</strong> ${report.description || 'Không có mô tả chi tiết.'}</p><p><strong>Nguồn:</strong> Báo cáo từ cộng đồng</p>`
-        };
-        newsData.unshift(newsItem); 
-        localStorage.removeItem('new_report'); 
-        
-        setTimeout(() => {
-            document.getElementById('news-section').scrollIntoView({ behavior: 'smooth' });
-            alert('Báo cáo của bạn đã được thêm vào đầu bản tin và đang chờ xử lý!');
-        }, 500);
+        // Đóng modal khi nhấn phím ESC
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && !newsModal.classList.contains('hidden')) {
+                newsModal.classList.add('hidden');
+            }
+        });
     }
-    
-    // Khởi tạo hiển thị tin tức
-    filterNews();
 });

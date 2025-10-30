@@ -461,3 +461,35 @@ let authSystem;
 document.addEventListener('DOMContentLoaded', function() {
     authSystem = new AuthSystem();
 });
+
+
+
+
+//request.js// Login functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const loginForm = document.getElementById('login-form');
+    
+    if (loginForm) {
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            // Basic validation
+            if (!email || !password) {
+                alert('Vui lòng điền đầy đủ thông tin đăng nhập');
+                return;
+            }
+            
+            // Simulate login process
+            console.log('Login attempt:', { email, password });
+            
+            // Here you would typically make an API call
+            // For demo purposes, we'll just redirect
+            setTimeout(() => {
+                window.location.href = 'dashboard.html';
+            }, 1000);
+        });
+    }
+});

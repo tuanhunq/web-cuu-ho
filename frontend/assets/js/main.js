@@ -623,4 +623,87 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-//post.js
+//request.html// Main JavaScript for common functionality across all pages
+
+// Mobile menu functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Mobile menu toggle
+    const menuToggle = document.getElementById('menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    if (menuToggle && mobileMenu) {
+        menuToggle.addEventListener('click', function() {
+            mobileMenu.classList.toggle('hidden');
+        });
+    }
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', function(event) {
+        if (!event.target.closest('nav') && !mobileMenu.classList.contains('hidden')) {
+            mobileMenu.classList.add('hidden');
+        }
+    });
+
+    // Initialize Feather icons
+    if (typeof feather !== 'undefined') {
+        feather.replace();
+    }
+
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+
+    // Add active class to current page in navigation
+    const currentPage = window.location.pathname.split('/').pop();
+    document.querySelectorAll('.nav-link').forEach(link => {
+        const linkHref = link.getAttribute('href');
+        if (linkHref === currentPage || (currentPage === '' && linkHref === 'index.html')) {
+            link.classList.add('text-red-500', 'font-bold');
+            link.classList.remove('text-gray-700', 'hover:text-red-500');
+        }
+    });
+});
+
+// Utility functions
+const Utils = {
+    // Format date
+    formatDate: (dateString) => {
+        const options = { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        };
+        return new Date(dateString).toLocaleDateString('vi-VN', options);
+    },
+
+    // Debounce function for search inputs
+    debounce: (func, wait) => {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    },
+
+    // Show notification
+    showNotification: (message, type = 'info') => {
+        // Implementation for showing notifications
+        console.log(`${type.toUpperCase()}: ${message}`);
+    }
+};

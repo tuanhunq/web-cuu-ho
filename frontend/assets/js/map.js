@@ -56,25 +56,6 @@ class EmergencyMap {
         L.control.layers(baseMaps).addTo(this.map);
     }
     
-    async loadIncidents() {
-        try {
-            // Show loading state
-            this.showLoading(true);
-            
-            const data = await ApiService.getIncidents(this.currentFilters);
-            this.incidents = data.incidents || [];
-            
-            this.renderIncidents();
-            this.updateStatistics();
-            this.showLoading(false);
-            
-        } catch (error) {
-            console.error('Error loading incidents:', error);
-            this.showLoading(false);
-            this.showError('Không thể tải dữ liệu sự cố. Vui lòng thử lại sau.');
-        }
-    }
-    
     renderIncidents() {
         // Clear existing markers
         this.clearMarkers();
@@ -422,905 +403,1155 @@ if (typeof module !== 'undefined' && module.exports) {
 }
 
 
-//map// Dữ liệu tin tức từ trang news (đồng bộ)// ===== THÊM CÁC HÀM HỖ TRỢ BỊ THIẾU =====
-function timeAgo(dateString) {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffMs = now - date;
-    const diffMins = Math.floor(diffMs / (1000 * 60));
-    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+//map// Khởi tạo bản đồ
+let map;
+let markers = [];
+let currentIncidents = [];
 
-    if (diffMins < 60) {
-        return `${diffMins} phút trước`;
-    } else if (diffHours < 24) {
-        return `${diffHours} giờ trước`;
-    } else {
-        return `${diffDays} ngày trước`;
-    }
-}
-
-function formatDate(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('vi-VN', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-    });
-}
-
-function formatTime(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleTimeString('vi-VN', {
-        hour: '2-digit',
-        minute: '2-digit'
-    });
-}
-
-// ===== SỬA LẠI HÀM VẼ MARKER =====
-function drawMarkers() {
-    // Xóa các marker cũ
-    currentMarkers.forEach(marker => map.removeLayer(marker));
-    currentMarkers = [];
-
-    const filteredEmergencies = filterEmergencies();
+function initMap() {
+    // Tạo bản đồ với trung tâm là Việt Nam
+    map = L.map('map').setView([16.0, 108.0], 6);
     
-    console.log('Filtered emergencies:', filteredEmergencies); // Debug log
-    
-    filteredEmergencies.forEach(emg => {
-        const color = getColorByType(emg.type);
-        const icon = getIconByType(emg.type);
-        
-        // Tạo marker với inline styles thay vì Tailwind classes
-        const marker = L.marker(emg.coords, {
-            icon: L.divIcon({
-                html: `
-                    <div style="position: relative;">
-                        <div style="
-                            width: 40px; 
-                            height: 40px; 
-                            background-color: ${getColorHex(emg.type)}; 
-                            border-radius: 50%; 
-                            display: flex; 
-                            align-items: center; 
-                            justify-content: center; 
-                            color: white; 
-                            font-size: 16px; 
-                            box-shadow: 0 2px 8px rgba(0,0,0,0.3); 
-                            border: 2px solid white;
-                            cursor: pointer;
-                            ${emg.status === 'resolved' ? 'opacity: 0.7;' : ''}
-                        ">
-                            ${icon}
-                        </div>
-                        ${emg.status === 'active' ? 
-                            '<div style="position: absolute; top: -2px; right: -2px; width: 12px; height: 12px; background-color: #ef4444; border-radius: 50%; animation: pulse 1.5s infinite;"></div>' : 
-                            ''
-                        }
-                    </div>
-                    <style>
-                        @keyframes pulse {
-                            0% { opacity: 1; }
-                            50% { opacity: 0.4; }
-                            100% { opacity: 1; }
-                        }
-                    </style>
-                `,
-                className: 'custom-marker',
-                iconSize: [40, 40],
-                iconAnchor: [20, 20]
-            })
-        })
-        .addTo(map)
-        .bindPopup(`
-            <div style="padding: 12px; min-width: 250px; font-family: sans-serif;">
-                <div style="display: flex; align-items: center; margin-bottom: 8px;">
-                    <div style="width: 24px; height: 24px; background-color: ${getColorHex(emg.type)}; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 8px; color: white; font-size: 12px;">
-                        ${icon}
-                    </div>
-                    <h4 style="font-weight: bold; color: #1f2937; margin: 0;">${emg.name}</h4>
-                </div>
-                <p style="font-size: 14px; color: #4b5563; margin-bottom: 8px;">${emg.address}</p>
-                <p style="font-size: 14px; color: #6b7280; margin-bottom: 12px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${emg.description}</p>
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 12px;">
-                    <span style="padding: 4px 8px; background-color: ${getColorHex(emg.type)}20; color: ${getColorHex(emg.type)}; border-radius: 4px;">${getTypeName(emg.type)}</span>
-                    <span style="color: #6b7280;">${emg.time}</span>
-                </div>
-                <div style="margin-top: 12px; display: flex; gap: 8px;">
-                    <button onclick="showEmergencyDetail(${emg.id})" style="flex: 1; background-color: #ef4444; color: white; padding: 6px 12px; border: none; border-radius: 4px; font-size: 12px; cursor: pointer; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#dc2626'" onmouseout="this.style.backgroundColor='#ef4444'">
-                        Chi tiết
-                    </button>
-                    <button onclick="shareEmergency(${emg.id})" style="flex: 1; background-color: #3b82f6; color: white; padding: 6px 12px; border: none; border-radius: 4px; font-size: 12px; cursor: pointer; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#2563eb'" onmouseout="this.style.backgroundColor='#3b82f6'">
-                        Chia sẻ
-                    </button>
-                </div>
-            </div>
-        `);
-
-        currentMarkers.push(marker);
-    });
-
-    updateStatistics();
-    updateRecentIncidents();
-}
-
-// ===== THÊM HÀM LẤY MÀU HEX =====
-function getColorHex(type) {
-    const colors = {
-        fire: '#ef4444',
-        flood: '#3b82f6', 
-        accident: '#f97316',
-        disaster: '#8b5cf6',
-        rescue: '#10b981',
-        warning: '#eab308'
-    };
-    return colors[type] || '#6b7280';
-}
-
-// ===== SỬA LẠI HÀM KHỞI TẠO MAP =====
-function initializeMap() {
-    // Đảm bảo container map tồn tại
-    const mapContainer = document.getElementById('map');
-    if (!mapContainer) {
-        console.error('Map container not found!');
-        return;
-    }
-
-    // Khởi tạo map
-    map = L.map("map").setView([16.0471, 108.2068], 6);
-    
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom: 19,
-        attribution: '© OpenStreetMap'
+    // Thêm tile layer (OpenStreetMap)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
-
-    // Debug: Kiểm tra dữ liệu
-    console.log('Original emergencies:', emergencies);
-    console.log('News emergencies:', newsEmergencies);
-    console.log('All emergencies:', [...emergencies, ...newsEmergencies]);
-
-    // Vẽ markers sau khi map đã load
-    map.whenReady(() => {
-        drawMarkers();
-        updateStatistics();
-        updateRecentIncidents();
+    
+    // Thêm các marker giả lập
+    currentIncidents = generateMockIncidents();
+    
+    // Tạo marker cho mỗi sự cố
+    currentIncidents.forEach(incident => {
+        createIncidentMarker(incident);
     });
-
-    // Thêm event listeners
-    setupEventListeners();
-}
-
-// ===== TÁCH RIÊNG PHẦN EVENT LISTENERS =====
-function setupEventListeners() {
-    // Filter events
-    const typeFilter = document.getElementById('type-filter');
-    const provinceFilter = document.getElementById('province-filter');
-    const searchInput = document.getElementById('search-incidents');
-    const resetBtn = document.getElementById('reset-filters');
-
-    if (typeFilter) {
-        typeFilter.addEventListener('change', (e) => {
-            currentFilters.type = e.target.value;
-            drawMarkers();
+    
+    // Cập nhật thống kê
+    updateStatistics(currentIncidents);
+    
+    // Hiển thị sự cố gần đây
+    displayRecentIncidents(currentIncidents);
+    
+    // Thêm sự kiện cho các nút điều khiển bản đồ
+    document.getElementById('zoom-in-btn').addEventListener('click', () => {
+        map.zoomIn();
+    });
+    // Thêm sự kiện cho tab switching
+    document.querySelectorAll('.panel-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            const tabName = this.getAttribute('data-tab');
+            
+            // Xóa active class từ tất cả các tab
+            document.querySelectorAll('.panel-tab').forEach(t => {
+                t.classList.remove('active');
+            });
+            
+            // Ẩn tất cả nội dung tab
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Thêm active class cho tab được chọn
+            this.classList.add('active');
+            
+            // Hiển thị nội dung tab tương ứng
+            document.getElementById(`${tabName}-tab`).classList.add('active');
         });
-    }
-
-    if (provinceFilter) {
-        provinceFilter.addEventListener('change', (e) => {
-            currentFilters.province = e.target.value;
-            flyToProvince(e.target.value);
-            drawMarkers();
+    });
+    
+    document.getElementById('zoom-out-btn').addEventListener('click', () => {
+        map.zoomOut();
+    });
+    
+    document.getElementById('locate-btn').addEventListener('click', () => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                position => {
+                    const { latitude, longitude } = position.coords;
+                    map.setView([latitude, longitude], 13);
+                    L.marker([latitude, longitude])
+                        .addTo(map)
+                        .bindPopup('Vị trí của bạn')
+                        .openPopup();
+                },
+                error => {
+                    alert('Không thể xác định vị trí của bạn: ' + error.message);
+                }
+            );
+        } else {
+            alert('Trình duyệt của bạn không hỗ trợ định vị.');
+        }
+    });
+    
+    // Thêm sự kiện cho bộ lọc
+    document.getElementById('province-filter').addEventListener('change', applyFilters);
+    document.getElementById('type-filter').addEventListener('change', applyFilters);
+    document.getElementById('reset-filters').addEventListener('click', resetFilters);
+    
+    // Thêm sự kiện cho các nút lọc loại sự cố
+    document.querySelectorAll('.type-filter-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Xóa active class từ tất cả các nút
+            document.querySelectorAll('.type-filter-btn').forEach(b => {
+                b.classList.remove('active');
+            });
+            
+            // Thêm active class cho nút được nhấn
+            this.classList.add('active');
+            
+            // Cập nhật bộ lọc loại sự cố
+            const type = this.getAttribute('data-type');
+            document.getElementById('type-filter').value = type;
+            
+            // Áp dụng bộ lọc
+            applyFilters();
         });
-    }
-
-    if (searchInput) {
-        searchInput.addEventListener('input', (e) => {
-            currentFilters.search = e.target.value;
-            drawMarkers();
-        });
-    }
-
-    if (resetBtn) {
-        resetBtn.addEventListener('click', () => {
-            currentFilters = { type: 'all', province: 'all', search: '' };
-            if (typeFilter) typeFilter.value = 'all';
-            if (provinceFilter) provinceFilter.value = 'all';
-            if (searchInput) searchInput.value = '';
-            flyToProvince('all');
-            drawMarkers();
-        });
-    }
-
-    // Map controls
-    const locateBtn = document.getElementById('locate-btn');
-    const zoomInBtn = document.getElementById('zoom-in-btn');
-    const zoomOutBtn = document.getElementById('zoom-out-btn');
-
-    if (locateBtn) {
-        locateBtn.addEventListener('click', locateUser);
-    }
-
-    if (zoomInBtn) {
-        zoomInBtn.addEventListener('click', () => map.zoomIn());
-    }
-
-    if (zoomOutBtn) {
-        zoomOutBtn.addEventListener('click', () => map.zoomOut());
-    }
-
-    // Modal events
-    setupModalEvents();
-}
-
-// ===== HÀM ĐỊNH VỊ NGƯỜI DÙNG =====
-function locateUser() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            pos => {
-                const lat = pos.coords.latitude;
-                const lng = pos.coords.longitude;
-                map.flyTo([lat, lng], 13, { duration: 1.5 });
+    });
+    
+    // Thêm sự kiện cho các nút trong modal
+    document.getElementById('close-modal').addEventListener('click', closeModal);
+    document.getElementById('modal-close-btn').addEventListener('click', closeModal);
+    
+    // Thêm sự kiện đóng modal khi click vào overlay
+    document.querySelector('.modal-overlay').addEventListener('click', closeModal);
+    
+    // Thêm sự kiện cho tìm kiếm
+    document.getElementById('search-input').addEventListener('input', applyFilters);
+    
+    // Thêm sự kiện cho các nút chú thích bản đồ
+    document.querySelectorAll('[data-type]').forEach(item => {
+        if (item.classList.contains('cursor-pointer')) {
+            item.addEventListener('click', function() {
+                const type = this.getAttribute('data-type');
+                document.querySelectorAll('.type-filter-btn').forEach(b => {
+                    b.classList.remove('active');
+                    if (b.getAttribute('data-type') === type) {
+                        b.classList.add('active');
+                    }
+                });
                 
-                L.marker([lat, lng])
-                    .addTo(map)
-                    .bindPopup("📍 Vị trí của bạn")
-                    .openPopup();
-            },
-            error => {
-                console.error('Geolocation error:', error);
-                alert("Không thể lấy vị trí của bạn. Vui lòng kiểm tra quyền truy cập vị trí.");
-            }
-        );
-    } else {
-        alert("Trình duyệt không hỗ trợ định vị!");
-    }
-}
-
-// ===== SETUP MODAL EVENTS =====
-function setupModalEvents() {
-    const closeModal = document.getElementById('close-modal');
-    const modalCloseBtn = document.getElementById('modal-close-btn');
-    const modalShareBtn = document.getElementById('modal-share-btn');
-    const modalNavigateBtn = document.getElementById('modal-navigate-btn');
-    const modalReportBtn = document.getElementById('modal-report-btn');
-    const modalElement = document.getElementById('emergency-detail-modal');
-
-    if (closeModal) {
-        closeModal.addEventListener('click', closeEmergencyDetail);
-    }
-
-    if (modalCloseBtn) {
-        modalCloseBtn.addEventListener('click', closeEmergencyDetail);
-    }
-
-    if (modalShareBtn) {
-        modalShareBtn.addEventListener('click', () => {
-            const emergencyId = document.getElementById('modal-id').textContent;
-            shareEmergency(parseInt(emergencyId.replace('#', '')));
-        });
-    }
-
-    if (modalNavigateBtn) {
-        modalNavigateBtn.addEventListener('click', () => {
-            const emergencyId = document.getElementById('modal-id').textContent;
-            viewEmergencyOnMap(parseInt(emergencyId.replace('#', '')));
-            closeEmergencyDetail();
-        });
-    }
-
-    if (modalReportBtn) {
-        modalReportBtn.addEventListener('click', () => {
-            alert('Cảm ơn bạn đã báo cáo. Chúng tôi sẽ kiểm tra thông tin này.');
-        });
-    }
-
-    if (modalElement) {
-        modalElement.addEventListener('click', (e) => {
-            if (e.target.id === 'emergency-detail-modal') {
-                closeEmergencyDetail();
-            }
-        });
-    }
-}
-
-// ===== KHỞI TẠO KHI TRANG LOAD =====
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM loaded, initializing map...');
-    initializeMap();
-    
-    // Cập nhật thời gian thực mỗi 30 giây
-    setInterval(updateStatistics, 30000);
-});
-
-// ===== ĐẢM BẢO CÁC HÀM TOÀN CỤC =====
-window.showEmergencyDetail = showEmergencyDetail;
-window.closeEmergencyDetail = closeEmergencyDetail;
-window.shareEmergency = shareEmergency;
-window.viewEmergencyOnMap = viewEmergencyOnMap;
-// Khởi tạo Feather Icons
-feather.replace();
-
-// Mobile menu toggle
-document.getElementById('menu-toggle').addEventListener('click', function() {
-    const menu = document.getElementById('mobile-menu');
-    menu.classList.toggle('hidden');
-    const isHidden = menu.classList.contains('hidden');
-    this.innerHTML = isHidden ? feather.icons.menu.toSvg() : feather.icons.x.toSvg();
-});
-
-// 🔹 Dữ liệu tin tức từ trang news (để mô phỏng đồng bộ)
-const newsData = [
-    {
-        title: "Đà Nẵng: Chủ động ứng phó thiên tai những tháng cuối năm",
-        date: "2025-10-21",
-        type: "thien-tai",
-        location: "da-nang,mien-trung",
-        img: "https://media.daidoanket.vn/w1280/uploaded/images/2025/10/18/8898fcf6-b66a-433c-908c-72eb18bbdeb1.jpg",
-        content: "<p><strong>Tình hình:</strong> TP. Đà Nẵng đang hứng chịu thời tiết cực đoan, mưa lớn kéo dài gây sạt lở nghiêm trọng tại nhiều khu vực. Đáng chú ý, bờ biển phường Hội An Tây bị sóng đánh mạnh, sạt lở dài hơn 200m với vách đứng cao 5-6m, cây chắn sóng bật gốc, công trình ven biển nguy cơ sụp đổ.</p>"
-    },
-    {
-        title: "Tai nạn giao thông mới nhất 19/10/2025: xe cứu hộ gây tai nạn liên hoàn trên quốc lộ 26",
-        date: "2025-10-19",
-        type: "tai-nan",
-        location: "dak-lak,tp-hcm,binh-dinh,tay-nguyen",
-        img: "https://cdnphoto.dantri.com.vn/fT-JEopnjSnsEkgTdgpPSX-an_8=/thumb_w/1020/2025/10/19/z7132063905158f9b65fad4a12b3160200c0a32ca66181-edited-1760843872053.jpg",
-        content: "<p><strong>Tình hình:</strong> Ngày 19/10/2025, xảy ra ba vụ tai nạn giao thông nghiêm trọng: Xe cứu hộ gây tai nạn liên hoàn tại km146+400 quốc lộ 26 (Đắk Lắk), người đàn ông tử vong do mất lái xe máy ở dốc cầu Bình Lợi (TP Hồ Chí Minh), và xe máy va chạm xe tải chở gỗ khiến cô gái tử vong trên tỉnh lộ 639 (Bình Định).</p>"
-    },
-    {
-        title: "Thiên tai đã vượt quá sức chịu đựng của người dân",
-        date: "2025-10-10",
-        type: "thien-tai",
-        location: "thai-nguyen,bac-ninh,cao-bang,lang-son,mien-bac,mien-trung",
-        img: "https://premedia.vneconomy.vn/files/uploads/2025/10/10/c999b83a970f40588b4d060116ebed76-20061.png?w=900",
-        content: "<p><strong>Tình hình:</strong> Năm 2025, Việt Nam xảy ra 20 loại hình thiên tai với diễn biến dồn dập, khốc liệt, bất thường, vượt mức lịch sử, ảnh hưởng rộng lớn đến miền Bắc và miền Trung.</p>"
-    },
-    {
-        title: "Việt Nam kêu gọi quốc tế hỗ trợ khắc phục hậu quả thiên tai",
-        date: "2025-10-09",
-        type: "cuu-ho",
-        location: "ha-noi,mien-bac,mien-trung",
-        img: "https://image.phunuonline.com.vn/fckeditor/upload/2025/20251009/images/lien-hop-quoc-keu-goi-ho-_241760006840.jpg",
-        content: "<p><strong>Tình hình:</strong> Trong hai tháng 9 và 10/2025, Việt Nam liên tiếp hứng chịu bão số 8, 9, 10 và 11 cùng mưa lũ lớn. Bão số 10 đổ bộ vào Nghệ An - Hà Tĩnh đêm 28 và rạng sáng 29/9 với tốc độ nhanh, cường độ mạnh, phạm vi rộng.</p>"
-    },
-    {
-        title: "Lực lượng Công an nhân dân chủ động ứng phó với bão số 12 và nguy cơ mưa lớn",
-        date: "2025-10-20",
-        type: "canh-bao",
-        location: "mien-trung,mien-bac",
-        img: "https://dbnd.1cdn.vn/2025/10/20/dbqgxtnd202510201700-17609581259941101885533.jpg",
-        content: "<p><strong>Tình hình:</strong> Bão số 12 (Fengshen) đi vào Biển Đông chiều 19/10/2025, sức gió cấp 9 giật cấp 11, di chuyển hướng Tây Bắc 25km/h.</p>"
-    }
-];
-
-// 🔹 Hàm timeAgo (đồng bộ với news.html)
-function timeAgo(dateString) {
-    const now = new Date();
-    const date = new Date(dateString);
-    const seconds = Math.floor((now - date) / 1000);
-    
-    let interval = Math.floor(seconds / 31536000);
-    if (interval > 1) return `${interval} năm trước`;
-    interval = Math.floor(seconds / 2592000);
-    if (interval > 1) return `${interval} tháng trước`;
-    interval = Math.floor(seconds / 86400);
-    if (interval > 1) return `${interval} ngày trước`;
-    interval = Math.floor(seconds / 3600);
-    if (interval > 1) return `${interval} giờ trước`;
-    interval = Math.floor(seconds / 60);
-    if (interval > 1) return `${interval} phút trước`;
-    return "Vừa xong";
-}
-
-// 🔹 Tọa độ trung tâm các tỉnh thành
-const provinceCoordinates = {
-    'hanoi': [21.0278, 105.8342],
-    'hcm': [10.8231, 106.6297],
-    'danang': [16.0544, 108.2022],
-    'hue': [16.4637, 107.5909],
-    'nghean': [18.6796, 105.6813],
-    'thanhhoa': [19.8076, 105.7766],
-    'haiphong': [20.8449, 106.6881],
-    'cantho': [10.0452, 105.7469],
-    'sonla': [21.3257, 103.9160],
-    'ninhbinh': [20.2506, 105.9745]
-};
-
-// 🔹 Dữ liệu sự cố mẫu (đang xử lý và đã giải quyết)
-const emergencies = [
-    { 
-        id: 1, 
-        name: "Cháy nhà dân", 
-        address: "Số 35 Trần Hưng Đạo, Hoàn Kiếm, Hà Nội", 
-        coords: [21.027, 105.85], 
-        type: "fire", 
-        province: "hanoi", 
-        status: "active", 
-        time: "10 phút trước", 
-        description: "Cháy bùng phát tại tòa nhà 5 tầng, đang có người mắc kẹt bên trong. Lửa bắt đầu từ tầng 2 và đang lan nhanh lên các tầng trên.",
-        priority: "high",
-        reporter: { name: "Nguyễn Văn A", phone: "0912345678", reportTime: "14:20 15/06/2023" },
-        responseTeams: [{ name: "Đội PCCC Quận Hoàn Kiếm", status: "Đang di chuyển", eta: "5 phút" }],
-        timeline: [{ time: "14:20", event: "Tiếp nhận báo cáo sự cố", status: "completed" }, { time: "14:25", event: "Lực lượng đầu tiên đến hiện trường", status: "in-progress" }]
-    },
-    { 
-        id: 2, 
-        name: "Ngập lụt khu dân cư", 
-        address: "Khu vực Định Công, Hoàng Mai, Hà Nội", 
-        coords: [20.98, 105.84], 
-        type: "flood", 
-        province: "hanoi", 
-        status: "active", 
-        time: "25 phút trước", 
-        description: "Ngập sâu 0.5-0.7m do mưa lớn kéo dài. Nhiều phương tiện bị chết máy, người dân không thể di chuyển.",
-        priority: "medium",
-        reporter: { name: "Trần Thị B", phone: "0923456789", reportTime: "14:05 15/06/2023" },
-        responseTeams: [{ name: "Đội cứu hộ Quận Hoàng Mai", status: "Có mặt tại hiện trường", eta: "0 phút" }],
-        timeline: [{ time: "14:05", event: "Tiếp nhận báo cáo sự cố", status: "completed" }, { time: "14:20", event: "Lực lượng đầu tiên đến hiện trường", status: "completed" }]
-    },
-    // Thêm một sự cố đã giải quyết
-    { 
-        id: 3, 
-        name: "Tai nạn giao thông trên QL1A", 
-        address: "Ngã ba Vũng Tàu, Đồng Nai", 
-        coords: [10.957, 106.84], 
-        type: "accident", 
-        province: "hcm", // gần TPHCM
-        status: "resolved", 
-        time: "1 giờ trước", 
-        description: "Xe container va chạm với xe máy, đã xử lý xong, giao thông thông suốt.",
-        priority: "low",
-        reporter: { name: "Lê Văn C", phone: "0934567890", reportTime: "13:00 15/06/2023" },
-        responseTeams: [{ name: "CSGT Đồng Nai", status: "Hoàn thành", eta: "0 phút" }],
-        timeline: [{ time: "13:00", event: "Tiếp nhận", status: "completed" }, { time: "14:00", event: "Giải quyết", status: "completed" }]
-    }
-];
-
-// 🔹 Hàm chuyển đổi dữ liệu từ news sang emergencies (tạo marker từ tin tức)
-function convertNewsToEmergencies(newsData) {
-    const typeMapping = {
-        'thien-tai': 'disaster',
-        'tai-nan': 'accident', 
-        'cuu-ho': 'rescue',
-        'canh-bao': 'warning'
-    };
-
-    const locationMapping = {
-        'ha-noi': [21.0278, 105.8342],
-        'tp-hcm': [10.8231, 106.6297],
-        'da-nang': [16.0544, 108.2022],
-        'mien-bac': [21.5, 105.5],
-        'mien-trung': [16.0, 108.0],
-        'tay-nguyen': [12.0, 108.0],
-        'dak-lak': [12.6667, 108.05],
-        'binh-dinh': [14.1667, 109.0],
-        'thai-nguyen': [21.6, 105.85],
-        'toan-quoc': [16.0, 108.0]
-    };
-    
-    // Tích hợp dữ liệu báo cáo từ người dùng (nếu có)
-    const userReportsString = localStorage.getItem('newsData_user_reports');
-    const userReports = userReportsString ? JSON.parse(userReportsString) : [];
-    
-    // Lọc ra các tin tức thật để tránh trùng lặp
-    const filteredNewsData = newsData.filter(news => !userReports.some(report => report.newsData && report.newsData.title === news.title));
-
-    // Kết hợp và map data
-    const allNews = [...filteredNewsData, ...userReports];
-
-    return allNews.map((news, index) => {
-        // Nếu là báo cáo từ user, ưu tiên location_full
-        const locationKey = news.location.split(',')[0];
-        const coords = locationMapping[locationKey] || [16.0, 108.0];
-        
-        // Tạo mô tả ngắn từ content
-        const shortDescription = news.content.replace(/<[^>]+>/g, '').substring(0, 150) + '...';
-        const isUserReport = news.isUserReport;
-        
-        return {
-            id: 1000 + index, // ID bắt đầu từ 1000
-            name: news.title.replace('[BÁO CÁO]', isUserReport ? '[BC Người Dùng]' : '[Tin Tức]'),
-            address: news.location_full || getAddressFromNews(news),
-            coords: coords,
-            type: typeMapping[news.type] || 'disaster',
-            province: getProvinceCodeFromLocation(news.location),
-            status: news.status || 'active', // 'active' cho tin tức/báo cáo
-            time: timeAgo(news.date),
-            description: shortDescription,
-            priority: getPriorityFromNews(news),
-            reporter: {
-                name: isUserReport ? news.reporter.name : 'Hệ thống (Báo chí)',
-                phone: isUserReport ? news.reporter.phone : 'N/A',
-                reportTime: formatDate(news.date)
-            },
-            responseTeams: isUserReport 
-                ? [{ name: "Đội ứng phó (Đang xác minh)", status: "Đang điều phối", eta: "Đang chờ" }]
-                : [{ name: "Lực lượng cứu hộ địa phương", status: "Sẵn sàng", eta: "Đang điều phối" }],
-            timeline: [
-                { time: formatTime(news.date), event: `Tiếp nhận ${isUserReport ? 'báo cáo' : 'tin tức'}`, status: "completed" },
-                { time: "Đang cập nhật", event: `Điều phối lực lượng`, status: isUserReport ? "pending" : "in-progress" }
-            ],
-            newsData: news // Giữ nguyên dữ liệu gốc
-        };
+                document.getElementById('type-filter').value = type;
+                applyFilters();
+            });
+        }
     });
-}
-
-// 🔹 Các hàm hỗ trợ chuyển đổi
-function getAddressFromNews(news) {
-    const primaryLocation = news.location.split(',')[0];
-    const locationNames = {
-        'ha-noi': 'Hà Nội', 'tp-hcm': 'Thành phố Hồ Chí Minh', 'da-nang': 'Đà Nẵng', 'mien-bac': 'Miền Bắc', 'mien-trung': 'Miền Trung',
-        'tay-nguyen': 'Tây Nguyên', 'dak-lak': 'Đắk Lắk', 'binh-dinh': 'Bình Định', 'thai-nguyen': 'Thái Nguyên', 'toan-quoc': 'Toàn quốc'
-    };
-    return locationNames[primaryLocation] || news.location.replace(/,/g, ', ');
-}
-
-function getProvinceCodeFromLocation(location) {
-    const map = {
-        'ha-noi': 'hanoi', 'tp-hcm': 'hcm', 'da-nang': 'danang', 'thai-nguyen': 'thai-nguyen', 'dak-lak': 'dak-lak', 'binh-dinh': 'binh-dinh',
-        'mien-bac': 'hanoi', 'mien-trung': 'danang'
-    };
-    const key = location.split(',')[0];
-    return map[key] || 'all';
-}
-
-function getPriorityFromNews(news) {
-    const priorityMap = { 'thien-tai': 'high', 'tai-nan': 'medium', 'cuu-ho': 'medium', 'canh-bao': 'high' };
-    return priorityMap[news.type] || 'medium';
-}
-
-function formatDate(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('vi-VN') + ' ' + date.toLocaleTimeString('vi-VN', {hour: '2-digit', minute:'2-digit'});
-}
-
-function formatTime(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleTimeString('vi-VN', {hour: '2-digit', minute:'2-digit'});
-}
-
-// 🔹 Khởi tạo dữ liệu sự cố tổng hợp
-const newsEmergencies = convertNewsToEmergencies(newsData);
-const allInitialEmergencies = [...emergencies, ...newsEmergencies];
-
-// 🗺️ Khởi tạo bản đồ Leaflet
-const map = L.map("map").setView([16.0471, 108.2068], 6);
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom: 19,
-    attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
-}).addTo(map);
-
-let currentMarkers = [];
-let currentFilters = { type: 'all', province: 'all', search: '' };
-
-// === MAP & RENDER LOGIC ===
-function showEmergencyDetail(id) {
-    const emergency = allInitialEmergencies.find(e => e.id === id);
-    if (!emergency) return;
     
-    // Logic cập nhật modal (giữ nguyên từ code gốc)
-    document.getElementById('modal-id').textContent = `#${emergency.id}`;
-    document.getElementById('modal-title').textContent = emergency.name;
-    document.getElementById('modal-type').textContent = getTypeName(emergency.type);
-    document.getElementById('modal-status').textContent = emergency.status === 'active' ? 'Đang xử lý' : 'Đã giải quyết';
-    document.getElementById('modal-status').className = `status-badge ${emergency.status === 'active' ? 'priority-high' : 'priority-low'}`;
-    document.getElementById('modal-priority').textContent = getPriorityName(emergency.priority);
-    document.getElementById('modal-priority').className = `status-badge priority-${emergency.priority}`;
-    document.getElementById('modal-time').textContent = emergency.time;
-    document.getElementById('modal-address').textContent = emergency.address;
-    document.getElementById('modal-province').textContent = getProvinceName(emergency.province);
-    document.getElementById('modal-coords').textContent = `${emergency.coords[0].toFixed(4)}, ${emergency.coords[1].toFixed(4)}`;
-    document.getElementById('modal-description').textContent = emergency.description;
-    document.getElementById('modal-reporter-name').textContent = emergency.reporter.name;
-    document.getElementById('modal-reporter-phone').textContent = emergency.reporter.phone;
-    document.getElementById('modal-report-time').textContent = emergency.reporter.reportTime;
-
-    // Thêm nguồn tin nếu là từ news
-    const descriptionEl = document.getElementById('modal-description');
-    if (emergency.newsData) {
-        const cleanContent = emergency.newsData.content.replace(/<[^>]+>/g, '');
-        descriptionEl.innerHTML = emergency.description + `<br><br><strong>Nguồn tin:</strong> ${cleanContent.substring(0, 300)}...`;
-    } else {
-        descriptionEl.textContent = emergency.description;
-    }
-
-    // Cập nhật lực lượng ứng phó
-    const responseTeamsContainer = document.getElementById('modal-response-teams');
-    responseTeamsContainer.innerHTML = emergency.responseTeams.map(team => `
-        <div class="flex justify-between items-center p-2 bg-white rounded border">
-            <div>
-                <div class="font-medium">${team.name}</div>
-                <div class="text-sm text-gray-600">${team.status}</div>
-            </div>
-            <div class="text-sm font-semibold ${team.eta === '0 phút' || team.eta === 'Đang điều phối' || team.eta === 'Đang chờ' ? 'text-orange-600' : 'text-green-600'}">
-                ${team.eta}
-            </div>
-        </div>
-    `).join('');
-
-    // Cập nhật timeline
-    const timelineContainer = document.getElementById('modal-timeline');
-    timelineContainer.innerHTML = emergency.timeline.map(item => `
-        <div class="flex items-center space-x-3">
-            <div class="flex-shrink-0 w-3 h-3 rounded-full ${
-                item.status === 'completed' ? 'bg-green-500' :
-                item.status === 'in-progress' ? 'bg-yellow-500 animate-pulse' : 'bg-gray-300'
-            }"></div>
-            <div class="flex-1">
-                <div class="flex justify-between">
-                    <span class="font-medium">${item.event}</span>
-                    <span class="text-sm text-gray-500">${item.time}</span>
-                </div>
-            </div>
-        </div>
-    `).join('');
-
-    document.getElementById('emergency-detail-modal').classList.remove('hidden');
+    // Khởi tạo feather icons
     feather.replace();
 }
 
-function closeEmergencyDetail() {
-    document.getElementById('emergency-detail-modal').classList.add('hidden');
+// Tạo dữ liệu sự cố mẫu
+function generateMockIncidents() {
+    return [
+        {
+            id: 'INC001',
+            type: 'fire',
+            status: 'active',
+            priority: 'high',
+            position: [21.0278, 105.8342], // Hà Nội
+            title: 'Cháy chung cư tại Cầu Giấy',
+            address: '123 Trần Duy Hưng, Cầu Giấy, Hà Nội',
+            province: 'hanoi',
+            time: '15:30, 12/11/2023',
+            description: 'Cháy lớn tại tầng 12 chung cư Golden West, nhiều người mắc kẹt bên trong.',
+            reporter: {
+                name: 'Nguyễn Văn A',
+                phone: '0912 345 678',
+                time: '15:25, 12/11/2023'
+            },
+            responseTeams: [
+                { name: 'Đội PCCC Quận Cầu Giấy', status: 'Đang di chuyển' },
+                { name: 'Xe cứu thương 115', status: 'Có mặt tại hiện trường' }
+            ],
+            timeline: [
+                { time: '15:25', action: 'Tiếp nhận báo cáo sự cố' },
+                { time: '15:28', action: 'Điều động đội PCCC' },
+                { time: '15:35', action: 'Lực lượng có mặt tại hiện trường' }
+            ]
+        },
+        {
+            id: 'INC002',
+            type: 'flood',
+            status: 'active',
+            priority: 'medium',
+            position: [10.8231, 106.6297], // TP.HCM
+            title: 'Ngập nước nghiêm trọng tại Quận 1',
+            address: 'Đường Nguyễn Huệ, Quận 1, TP.HCM',
+            province: 'hcm',
+            time: '14:15, 12/11/2023',
+            description: 'Ngập nước sâu 0.5m sau cơn mưa lớn, nhiều phương tiện bị kẹt.',
+            reporter: {
+                name: 'Trần Thị B',
+                phone: '0934 567 890',
+                time: '14:10, 12/11/2023'
+            },
+            responseTeams: [
+                { name: 'Đội cứu hộ đô thị', status: 'Đang di chuyển' },
+                { name: 'Cảnh sát giao thông', status: 'Có mặt tại hiện trường' }
+            ],
+            timeline: [
+                { time: '14:10', action: 'Tiếp nhận báo cáo sự cố' },
+                { time: '14:12', action: 'Cảnh báo người dân' },
+                { time: '14:20', action: 'Triển khai lực lượng ứng phó' }
+            ]
+        },
+        {
+            id: 'INC003',
+            type: 'accident',
+            status: 'resolved',
+            priority: 'high',
+            position: [16.0544, 108.2022], // Đà Nẵng
+            title: 'Tai nạn giao thông trên cầu Sông Hàn',
+            address: 'Cầu Sông Hàn, Đà Nẵng',
+            province: 'danang',
+            time: '10:45, 12/11/2023',
+            description: 'Va chạm giữa xe tải và xe máy, một người bị thương nặng.',
+            reporter: {
+                name: 'Lê Văn C',
+                phone: '0978 901 234',
+                time: '10:40, 12/11/2023'
+            },
+            responseTeams: [
+                { name: 'Xe cứu thương 115', status: 'Đã hoàn thành' },
+                { name: 'Cảnh sát giao thông', status: 'Đã hoàn thành' }
+            ],
+            timeline: [
+                { time: '10:40', action: 'Tiếp nhận báo cáo sự cố' },
+                { time: '10:43', action: 'Điều động xe cứu thương' },
+                { time: '10:50', action: 'Lực lượng có mặt tại hiện trường' },
+                { time: '11:15', action: 'Sự cố đã được giải quyết' }
+            ]
+        },
+        {
+            id: 'INC004',
+            type: 'disaster',
+            status: 'active',
+            priority: 'high',
+            position: [16.4637, 107.5909], // Huế
+            title: 'Sạt lở đất tại huyện A Lưới',
+            address: 'Xã Hồng Vân, Huyện A Lưới, Thừa Thiên Huế',
+            province: 'hue',
+            time: '09:20, 12/11/2023',
+            description: 'Sạt lở đất sau mưa lớn, nhiều hộ dân bị ảnh hưởng.',
+            reporter: {
+                name: 'Phạm Thị D',
+                phone: '0901 234 567',
+                time: '09:15, 12/11/2023'
+            },
+            responseTeams: [
+                { name: 'Đội cứu hộ tỉnh', status: 'Đang di chuyển' },
+                { name: 'Hội Chữ thập đỏ', status: 'Chuẩn bị hỗ trợ' }
+            ],
+            timeline: [
+                { time: '09:15', action: 'Tiếp nhận báo cáo sự cố' },
+                { time: '09:18', action: 'Cảnh báo và sơ tán người dân' },
+                { time: '09:30', action: 'Triển khai lực lượng cứu hộ' }
+            ]
+        },
+        {
+            id: 'INC005',
+            type: 'fire',
+            status: 'active',
+            priority: 'high',
+            position: [20.9874, 105.5324], // Hà Đông
+            title: 'Cháy nhà máy sản xuất',
+            address: 'Khu công nghiệp Vĩnh Tuy, Hà Đông, Hà Nội',
+            province: 'hanoi',
+            time: '13:10, 12/11/2023',
+            description: 'Cháy lớn tại nhà máy sản xuất linh kiện điện tử, khói đen bao phủ khu vực.',
+            reporter: {
+                name: 'Hoàng Văn E',
+                phone: '0987 654 321',
+                time: '13:05, 12/11/2023'
+            },
+            responseTeams: [
+                { name: 'Đội PCCC Hà Đông', status: 'Có mặt tại hiện trường' },
+                { name: 'Cảnh sát PCCC', status: 'Đang di chuyển' }
+            ],
+            timeline: [
+                { time: '13:05', action: 'Tiếp nhận báo cáo sự cố' },
+                { time: '13:08', action: 'Điều động 5 xe chữa cháy' },
+                { time: '13:15', action: 'Lực lượng có mặt tại hiện trường' }
+            ]
+        },
+        {
+            id: 'INC006',
+            type: 'flood',
+            status: 'active',
+            priority: 'medium',
+            position: [10.0452, 105.7469], // Cần Thơ
+            title: 'Ngập lụt khu vực trung tâm',
+            address: 'Đường 30/4, Quận Ninh Kiều, Cần Thơ',
+            province: 'cantho',
+            time: '11:30, 12/11/2023',
+            description: 'Ngập nước sâu 0.7m do triều cường kết hợp mưa lớn.',
+            reporter: {
+                name: 'Lý Thị F',
+                phone: '0965 432 109',
+                time: '11:25, 12/11/2023'
+            },
+            responseTeams: [
+                { name: 'Đội cứu hộ thành phố', status: 'Có mặt tại hiện trường' },
+                { name: 'Công an giao thông', status: 'Phân luồng giao thông' }
+            ],
+            timeline: [
+                { time: '11:25', action: 'Tiếp nhận báo cáo sự cố' },
+                { time: '11:28', action: 'Cảnh báo người dân' },
+                { time: '11:35', action: 'Triển khai lực lượng ứng phó' }
+            ]
+        },
+        {
+            id: 'INC007',
+            type: 'accident',
+            status: 'active',
+            priority: 'high',
+            position: [20.8561, 106.6820], // Hải Phòng
+            title: 'Tai nạn liên hoàn trên cao tốc',
+            address: 'Cao tốc Hà Nội - Hải Phòng, Km25',
+            province: 'haiphong',
+            time: '08:45, 12/11/2023',
+            description: 'Va chạm liên hoàn giữa 5 xe ô tô, nhiều người bị thương.',
+            reporter: {
+                name: 'Vũ Văn G',
+                phone: '0943 218 765',
+                time: '08:40, 12/11/2023'
+            },
+            responseTeams: [
+                { name: 'Xe cứu thương 115', status: 'Đang di chuyển' },
+                { name: 'Cảnh sát giao thông', status: 'Có mặt tại hiện trường' }
+            ],
+            timeline: [
+                { time: '08:40', action: 'Tiếp nhận báo cáo sự cố' },
+                { time: '08:43', action: 'Điều động 3 xe cứu thương' },
+                { time: '08:50', action: 'Lực lượng có mặt tại hiện trường' }
+            ]
+        },
+        {
+            id: 'INC008',
+            type: 'disaster',
+            status: 'active',
+            priority: 'high',
+            position: [19.8065, 105.7853], // Thanh Hóa
+            title: 'Lũ quét tại huyện miền núi',
+            address: 'Xã Trung Sơn, Huyện Quan Hóa, Thanh Hóa',
+            province: 'thanhhoa',
+            time: '07:20, 12/11/2023',
+            description: 'Lũ quét sau mưa lớn, nhiều nhà cửa bị cuốn trôi.',
+            reporter: {
+                name: 'Đặng Thị H',
+                phone: '0918 765 432',
+                time: '07:15, 12/11/2023'
+            },
+            responseTeams: [
+                { name: 'Đội cứu hộ tỉnh', status: 'Đang di chuyển' },
+                { name: 'Quân đội', status: 'Chuẩn bị hỗ trợ' }
+            ],
+            timeline: [
+                { time: '07:15', action: 'Tiếp nhận báo cáo sự cố' },
+                { time: '07:18', action: 'Cảnh báo và sơ tán người dân' },
+                { time: '07:30', action: 'Triển khai lực lượng cứu hộ' }
+            ]
+        },
+        {
+            id: 'INC009',
+            type: 'fire',
+            status: 'resolved',
+            priority: 'medium',
+            position: [18.6796, 105.6813], // Nghệ An
+            title: 'Cháy rừng tại Vườn Quốc gia',
+            address: 'Vườn Quốc gia Pù Mát, Con Cuông, Nghệ An',
+            province: 'nghean',
+            time: '16:40, 11/11/2023',
+            description: 'Cháy rừng quy mô nhỏ, đã được khống chế.',
+            reporter: {
+                name: 'Bùi Văn I',
+                phone: '0976 543 210',
+                time: '16:35, 11/11/2023'
+            },
+            responseTeams: [
+                { name: 'Kiểm lâm', status: 'Đã hoàn thành' },
+                { name: 'Đội PCCC huyện', status: 'Đã hoàn thành' }
+            ],
+            timeline: [
+                { time: '16:35', action: 'Tiếp nhận báo cáo sự cố' },
+                { time: '16:38', action: 'Điều động lực lượng' },
+                { time: '17:10', action: 'Dập tắt đám cháy' },
+                { time: '17:30', action: 'Sự cố đã được giải quyết' }
+            ]
+        },
+        {
+            id: 'INC010',
+            type: 'accident',
+            status: 'active',
+            priority: 'medium',
+            position: [21.1565, 106.0587], // Bắc Ninh
+            title: 'Tai nạn xe container',
+            address: 'Quốc lộ 1A, Thành phố Bắc Ninh',
+            province: 'bacninh',
+            time: '12:15, 12/11/2023',
+            description: 'Xe container mất lái đâm vào nhà dân.',
+            reporter: {
+                name: 'Ngô Văn K',
+                phone: '0932 109 876',
+                time: '12:10, 12/11/2023'
+            },
+            responseTeams: [
+                { name: 'Cảnh sát giao thông', status: 'Có mặt tại hiện trường' },
+                { name: 'Xe cứu hộ', status: 'Đang di chuyển' }
+            ],
+            timeline: [
+                { time: '12:10', action: 'Tiếp nhận báo cáo sự cố' },
+                { time: '12:13', action: 'Điều động cảnh sát GT' },
+                { time: '12:20', action: 'Lực lượng có mặt tại hiện trường' }
+            ]
+        },
+        {
+            id: 'INC011',
+            type: 'flood',
+            status: 'active',
+            priority: 'high',
+            position: [10.345, 106.365], // Tiền Giang
+            title: 'Ngập lụt diện rộng tại huyện Cái Bè',
+            address: 'Huyện Cái Bè, Tiền Giang',
+            province: 'tiengiang',
+            time: '09:45, 12/11/2023',
+            description: 'Ngập nước sâu 1m do vỡ đê, nhiều hộ dân bị cô lập.',
+            reporter: {
+                name: 'Trần Văn L',
+                phone: '0915 678 432',
+                time: '09:40, 12/11/2023'
+            },
+            responseTeams: [
+                { name: 'Đội cứu hộ tỉnh', status: 'Đang di chuyển' },
+                { name: 'Quân đội', status: 'Chuẩn bị hỗ trợ' }
+            ],
+            timeline: [
+                { time: '09:40', action: 'Tiếp nhận báo cáo sự cố' },
+                { time: '09:43', action: 'Cảnh báo và sơ tán người dân' },
+                { time: '09:50', action: 'Triển khai lực lượng cứu hộ' }
+            ]
+        },
+        {
+            id: 'INC012',
+            type: 'disaster',
+            status: 'active',
+            priority: 'high',
+            position: [11.942, 108.438], // Lâm Đồng
+            title: 'Sạt lở đất tại Đà Lạt',
+            address: 'Đường Hồ Tùng Mậu, Đà Lạt, Lâm Đồng',
+            province: 'lamdong',
+            time: '08:30, 12/11/2023',
+            description: 'Sạt lở đất sau mưa lớn, một số nhà bị vùi lấp.',
+            reporter: {
+                name: 'Phan Thị M',
+                phone: '0986 543 210',
+                time: '08:25, 12/11/2023'
+            },
+            responseTeams: [
+                { name: 'Đội cứu hộ thành phố', status: 'Có mặt tại hiện trường' },
+                { name: 'Xe cứu thương', status: 'Đang di chuyển' }
+            ],
+            timeline: [
+                { time: '08:25', action: 'Tiếp nhận báo cáo sự cố' },
+                { time: '08:28', action: 'Điều động lực lượng cứu hộ' },
+                { time: '08:35', action: 'Lực lượng có mặt tại hiện trường' }
+            ]
+        },
+        {
+            id: 'INC013',
+            type: 'fire',
+            status: 'active',
+            priority: 'high',
+            position: [12.245, 109.194], // Khánh Hòa
+            title: 'Cháy kho xưởng tại Nha Trang',
+            address: 'Khu công nghiệp Bắc Nha Trang, Khánh Hòa',
+            province: 'khanhhoa',
+            time: '16:20, 12/11/2023',
+            description: 'Cháy lớn tại kho chứa vật liệu xây dựng, khói đen dày đặc.',
+            reporter: {
+                name: 'Lê Văn N',
+                phone: '0975 432 109',
+                time: '16:15, 12/11/2023'
+            },
+            responseTeams: [
+                { name: 'Đội PCCC Nha Trang', status: 'Có mặt tại hiện trường' },
+                { name: 'Cảnh sát PCCC', status: 'Đang di chuyển' }
+            ],
+            timeline: [
+                { time: '16:15', action: 'Tiếp nhận báo cáo sự cố' },
+                { time: '16:18', action: 'Điều động 4 xe chữa cháy' },
+                { time: '16:25', action: 'Lực lượng có mặt tại hiện trường' }
+            ]
+        },
+        {
+            id: 'INC014',
+            type: 'accident',
+            status: 'active',
+            priority: 'medium',
+            position: [20.941, 106.320], // Hải Dương
+            title: 'Tai nạn giao thông trên Quốc lộ 5',
+            address: 'Quốc lộ 5, Km45, Hải Dương',
+            province: 'haiduong',
+            time: '14:50, 12/11/2023',
+            description: 'Va chạm giữa xe khách và xe tải, 5 người bị thương.',
+            reporter: {
+                name: 'Nguyễn Thị O',
+                phone: '0967 890 123',
+                time: '14:45, 12/11/2023'
+            },
+            responseTeams: [
+                { name: 'Xe cứu thương 115', status: 'Đang di chuyển' },
+                { name: 'Cảnh sát giao thông', status: 'Có mặt tại hiện trường' }
+            ],
+            timeline: [
+                { time: '14:45', action: 'Tiếp nhận báo cáo sự cố' },
+                { time: '14:48', action: 'Điều động 2 xe cứu thương' },
+                { time: '14:55', action: 'Lực lượng có mặt tại hiện trường' }
+            ]
+        },
+        {
+            id: 'INC015',
+            type: 'flood',
+            status: 'resolved',
+            priority: 'low',
+            position: [9.177, 105.150], // Cà Mau
+            title: 'Ngập cục bộ tại trung tâm thành phố',
+            address: 'Đường Phan Ngọc Hiển, TP. Cà Mau',
+            province: 'camau',
+            time: '10:15, 11/11/2023',
+            description: 'Ngập nước nhẹ do triều cường, đã rút hết.',
+            reporter: {
+                name: 'Võ Văn P',
+                phone: '0933 444 555',
+                time: '10:10, 11/11/2023'
+            },
+            responseTeams: [
+                { name: 'Công ty thoát nước', status: 'Đã hoàn thành' }
+            ],
+            timeline: [
+                { time: '10:10', action: 'Tiếp nhận báo cáo sự cố' },
+                { time: '10:12', action: 'Thông báo cho công ty thoát nước' },
+                { time: '11:30', action: 'Nước đã rút hết' }
+            ]
+        }
+    ];
 }
-
-function filterEmergencies() {
-    return allInitialEmergencies.filter(emg => {
-        const typeMatch = currentFilters.type === 'all' || emg.type === currentFilters.type;
-        const provinceMatch = currentFilters.province === 'all' || emg.province === currentFilters.province || emg.address.toLowerCase().includes(getProvinceName(currentFilters.province).toLowerCase());
-        const searchMatch = currentFilters.search === '' || 
-            emg.name.toLowerCase().includes(currentFilters.search.toLowerCase()) ||
-            emg.address.toLowerCase().includes(currentFilters.search.toLowerCase());
-        
-        return typeMatch && provinceMatch && searchMatch;
-    });
-}
-
-function flyToProvince(provinceCode) {
-    if (provinceCode === 'all') {
-        map.flyTo([16.0471, 108.2068], 6, { duration: 1.5, easeLinearity: 0.25 });
-    } else if (provinceCoordinates[provinceCode]) {
-        const coords = provinceCoordinates[provinceCode];
-        map.flyTo(coords, 11, { duration: 1.5, easeLinearity: 0.25 });
-        
-        const provinceMarker = L.marker(coords)
-            .addTo(map)
-            .bindPopup(`<b>${getProvinceName(provinceCode)}</b><br>Đang hiển thị sự cố trong khu vực`)
-            .openPopup();
-        
-        setTimeout(() => { map.removeLayer(provinceMarker); }, 3000);
-    }
-}
-
-function drawMarkers() {
-    currentMarkers.forEach(marker => map.removeLayer(marker));
-    currentMarkers = [];
-
-    const filteredEmergencies = filterEmergencies();
+// Tạo marker cho sự cố
+function createIncidentMarker(incident) {
+    let iconColor;
+    let iconSymbol;
     
-    filteredEmergencies.forEach(emg => {
-        const color = getColorByType(emg.type);
-        const icon = getIconByType(emg.type);
-        
-        const marker = L.marker(emg.coords, {
-            icon: L.divIcon({
-                html: `
-                    <div class="relative">
-                        <div class="w-10 h-10 bg-${color}-500 rounded-full flex items-center justify-center text-white shadow-lg border-2 border-white transform hover:scale-110 transition-transform cursor-pointer ${emg.status === 'resolved' ? 'opacity-70' : ''}">
-                            <span class="text-lg">${icon}</span>
-                        </div>
-                        ${emg.status === 'active' ? '<div class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>' : ''}
-                    </div>
-                `,
-                className: 'custom-marker',
-                iconSize: [40, 40],
-                iconAnchor: [20, 20]
-            })
-        })
-        .addTo(map)
-        .bindPopup(`
-            <div class="p-3 min-w-[250px]">
-                <div class="flex items-center mb-2">
-                    <div class="w-6 h-6 bg-${color}-500 rounded-full flex items-center justify-center mr-2 text-white">
-                        <span>${icon}</span>
-                    </div>
-                    <h4 class="font-bold text-gray-800">${emg.name}</h4>
-                </div>
-                <p class="text-sm text-gray-600 mb-2">${emg.address}</p>
-                <p class="text-sm text-gray-500 mb-3 line-clamp-2">${emg.description}</p>
-                <div class="flex justify-between items-center text-xs mb-3">
-                    <span class="px-2 py-1 bg-${color}-100 text-${color}-700 rounded">${getTypeName(emg.type)}</span>
-                    <span class="text-gray-500">${emg.time}</span>
-                </div>
-                <div class="mt-3 flex gap-2">
-                    <button onclick="showEmergencyDetail(${emg.id})" class="flex-1 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm transition">
-                        Chi tiết
-                    </button>
-                    <button onclick="shareEmergency(${emg.id})" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm transition">
-                        Chia sẻ
-                    </button>
-                </div>
-            </div>
-        `);
-
-        currentMarkers.push(marker);
+    switch(incident.type) {
+        case 'fire':
+            iconColor = '#ef4444'; // red-500
+            iconSymbol = 'flame';
+            break;
+        case 'flood':
+            iconColor = '#3b82f6'; // blue-500
+            iconSymbol = 'droplet';
+            break;
+        case 'accident':
+            iconColor = '#f97316'; // orange-500
+            iconSymbol = 'activity';
+            break;
+        case 'disaster':
+            iconColor = '#8b5cf6'; // purple-500
+            iconSymbol = 'alert-octagon';
+            break;
+    }
+    
+    // Tạo custom icon với màu sắc và trạng thái
+    const iconHtml = `
+        <div style="width: 40px; height: 40px; border-radius: 50%; background-color: ${iconColor}; display: flex; align-items: center; justify-content: center; color: white; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); ${incident.status === 'active' ? 'animation: pulse 2s infinite;' : ''}">
+            <i data-feather="${iconSymbol}" style="width: 20px; height: 20px;"></i>
+        </div>
+    `;
+    
+    const customIcon = L.divIcon({
+        html: iconHtml,
+        className: 'custom-marker',
+        iconSize: [40, 40],
+        iconAnchor: [20, 20]
     });
-
-    updateStatistics();
-    updateRecentIncidents();
+    
+    const marker = L.marker(incident.position, { icon: customIcon }).addTo(map);
+    markers.push(marker);
+    
+    // Thêm popup thông tin
+    marker.bindPopup(`
+        <div class="p-2 min-w-[250px]">
+            <h4 class="font-bold text-lg mb-2">${incident.title}</h4>
+            <div class="flex items-center mb-2">
+                <span class="status-badge ${incident.status === 'active' ? 'status-active' : 'status-resolved'} mr-2">
+                    ${incident.status === 'active' ? 'Đang xử lý' : 'Đã giải quyết'}
+                </span>
+                <span class="status-badge ${incident.priority === 'high' ? 'priority-high' : incident.priority === 'medium' ? 'priority-medium' : 'priority-low'}">
+                    ${incident.priority === 'high' ? 'Cao' : incident.priority === 'medium' ? 'Trung bình' : 'Thấp'}
+                </span>
+            </div>
+            <p class="text-gray-600 mb-2">${incident.address}</p>
+            <p class="text-sm text-gray-500">${incident.time}</p>
+            <div class="mt-3 flex gap-2">
+                <button class="flex-1 bg-red-500 text-white py-1 px-3 rounded-lg hover:bg-red-600 transition view-details" data-id="${incident.id}">
+                    Xem chi tiết
+                </button>
+                <button class="flex-1 bg-blue-500 text-white py-1 px-3 rounded-lg hover:bg-blue-600 transition zoom-to-location" data-lat="${incident.position[0]}" data-lng="${incident.position[1]}">
+                    Phóng to
+                </button>
+            </div>
+        </div>
+    `, {className: 'custom-popup'});
+    
+    // Thêm sự kiện click để mở modal chi tiết
+    marker.on('popupopen', function() {
+        document.querySelectorAll('.view-details').forEach(button => {
+            button.addEventListener('click', function() {
+                const incidentId = this.getAttribute('data-id');
+                const incident = currentIncidents.find(i => i.id === incidentId);
+                if (incident) {
+                    openIncidentModal(incident);
+                    map.closePopup();
+                }
+            });
+        });
+        
+        // Thêm sự kiện cho nút phóng to
+        document.querySelectorAll('.zoom-to-location').forEach(button => {
+            button.addEventListener('click', function() {
+                const lat = parseFloat(this.getAttribute('data-lat'));
+                const lng = parseFloat(this.getAttribute('data-lng'));
+                map.setView([lat, lng], 15);
+            });
+        });
+        
+        feather.replace();
+    });
+    
+    // Thêm sự kiện click vào marker để zoom đến vị trí
+    marker.on('click', function() {
+        map.setView(incident.position, 15);
+    });
+    
+    return marker;
 }
 
-// 🔹 Hàm cập nhật thống kê
-function updateStatistics() {
-    const active = allInitialEmergencies.filter(e => e.status === 'active').length;
-    const resolved = allInitialEmergencies.filter(e => e.status === 'resolved').length;
-    const total = allInitialEmergencies.length;
+// Cập nhật thống kê
+function updateStatistics(incidents) {
+    const active = incidents.filter(i => i.status === 'active').length;
+    const resolved = incidents.filter(i => i.status === 'resolved').length;
+    const total = incidents.length;
     
     document.getElementById('active-incidents').textContent = active;
     document.getElementById('resolved-incidents').textContent = resolved;
     document.getElementById('total-incidents').textContent = total;
     
-    // Cập nhật số lượng theo loại
-    const typeCounts = { fire: 0, flood: 0, accident: 0, disaster: 0, rescue: 0, warning: 0 };
-    allInitialEmergencies.forEach(emg => { if (typeCounts.hasOwnProperty(emg.type)) { typeCounts[emg.type]++; } });
-    
-    Object.keys(typeCounts).forEach(type => {
-        const element = document.getElementById(`count-${type}`);
-        if (element) { element.textContent = typeCounts[type]; }
-    });
-
-    // Cập nhật thời gian
-    document.getElementById('last-update').textContent = new Date().toLocaleTimeString('vi-VN');
+    // Cập nhật số lượng theo loại sự cố
+    document.getElementById('count-fire').textContent = incidents.filter(i => i.type === 'fire').length;
+    document.getElementById('count-flood').textContent = incidents.filter(i => i.type === 'flood').length;
+    document.getElementById('count-accident').textContent = incidents.filter(i => i.type === 'accident').length;
+    document.getElementById('count-disaster').textContent = incidents.filter(i => i.type === 'disaster').length;
 }
 
-// 🔹 Hàm cập nhật danh sách sự cố gần đây
-function updateRecentIncidents() {
+// Hiển thị sự cố gần đây
+function displayRecentIncidents(incidents) {
     const container = document.getElementById('recent-incidents');
+    container.innerHTML = '';
     
-    // Sắp xếp theo ID (ID cao hơn là mới hơn)
-    const recentEmergencies = [...allInitialEmergencies]
-        .sort((a, b) => b.id - a.id)
-        .slice(0, 6);
-    
-    container.innerHTML = recentEmergencies.map(emg => {
-        const isFromNews = emg.id >= 1000;
-        const typeClass = getTypeClass(emg.type);
-        const icon = getIconByType(emg.type);
+    incidents.slice(0, 6).forEach(incident => {
+        let typeClass = '';
+        let typeIcon = '';
         
-        return `
-            <div class="emergency-card bg-white p-4 rounded-lg border-l-4 ${typeClass.border} hover:shadow-md transition-all cursor-pointer" 
-                  onclick="showEmergencyDetail(${emg.id})">
-                <div class="flex items-start justify-between mb-2">
-                    <div class="flex items-center">
-                        <h4 class="font-bold text-gray-800 mr-2">${emg.name}</h4>
-                        ${isFromNews ? '<span class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded">TIN TỨC</span>' : ''}
-                    </div>
-                    <span class="px-2 py-1 text-xs rounded ${
-                        emg.status === 'active' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'
-                    }">
-                        ${emg.status === 'active' ? 'Đang xử lý' : 'Đã giải quyết'}
-                    </span>
+        switch(incident.type) {
+            case 'fire':
+                typeClass = 'incident-fire';
+                typeIcon = 'flame';
+                break;
+            case 'flood':
+                typeClass = 'incident-flood';
+                typeIcon = 'droplet';
+                break;
+            case 'accident':
+                typeClass = 'incident-accident';
+                typeIcon = 'activity';
+                break;
+            case 'disaster':
+                typeClass = 'incident-disaster';
+                typeIcon = 'alert-octagon';
+                break;
+        }
+        
+        const incidentCard = document.createElement('div');
+        incidentCard.className = `incident-card bg-white rounded-xl p-4 shadow-md ${typeClass}`;
+        incidentCard.innerHTML = `
+            <div class="flex justify-between items-start mb-2">
+                <h4 class="font-bold text-lg">${incident.title}</h4>
+                <div class="w-8 h-8 rounded-full flex items-center justify-center bg-opacity-20 ${typeClass.replace('incident-', 'bg-')}">
+                    <i data-feather="${typeIcon}" class="w-4 h-4"></i>
                 </div>
-                <div class="flex items-center text-sm text-gray-600 mb-2">
-                    <span class="mr-3">${icon}</span>
-                    <span>${emg.address}</span>
-                </div>
-                <p class="text-sm text-gray-500 mb-3 line-clamp-2">${emg.description}</p>
-                <div class="flex justify-between items-center text-xs">
-                    <span class="text-gray-500">${emg.time}</span>
-                    <button class="text-blue-600 hover:text-blue-800 font-medium flex items-center">
+            </div>
+            <div class="flex items-center mb-2">
+                <span class="status-badge ${incident.status === 'active' ? 'status-active' : 'status-resolved'} mr-2">
+                    ${incident.status === 'active' ? 'Đang xử lý' : 'Đã giải quyết'}
+                </span>
+                <span class="status-badge ${incident.priority === 'high' ? 'priority-high' : incident.priority === 'medium' ? 'priority-medium' : 'priority-low'}">
+                    ${incident.priority === 'high' ? 'Cao' : incident.priority === 'medium' ? 'Trung bình' : 'Thấp'}
+                </span>
+            </div>
+            <p class="text-gray-600 mb-3">${incident.address}</p>
+            <div class="flex justify-between items-center text-sm text-gray-500">
+                <span>${incident.time}</span>
+                <div class="flex gap-2">
+                    <button class="text-blue-500 hover:text-blue-700 font-medium zoom-to-location" data-lat="${incident.position[0]}" data-lng="${incident.position[1]}">
+                        Phóng to
+                    </button>
+                    <button class="text-red-500 hover:text-red-700 font-medium view-details" data-id="${incident.id}">
                         Chi tiết
-                        <i data-feather="arrow-right" class="ml-1 w-3 h-3"></i>
                     </button>
                 </div>
             </div>
         `;
-    }).join('');
+        
+        container.appendChild(incidentCard);
+        
+        // Thêm sự kiện click để mở modal
+        incidentCard.querySelector('.view-details').addEventListener('click', function() {
+            const incidentId = this.getAttribute('data-id');
+            const incident = currentIncidents.find(i => i.id === incidentId);
+            if (incident) {
+                openIncidentModal(incident);
+            }
+        });
+        
+        // Thêm sự kiện cho nút phóng to
+        incidentCard.querySelector('.zoom-to-location').addEventListener('click', function() {
+            const lat = parseFloat(this.getAttribute('data-lat'));
+            const lng = parseFloat(this.getAttribute('data-lng'));
+            map.setView([lat, lng], 15);
+        });
+    });
     
     feather.replace();
 }
 
-// 🔹 Hàm hỗ trợ (Cần là Global để sử dụng trong Leaflet Popup HTML)
-window.shareEmergency = function(id) {
-    const emergency = allInitialEmergencies.find(e => e.id === id);
-    if (emergency && navigator.share) {
-        navigator.share({
-            title: `Sự cố: ${emergency.name}`,
-            text: `${emergency.name} - ${emergency.address}\n${emergency.description}`,
-            url: window.location.href
-        });
-    } else {
-        alert('Chức năng chia sẻ không được hỗ trợ trên thiết bị này.');
-    }
-}
-
-window.viewEmergencyOnMap = function(id) {
-    const emergency = allInitialEmergencies.find(e => e.id === id);
-    if (emergency) {
-        map.flyTo(emergency.coords, 15, { duration: 1.5 });
-        // Mở popup tương ứng
-        currentMarkers.forEach(marker => {
-            const markerCoords = marker.getLatLng();
-            if (markerCoords.lat === emergency.coords[0] && markerCoords.lng === emergency.coords[1]) {
-                marker.openPopup();
-            }
-        });
-    }
-}
-
-window.showEmergencyDetail = showEmergencyDetail;
-
-// === EVENT LISTENERS ===
-document.getElementById('type-filter').addEventListener('change', (e) => {
-    currentFilters.type = e.target.value;
-    drawMarkers();
-});
-
-document.getElementById('province-filter').addEventListener('change', (e) => {
-    currentFilters.province = e.target.value;
-    flyToProvince(e.target.value);
-    drawMarkers();
-});
-
-document.getElementById('search-incidents').addEventListener('input', (e) => {
-    currentFilters.search = e.target.value;
-    drawMarkers();
-});
-
-document.getElementById('reset-filters').addEventListener('click', () => {
-    currentFilters = { type: 'all', province: 'all', search: '' };
-    document.getElementById('type-filter').value = 'all';
-    document.getElementById('province-filter').value = 'all';
-    document.getElementById('search-incidents').value = '';
-    flyToProvince('all');
-    drawMarkers();
-});
-
-// Click vào chú thích để lọc
-document.querySelectorAll('[data-type]').forEach(item => {
-    item.addEventListener('click', () => {
-        currentFilters.type = item.dataset.type;
-        document.getElementById('type-filter').value = currentFilters.type;
-        drawMarkers();
+// Mở modal chi tiết sự cố
+function openIncidentModal(incident) {
+    const modal = document.getElementById('emergency-detail-modal');
+    const modalTitle = document.getElementById('modal-title');
+    
+    // Cập nhật thông tin cơ bản
+    document.getElementById('modal-id').textContent = incident.id;
+    document.getElementById('modal-type').textContent = getIncidentTypeText(incident.type);
+    document.getElementById('modal-status').textContent = incident.status === 'active' ? 'Đang xử lý' : 'Đã giải quyết';
+    document.getElementById('modal-status').className = `status-badge ${incident.status === 'active' ? 'status-active' : 'status-resolved'}`;
+    document.getElementById('modal-priority').textContent = getPriorityText(incident.priority);
+    document.getElementById('modal-priority').className = `status-badge ${incident.priority === 'high' ? 'priority-high' : incident.priority === 'medium' ? 'priority-medium' : 'priority-low'}`;
+    document.getElementById('modal-time').textContent = incident.time;
+    
+    // Cập nhật thông tin địa điểm
+    document.getElementById('modal-address').textContent = incident.address;
+    document.getElementById('modal-province').textContent = getProvinceText(incident.province);
+    document.getElementById('modal-coords').textContent = `${incident.position[0].toFixed(4)}, ${incident.position[1].toFixed(4)}`;
+    
+    // Cập nhật mô tả
+    document.getElementById('modal-description').textContent = incident.description;
+    
+    // Cập nhật thông tin người báo cáo
+    document.getElementById('modal-reporter-name').textContent = incident.reporter.name;
+    document.getElementById('modal-reporter-phone').textContent = incident.reporter.phone;
+    document.getElementById('modal-report-time').textContent = incident.reporter.time;
+    
+    // Cập nhật lực lượng ứng phó
+    const responseTeamsContainer = document.getElementById('modal-response-teams');
+    responseTeamsContainer.innerHTML = '';
+    
+    incident.responseTeams.forEach(team => {
+        const teamElement = document.createElement('div');
+        teamElement.className = 'flex justify-between items-center py-2 border-b border-gray-200 last:border-b-0';
+        teamElement.innerHTML = `
+            <span class="font-medium">${team.name}</span>
+            <span class="text-sm ${team.status === 'Có mặt tại hiện trường' || team.status === 'Đã hoàn thành' ? 'text-green-600' : 'text-orange-600'}">${team.status}</span>
+        `;
+        responseTeamsContainer.appendChild(teamElement);
     });
-});
-
-// Map controls
-document.getElementById('locate-btn').addEventListener('click', () => {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(pos => {
-            const lat = pos.coords.latitude;
-            const lng = pos.coords.longitude;
-            map.flyTo([lat, lng], 13, { duration: 1.5 });
-            L.marker([lat, lng]).addTo(map)
-                .bindPopup("📍 Vị trí của bạn")
-                .openPopup();
-        }, () => {
-            alert("Không thể lấy vị trí của bạn. Vui lòng kiểm tra quyền truy cập vị trí.");
-        });
-    } else {
-        alert("Trình duyệt không hỗ trợ định vị!");
-    }
-});
-
-document.getElementById('zoom-in-btn').addEventListener('click', () => { map.zoomIn(); });
-document.getElementById('zoom-out-btn').addEventListener('click', () => { map.zoomOut(); });
-
-// Modal Event Listeners
-document.getElementById('close-modal').addEventListener('click', closeEmergencyDetail);
-document.getElementById('modal-close-btn').addEventListener('click', closeEmergencyDetail);
-document.getElementById('emergency-detail-modal').addEventListener('click', (e) => {
-    if (e.target.id === 'emergency-detail-modal' || e.target.classList.contains('modal-overlay')) {
-        closeEmergencyDetail();
-    }
-});
-
-// Khởi tạo
-function initializeMap() {
-    // Đảm bảo các hàm phụ trợ cần thiết cho Leaflet popup được khai báo trước khi drawMarkers
-    drawMarkers();
-    updateStatistics();
-    updateRecentIncidents();
+    
+    // Cập nhật timeline
+    const timelineContainer = document.getElementById('modal-timeline');
+    timelineContainer.innerHTML = '';
+    
+    incident.timeline.forEach(item => {
+        const timelineItem = document.createElement('div');
+        timelineItem.className = 'timeline-item';
+        timelineItem.innerHTML = `
+            <div class="font-medium text-gray-900">${item.time}</div>
+            <div class="text-gray-600">${item.action}</div>
+        `;
+        timelineContainer.appendChild(timelineItem);
+    });
+    
+    // Cập nhật tiêu đề modal
+    modalTitle.textContent = incident.title;
+    
+    // Hiển thị modal
+    modal.classList.remove('hidden');
+    
+    // Ngăn chặn cuộn trang nền
+    document.body.style.overflow = 'hidden';
+    
+    // Thêm sự kiện cho nút phóng to trong modal
+    document.getElementById('modal-navigate-btn').onclick = function() {
+        map.setView(incident.position, 15);
+        closeModal();
+    };
+    
+    // Cập nhật feather icons trong modal
+    feather.replace();
 }
 
-initializeMap();
-setInterval(updateStatistics, 30000); // Cập nhật thời gian thực mỗi 30 giây
-setInterval(updateStatistics, 30000); // Cập nhật thời gian thực mỗi 30 giây
+// Đóng modal
+function closeModal() {
+    const modal = document.getElementById('emergency-detail-modal');
+    modal.classList.add('hidden');
+    document.body.style.overflow = 'auto';
+}
+
+// Áp dụng bộ lọc
+function applyFilters() {
+    const provinceFilter = document.getElementById('province-filter').value;
+    const typeFilter = document.getElementById('type-filter').value;
+    const searchTerm = document.getElementById('search-input').value.toLowerCase();
+    
+    // Ẩn tất cả markers
+    markers.forEach(marker => {
+        map.removeLayer(marker);
+    });
+    
+    // Lọc và hiển thị lại markers
+    const incidents = generateMockIncidents();
+    const filteredIncidents = incidents.filter(incident => {
+        const provinceMatch = provinceFilter === 'all' || incident.province === provinceFilter;
+        const typeMatch = typeFilter === 'all' || incident.type === typeFilter;
+        const searchMatch = searchTerm === '' || 
+            incident.title.toLowerCase().includes(searchTerm) ||
+            incident.address.toLowerCase().includes(searchTerm) ||
+            incident.description.toLowerCase().includes(searchTerm);
+        return provinceMatch && typeMatch && searchMatch;
+    });
+    
+    // Cập nhật currentIncidents để sử dụng trong modal
+    currentIncidents = filteredIncidents;
+    
+    // Tạo lại markers
+    markers = [];
+    filteredIncidents.forEach(incident => {
+        createIncidentMarker(incident);
+    });
+    
+    // Cập nhật thống kê
+    updateStatistics(filteredIncidents);
+    
+    // Hiển thị sự cố gần đây
+    displayRecentIncidents(filteredIncidents);
+}
+
+// Đặt lại bộ lọc
+function resetFilters() {
+    document.getElementById('province-filter').value = 'all';
+    document.getElementById('type-filter').value = 'all';
+    document.getElementById('search-input').value = '';
+    
+    // Reset các nút lọc loại sự cố
+    document.querySelectorAll('.type-filter-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.getAttribute('data-type') === 'all') {
+            btn.classList.add('active');
+        }
+    });
+    
+    applyFilters();
+}
+
+// Hàm trợ giúp
+function getIncidentTypeText(type) {
+    switch(type) {
+        case 'fire': return 'Hỏa hoạn';
+        case 'flood': return 'Ngập lụt';
+        case 'accident': return 'Tai nạn giao thông';
+        case 'disaster': return 'Thiên tai';
+        default: return 'Không xác định';
+    }
+}
+
+function getPriorityText(priority) {
+    switch(priority) {
+        case 'high': return 'Cao';
+        case 'medium': return 'Trung bình';
+        case 'low': return 'Thấp';
+        default: return 'Không xác định';
+    }
+}
+
+function getProvinceText(province) {
+    switch(province) {
+        case 'hanoi': return 'Hà Nội';
+        case 'hcm': return 'TP.Hồ Chí Minh';
+        case 'danang': return 'Đà Nẵng';
+        case 'hue': return 'Thừa Thiên Huế';
+        case 'nghean': return 'Nghệ An';
+        case 'thanhhoa': return 'Thanh Hóa';
+        case 'haiphong': return 'Hải Phòng';
+        case 'cantho': return 'Cần Thơ';
+        case 'bacninh': return 'Bắc Ninh';
+        case 'haiduong': return 'Hải Dương';
+        case 'quangninh': return 'Quảng Ninh';
+        case 'thuathienhue': return 'Thừa Thiên Huế';
+        case 'binhdinh': return 'Bình Định';
+        case 'khanhhoa': return 'Khánh Hòa';
+        case 'lamdong': return 'Lâm Đồng';
+        case 'dongnai': return 'Đồng Nai';
+        case 'baria-vungtau': return 'Bà Rịa - Vũng Tàu';
+        case 'tiengiang': return 'Tiền Giang';
+        case 'bentre': return 'Bến Tre';
+        case 'soc trang': return 'Sóc Trăng';
+        case 'camau': return 'Cà Mau'; 
+        case 'quangnam': return 'Quảng Nam';
+        case 'ninhthuan': return 'Ninh Thuận';
+        case 'namdinh': return 'Nam Định';
+        case 'longan': return 'Long An';
+        case 'laocai': return 'Lào Cai';
+        case 'thainguyen': return 'Thái Nguyên';
+        default: return 'Không xác định';
+    }
+}
+
+// Khởi tạo bản đồ khi trang được tải
+document.addEventListener('DOMContentLoaded', initMap);
+
+
+
+// sự cố bản đồ
+ // JavaScript cho phần Sự Cố Gần Đây mới
+        document.addEventListener('DOMContentLoaded', function() {
+            initRecentIncidents();
+            setupRecentEventListeners();
+            feather.replace();
+        });
+
+        function initRecentIncidents() {
+            displayRecentIncidents();
+            updateRecentStatistics();
+        }
+
+        function displayRecentIncidents(incidents = getRecentIncidents()) {
+            const container = document.getElementById('recent-incidents-list');
+            container.innerHTML = '';
+
+            if (incidents.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-2 text-center py-12">
+                        <i data-feather="search" class="w-16 h-16 text-gray-400 mx-auto mb-4"></i>
+                        <h3 class="text-lg font-medium text-gray-900 mb-2">Không tìm thấy sự cố nào</h3>
+                        <p class="text-gray-500">Hãy thử thay đổi bộ lọc hoặc từ khóa tìm kiếm</p>
+                    </div>
+                `;
+                feather.replace();
+                return;
+            }
+
+            incidents.forEach(incident => {
+                let typeClass = '';
+                let typeIcon = '';
+                let typeColor = '';
+                
+                switch(incident.type) {
+                    case 'fire':
+                        typeClass = 'incident-fire';
+                        typeIcon = 'flame';
+                        typeColor = 'red';
+                        break;
+                    case 'flood':
+                        typeClass = 'incident-flood';
+                        typeIcon = 'droplet';
+                        typeColor = 'blue';
+                        break;
+                    case 'accident':
+                        typeClass = 'incident-accident';
+                        typeIcon = 'activity';
+                        typeColor = 'orange';
+                        break;
+                    case 'disaster':
+                        typeClass = 'incident-disaster';
+                        typeIcon = 'alert-octagon';
+                        typeColor = 'purple';
+                        break;
+                }
+                
+                const incidentCard = document.createElement('div');
+                incidentCard.className = `incident-card bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300 ${typeClass}`;
+                incidentCard.innerHTML = `
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex-1">
+                            <h4 class="font-bold text-lg text-gray-900 mb-2">${incident.title}</h4>
+                            <div class="flex items-center space-x-2 mb-3">
+                                <span class="status-badge ${incident.status === 'active' ? 'status-active' : 'status-resolved'}">
+                                    ${incident.status === 'active' ? 'Đang xử lý' : 'Đã giải quyết'}
+                                </span>
+                                <span class="status-badge ${incident.priority === 'high' ? 'priority-high' : incident.priority === 'medium' ? 'priority-medium' : 'priority-low'}">
+                                    ${incident.priority === 'high' ? 'Ưu tiên cao' : incident.priority === 'medium' ? 'Ưu tiên trung bình' : 'Ưu tiên thấp'}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="w-12 h-12 rounded-full flex items-center justify-center bg-${typeColor}-100 text-${typeColor}-600">
+                            <i data-feather="${typeIcon}" class="w-6 h-6"></i>
+                        </div>
+                    </div>
+                    
+                    <p class="text-gray-600 mb-4 line-clamp-2">${incident.description}</p>
+                    
+                    <div class="space-y-2 mb-4">
+                        <div class="flex items-center text-sm text-gray-500">
+                            <i data-feather="map-pin" class="w-4 h-4 mr-2"></i>
+                            <span>${incident.address}</span>
+                        </div>
+                        <div class="flex items-center text-sm text-gray-500">
+                            <i data-feather="clock" class="w-4 h-4 mr-2"></i>
+                            <span>${incident.time}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center pt-4 border-t border-gray-100">
+                        <span class="text-sm text-gray-500">${incident.id}</span>
+                        <div class="flex space-x-2">
+                            <button class="px-4 py-2 bg-${typeColor}-500 text-white rounded-lg hover:bg-${typeColor}-600 transition flex items-center view-recent-details" data-id="${incident.id}">
+                                <i data-feather="eye" class="w-4 h-4 mr-1"></i>
+                                Chi tiết
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(incidentCard);
+            });
+            
+            feather.replace();
+            
+            // Thêm sự kiện click để mở modal
+            document.querySelectorAll('.view-recent-details').forEach(button => {
+                button.addEventListener('click', function() {
+                    const incidentId = this.getAttribute('data-id');
+                    const incident = getRecentIncidents().find(i => i.id === incidentId);
+                    if (incident) {
+                        openIncidentModal(incident);
+                    }
+                });
+            });
+        }
+
+        function updateRecentStatistics() {
+            const incidents = getRecentIncidents();
+            const total = incidents.length;
+            const active = incidents.filter(i => i.status === 'active').length;
+            const resolved = incidents.filter(i => i.status === 'resolved').length;
+            const today = incidents.filter(i => i.time.includes('12/11/2023')).length;
+            
+            document.getElementById('recent-total-incidents').textContent = total;
+            document.getElementById('recent-active-incidents').textContent = active;
+            document.getElementById('recent-resolved-incidents').textContent = resolved;
+            document.getElementById('recent-today-incidents').textContent = today;
+        }
+
+        function setupRecentEventListeners() {
+            // Bộ lọc tìm kiếm
+            document.getElementById('search-recent-incidents').addEventListener('input', applyRecentFilters);
+            document.getElementById('recent-type-filter').addEventListener('change', applyRecentFilters);
+            document.getElementById('recent-status-filter').addEventListener('change', applyRecentFilters);
+            document.getElementById('sort-by').addEventListener('change', applyRecentFilters);
+            
+            // Nút đặt lại
+            document.getElementById('reset-recent-filters').addEventListener('click', resetRecentFilters);
+        }
+
+        function applyRecentFilters() {
+            const searchTerm = document.getElementById('search-recent-incidents').value.toLowerCase();
+            const typeFilter = document.getElementById('recent-type-filter').value;
+            const statusFilter = document.getElementById('recent-status-filter').value;
+            const sortBy = document.getElementById('sort-by').value;
+            
+            let filteredIncidents = getRecentIncidents().filter(incident => {
+                const searchMatch = searchTerm === '' || 
+                    incident.title.toLowerCase().includes(searchTerm) ||
+                    incident.address.toLowerCase().includes(searchTerm) ||
+                    incident.description.toLowerCase().includes(searchTerm);
+                
+                const typeMatch = typeFilter === 'all' || incident.type === typeFilter;
+                const statusMatch = statusFilter === 'all' || incident.status === statusFilter;
+                
+                return searchMatch && typeMatch && statusMatch;
+            });
+            
+            // Sắp xếp
+            switch(sortBy) {
+                case 'newest':
+                    filteredIncidents.sort((a, b) => new Date(b.time) - new Date(a.time));
+                    break;
+                case 'oldest':
+                    filteredIncidents.sort((a, b) => new Date(a.time) - new Date(b.time));
+                    break;
+                case 'priority':
+                    const priorityOrder = { high: 3, medium: 2, low: 1 };
+                    filteredIncidents.sort((a, b) => priorityOrder[b.priority] - priorityOrder[a.priority]);
+                    break;
+            }
+            
+            displayRecentIncidents(filteredIncidents);
+            updateRecentStatistics();
+        }
+
+        function resetRecentFilters() {
+            document.getElementById('search-recent-incidents').value = '';
+            document.getElementById('recent-type-filter').value = 'all';
+            document.getElementById('recent-status-filter').value = 'all';
+            document.getElementById('sort-by').value = 'newest';
+            
+            displayRecentIncidents();
+            updateRecentStatistics();
+        }
+
+        function getRecentIncidents() {
+            // Lấy dữ liệu từ map.js hoặc tạo dữ liệu mẫu
+            if (typeof currentIncidents !== 'undefined' && currentIncidents.length > 0) {
+                return currentIncidents.slice(0, 8); // Giới hạn 8 sự cố gần đây
+            }
+            
+            // Dữ liệu mẫu nếu không có từ map.js
+            return [
+                {
+                    id: 'INC001',
+                    type: 'fire',
+                    status: 'active',
+                    priority: 'high',
+                    title: 'Cháy chung cư tại Cầu Giấy',
+                    address: '123 Trần Duy Hưng, Cầu Giấy, Hà Nội',
+                    time: '15:30, 12/11/2023',
+                    description: 'Cháy lớn tại tầng 12 chung cư Golden West, nhiều người mắc kẹt bên trong.'
+                },
+                {
+                    id: 'INC002',
+                    type: 'flood',
+                    status: 'active',
+                    priority: 'medium',
+                    title: 'Ngập nước nghiêm trọng tại Quận 1',
+                    address: 'Đường Nguyễn Huệ, Quận 1, TP.HCM',
+                    time: '14:15, 12/11/2023',
+                    description: 'Ngập nước sâu 0.5m sau cơn mưa lớn, nhiều phương tiện bị kẹt.'
+                },
+                {
+                    id: 'INC003',
+                    type: 'accident',
+                    status: 'resolved',
+                    priority: 'high',
+                    title: 'Tai nạn giao thông trên cầu Sông Hàn',
+                    address: 'Cầu Sông Hàn, Đà Nẵng',
+                    time: '10:45, 12/11/2023',
+                    description: 'Va chạm giữa xe tải và xe máy, một người bị thương nặng.'
+                }
+            ];
+        }
