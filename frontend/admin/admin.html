@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Hệ Thống Cứu Hộ Quốc Gia</title>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <link rel="stylesheet" href="assets/css/admin.css">
+</head>
+<body class="bg-gray-100">
+    <!-- Data Sync Status -->
+    <div id="sync-status" class="data-sync-status sync-success hidden">
+        <i class="fas fa-check-circle mr-2"></i>
+        <span>Dữ liệu đã đồng bộ</span>
+    </div>
+
+    <!-- Layout Container -->
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="sidebar bg-gray-900 w-64 flex flex-col flex-shrink-0">
+            <!-- Logo -->
+            <div class="p-6 border-b border-gray-800">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-shield-alt text-white text-lg"></i>
+                    </div>
+                    <div class="ml-3">
+                        <h1 class="text-lg font-bold text-white">CỨU HỘ QUỐC GIA</h1>
+                        <p class="text-xs text-gray-400">Admin Dashboard</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Navigation -->
+            <div class="flex-1 overflow-y-auto py-4">
+                <nav class="space-y-1 px-3">
+                    <a href="#" class="nav-item active flex items-center px-3 py-3 text-white bg-red-600 rounded-lg" data-tab="dashboard">
+                        <i class="fas fa-tachometer-alt w-5 text-center"></i>
+                        <span class="ml-3 font-medium">Dashboard</span>
+                    </a>
+                    
+                    <!-- Content Management -->
+                    <div class="mt-6">
+                        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3 mb-2">Quản lý Nội dung</p>
+                        <a href="#" class="nav-item flex items-center px-3 py-3 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg" data-tab="news">
+                            <i class="fas fa-newspaper w-5 text-center"></i>
+                            <span class="ml-3 font-medium">Tin tức & Bài viết</span>
+                        </a>
+                        <a href="#" class="nav-item flex items-center px-3 py-3 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg" data-tab="weather">
+                            <i class="fas fa-cloud-sun w-5 text-center"></i>
+                            <span class="ml-3 font-medium">Dự báo Thời tiết</span>
+                        </a>
+                    </div>
+                    
+                    <!-- Emergency Management -->
+                    <div class="mt-6">
+                        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3 mb-2">Quản lý Khẩn cấp</p>
+                        <a href="#" class="nav-item flex items-center px-3 py-3 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg" data-tab="reports">
+                            <i class="fas fa-exclamation-triangle w-5 text-center"></i>
+                            <span class="ml-3 font-medium">Báo cáo Sự cố</span>
+                            <span class="badge badge-danger ml-auto">12</span>
+                        </a>
+                        <a href="#" class="nav-item flex items-center px-3 py-3 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg" data-tab="incidents">
+                            <i class="fas fa-ambulance w-5 text-center"></i>
+                            <span class="ml-3 font-medium">Sự cố Đang xử lý</span>
+                            <span class="badge badge-warning ml-auto">8</span>
+                        </a>
+                    </div>
+                    
+                    <!-- User Management -->
+                    <div class="mt-6">
+                        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3 mb-2">Quản lý Người dùng</p>
+                        <a href="#" class="nav-item flex items-center px-3 py-3 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg" data-tab="users">
+                            <i class="fas fa-users w-5 text-center"></i>
+                            <span class="ml-3 font-medium">Tài khoản</span>
+                        </a>
+                        <a href="#" class="nav-item flex items-center px-3 py-3 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg" data-tab="roles">
+                            <i class="fas fa-user-shield w-5 text-center"></i>
+                            <span class="ml-3 font-medium">Phân quyền</span>
+                        </a>
+                    </div>
+                    
+                    <!-- System -->
+                    <div class="mt-6">
+                        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3 mb-2">Hệ thống</p>
+                        <a href="#" class="nav-item flex items-center px-3 py-3 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg" data-tab="analytics">
+                            <i class="fas fa-chart-bar w-5 text-center"></i>
+                            <span class="ml-3 font-medium">Phân tích</span>
+                        </a>
+                        <a href="#" class="nav-item flex items-center px-3 py-3 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg" data-tab="settings">
+                            <i class="fas fa-cog w-5 text-center"></i>
+                            <span class="ml-3 font-medium">Cài đặt</span>
+                        </a>
+                        <a href="#" class="nav-item flex items-center px-3 py-3 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg" data-tab="logs">
+                            <i class="fas fa-clipboard-list w-5 text-center"></i>
+                            <span class="ml-3 font-medium">Nhật ký</span>
+                        </a>
+                    </div>
+                </nav>
+                
+                <!-- System Status -->
+                <div class="mt-6 mx-3 p-4 bg-gray-800 rounded-lg">
+                    <h3 class="text-white font-semibold text-sm mb-3">TRẠNG THÁI HỆ THỐNG</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <div class="flex justify-between text-xs text-gray-300 mb-1">
+                                <span>CPU</span>
+                                <span>68%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill bg-blue-500" style="width: 68%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs text-gray-300 mb-1">
+                                <span>Bộ nhớ</span>
+                                <span>82%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill bg-green-500" style="width: 82%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs text-gray-300 mb-1">
+                                <span>Lưu trữ</span>
+                                <span>45%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill bg-purple-500" style="width: 45%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- User Profile -->
+            <div class="p-4 border-t border-gray-800">
+                <div class="flex items-center">
+                    <div class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
+                        <i class="fas fa-user text-white text-sm"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-white">Admin</p>
+                        <p class="text-xs text-gray-400">Quản trị viên</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Header -->
+            <header class="bg-white border-b border-gray-200">
+                <div class="flex justify-between items-center px-6 py-4">
+                    <div class="flex items-center">
+                        <button id="sidebar-toggle" class="text-gray-500 hover:text-gray-700 mr-4">
+                            <i class="fas fa-bars text-lg"></i>
+                        </button>
+                        <div>
+                            <h2 class="text-xl font-semibold text-gray-800" id="page-title">Dashboard</h2>
+                            <p class="text-sm text-gray-600" id="page-description">Tổng quan hệ thống cứu hộ quốc gia</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="relative">
+                            <input type="text" placeholder="Tìm kiếm..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 w-64">
+                            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                        </div>
+                        <button class="relative p-2 text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-bell text-lg"></i>
+                            <div class="notification-dot"></div>
+                        </button>
+                        <button id="sync-data-btn" class="p-2 text-gray-500 hover:text-gray-700" title="Đồng bộ dữ liệu">
+                            <i class="fas fa-sync-alt text-lg"></i>
+                        </button>
+                        <div class="w-px h-6 bg-gray-300"></div>
+                        <div class="flex items-center space-x-3">
+                            <div class="text-right">
+                                <p class="text-sm font-medium text-gray-800">Nguyễn Văn Admin</p>
+                                <p class="text-xs text-gray-500">admin@cuuhoc.gov.vn</p>
+                            </div>
+                            <div class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user text-white text-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content Area -->
+            <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+                <!-- Dashboard Tab -->
+                <div id="dashboard" class="tab-content active">
+                    <!-- Stats Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                        <div class="bg-white rounded-lg border border-gray-200 p-6">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <p class="text-sm font-medium text-gray-600">Sự cố đang xử lý</p>
+                                    <p class="text-2xl font-bold text-gray-900">38</p>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <div class="flex items-center text-sm">
+                                    <span class="text-green-500 flex items-center font-medium">
+                                        <i class="fas fa-arrow-up mr-1"></i> 12%
+                                    </span>
+                                    <span class="text-gray-500 ml-2">so với tuần trước</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg border border-gray-200 p-6">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-newspaper text-blue-600 text-xl"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <p class="text-sm font-medium text-gray-600">Tin tức đã đăng</p>
+                                    <p class="text-2xl font-bold text-gray-900">42</p>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <div class="flex items-center text-sm">
+                                    <span class="text-green-500 flex items-center font-medium">
+                                        <i class="fas fa-arrow-up mr-1"></i> 8%
+                                    </span>
+                                    <span class="text-gray-500 ml-2">so với tháng trước</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg border border-gray-200 p-6">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-users text-green-600 text-xl"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <p class="text-sm font-medium text-gray-600">Người dùng</p>
+                                    <p class="text-2xl font-bold text-gray-900">47</p>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <div class="flex items-center text-sm">
+                                    <span class="text-green-500 flex items-center font-medium">
+                                        <i class="fas fa-arrow-up mr-1"></i> 5%
+                                    </span>
+                                    <span class="text-gray-500 ml-2">so với tháng trước</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg border border-gray-200 p-6">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-cloud-sun text-purple-600 text-xl"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <p class="text-sm font-medium text-gray-600">Cảnh báo thời tiết</p>
+                                    <p class="text-2xl font-bold text-gray-900">5</p>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <div class="flex items-center text-sm">
+                                    <span class="text-red-500 flex items-center font-medium">
+                                        <i class="fas fa-arrow-up mr-1"></i> 3%
+                                    </span>
+                                    <span class="text-gray-500 ml-2">so với tháng trước</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Charts and Activity -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                        <!-- Main Chart -->
+                        <div class="bg-white rounded-lg border border-gray-200 lg:col-span-2">
+                            <div class="p-6 border-b border-gray-200">
+                                <div class="flex justify-between items-center">
+                                    <h3 class="text-lg font-semibold text-gray-900">Hoạt động hệ thống</h3>
+                                    <div class="flex space-x-2">
+                                        <button class="px-3 py-1 text-sm bg-red-600 text-white rounded-md font-medium chart-filter active" data-period="day">Ngày</button>
+                                        <button class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-md font-medium chart-filter" data-period="week">Tuần</button>
+                                        <button class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-md font-medium chart-filter" data-period="month">Tháng</button>
+                                        <button class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-md font-medium chart-filter" data-period="year">Năm</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-6">
+                                <div class="h-80">
+                                    <canvas id="activityChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Recent Activity -->
+                        <div class="bg-white rounded-lg border border-gray-200">
+                            <div class="p-6 border-b border-gray-200">
+                                <h3 class="text-lg font-semibold text-gray-900">Hoạt động gần đây</h3>
+                            </div>
+                            <div class="p-6">
+                                <div class="space-y-4">
+                                    <div class="flex items-start">
+                                        <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                            <i class="fas fa-exclamation-triangle text-red-600 text-sm"></i>
+                                        </div>
+                                        <div class="ml-3">
+                                            <p class="text-sm font-medium text-gray-900">Báo cáo mới</p>
+                                            <p class="text-sm text-gray-600">Cháy nhà tại Quận 1</p>
+                                            <p class="text-xs text-gray-500">10:30 AM</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                            <i class="fas fa-check-circle text-green-600 text-sm"></i>
+                                        </div>
+                                        <div class="ml-3">
+                                            <p class="text-sm font-medium text-gray-900">Sự cố đã giải quyết</p>
+                                            <p class="text-sm text-gray-600">Tai nạn giao thông Q. Bình Thạnh</p>
+                                            <p class="text-xs text-gray-500">09:15 AM</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                            <i class="fas fa-user-plus text-blue-600 text-sm"></i>
+                                        </div>
+                                        <div class="ml-3">
+                                            <p class="text-sm font-medium text-gray-900">Người dùng mới</p>
+                                            <p class="text-sm text-gray-600">Nguyễn Văn A đã đăng ký</p>
+                                            <p class="text-xs text-gray-500">08:45 AM</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                            <i class="fas fa-cloud-rain text-purple-600 text-sm"></i>
+                                        </div>
+                                        <div class="ml-3">
+                                            <p class="text-sm font-medium text-gray-900">Cảnh báo thời tiết</p>
+                                            <p class="text-sm text-gray-600">Mưa lớn khu vực miền Trung</p>
+                                            <p class="text-xs text-gray-500">07:30 AM</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions and System Info -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Quick Actions -->
+                        <div class="bg-white rounded-lg border border-gray-200">
+                            <div class="p-6 border-b border-gray-200">
+                                <h3 class="text-lg font-semibold text-gray-900">Thao tác nhanh</h3>
+                            </div>
+                            <div class="p-6">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <button class="quick-action-btn flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg border border-gray-200 hover:border-red-300 hover:bg-red-50 transition" data-action="add-news">
+                                        <div class="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center text-white mb-2">
+                                            <i class="fas fa-plus text-sm"></i>
+                                        </div>
+                                        <span class="text-sm font-medium text-gray-700">Thêm tin tức</span>
+                                    </button>
+                                    <button class="quick-action-btn flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition" data-action="add-weather">
+                                        <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white mb-2">
+                                            <i class="fas fa-cloud-sun text-sm"></i>
+                                        </div>
+                                        <span class="text-sm font-medium text-gray-700">Thêm dự báo</span>
+                                    </button>
+                                    <button class="quick-action-btn flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg border border-gray-200 hover:border-green-300 hover:bg-green-50 transition" data-action="add-user">
+                                        <div class="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center text-white mb-2">
+                                            <i class="fas fa-user-plus text-sm"></i>
+                                        </div>
+                                        <span class="text-sm font-medium text-gray-700">Thêm người dùng</span>
+                                    </button>
+                                    <button class="quick-action-btn flex flex-col items-center justify-center p-4 bg-gray-50 rounded-lg border border-gray-200 hover:border-purple-300 hover:bg-purple-50 transition" data-action="view-reports">
+                                        <div class="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center text-white mb-2">
+                                            <i class="fas fa-chart-bar text-sm"></i>
+                                        </div>
+                                        <span class="text-sm font-medium text-gray-700">Xem báo cáo</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- System Overview -->
+                        <div class="bg-white rounded-lg border border-gray-200 lg:col-span-2">
+                            <div class="p-6 border-b border-gray-200">
+                                <h3 class="text-lg font-semibold text-gray-900">Thống kê hệ thống</h3>
+                            </div>
+                            <div class="p-6">
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                                    <div class="text-center">
+                                        <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                                            <i class="fas fa-bullhorn text-red-600"></i>
+                                        </div>
+                                        <p class="text-sm text-gray-600">Sự cố hôm nay</p>
+                                        <p class="text-xl font-bold text-gray-900 mt-1">8</p>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                                            <i class="fas fa-check-circle text-green-600"></i>
+                                        </div>
+                                        <p class="text-sm text-gray-600">Đã giải quyết</p>
+                                        <p class="text-xl font-bold text-gray-900 mt-1">142</p>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                                            <i class="fas fa-map-marker-alt text-blue-600"></i>
+                                        </div>
+                                        <p class="text-sm text-gray-600">Tỉnh thành</p>
+                                        <p class="text-xl font-bold text-gray-900 mt-1">63</p>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                                            <i class="fas fa-clock text-purple-600"></i>
+                                        </div>
+                                        <p class="text-sm text-gray-600">Thời gian phản hồi</p>
+                                        <p class="text-xl font-bold text-gray-900 mt-1">5.2p</p>
+                                    </div>
+                                </div>
+                                <div class="mt-6 pt-6 border-t border-gray-200">
+                                    <div class="flex justify-between items-center">
+                                        <div>
+                                            <p class="text-sm text-gray-600">Thời gian hoạt động</p>
+                                            <p class="text-lg font-bold text-gray-900">99.8%</p>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-sm text-gray-600">Cập nhật</p>
+                                            <p class="text-lg font-bold text-gray-900">01/11/2025</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- News Management Tab -->
+                <div id="news" class="tab-content">
+                    <div class="bg-white rounded-lg border border-gray-200">
+                        <div class="p-6 border-b border-gray-200">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h3 class="text-xl font-semibold text-gray-900">Quản lý Tin tức & Bài viết</h3>
+                                    <p class="text-gray-600 mt-1">Quản lý và xuất bản các tin tức khẩn cấp và bài viết thông thường</p>
+                                </div>
+                                <div class="flex space-x-3">
+                                    <button class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition flex items-center">
+                                        <i class="fas fa-sync-alt mr-2"></i>
+                                        Đồng bộ
+                                    </button>
+                                    <button class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition flex items-center">
+                                        <i class="fas fa-download mr-2"></i>
+                                        Xuất Excel
+                                    </button>
+                                    <button id="add-news-btn" class="bg-red-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-700 transition flex items-center">
+                                        <i class="fas fa-plus mr-2"></i>
+                                        Thêm tin tức
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tiêu đề</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Loại</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thao tác</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200" id="news-table-body">
+                                        <!-- News data will be populated by JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Weather Management Tab -->
+                <div id="weather" class="tab-content">
+                    <div class="bg-white rounded-lg border border-gray-200">
+                        <div class="p-6 border-b border-gray-200">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h3 class="text-xl font-semibold text-gray-900">Quản lý Dự báo Thời tiết</h3>
+                                    <p class="text-gray-600 mt-1">Dự báo thời tiết và cảnh báo thiên tai</p>
+                                </div>
+                                <button id="add-weather-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition flex items-center">
+                                    <i class="fas fa-plus mr-2"></i>
+                                    Thêm dự báo
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Weather Forecast -->
+                        <div class="p-6 border-b border-gray-200">
+                            <h4 class="text-lg font-semibold text-gray-900 mb-4">Dự báo 7 ngày tới</h4>
+                            <div class="grid grid-cols-2 md:grid-cols-7 gap-4" id="weather-forecast">
+                                <!-- Weather forecast will be populated by JavaScript -->
+                            </div>
+                        </div>
+
+                        <!-- Weather Alerts -->
+                        <div class="p-6">
+                            <h4 class="text-lg font-semibold text-gray-900 mb-4">Cảnh báo thời tiết</h4>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Loại cảnh báo</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Khu vực</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mức độ</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thời gian</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thao tác</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200" id="weather-alerts-table-body">
+                                        <!-- Weather alerts will be populated by JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Reports Management Tab -->
+                <div id="reports" class="tab-content">
+                    <div class="bg-white rounded-lg border border-gray-200">
+                        <div class="p-6 border-b border-gray-200">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h3 class="text-xl font-semibold text-gray-900">Quản lý Báo cáo Sự cố</h3>
+                                    <p class="text-gray-600 mt-1">Xem và xử lý các báo cáo khẩn cấp từ người dùng</p>
+                                </div>
+                                <div class="flex space-x-3">
+                                    <button class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition flex items-center">
+                                        <i class="fas fa-filter mr-2"></i>
+                                        Lọc
+                                    </button>
+                                    <button class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition flex items-center">
+                                        <i class="fas fa-download mr-2"></i>
+                                        Xuất Excel
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Loại sự cố</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Địa điểm</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mức độ</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thời gian</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thao tác</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200" id="reports-table-body">
+                                        <!-- Reports data will be populated by JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Incidents Management Tab -->
+                <div id="incidents" class="tab-content">
+                    <div class="bg-white rounded-lg border border-gray-200">
+                        <div class="p-6 border-b border-gray-200">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h3 class="text-xl font-semibold text-gray-900">Sự cố Đang xử lý</h3>
+                                    <p class="text-gray-600 mt-1">Theo dõi và quản lý các sự cố đang được xử lý</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-600">Nội dung quản lý sự cố đang xử lý sẽ được hiển thị tại đây.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Users Management Tab -->
+                <div id="users" class="tab-content">
+                    <div class="bg-white rounded-lg border border-gray-200">
+                        <div class="p-6 border-b border-gray-200">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h3 class="text-xl font-semibold text-gray-900">Quản lý Tài khoản</h3>
+                                    <p class="text-gray-600 mt-1">Quản lý tài khoản người dùng hệ thống</p>
+                                </div>
+                                <button id="add-user-btn" class="bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 transition flex items-center">
+                                    <i class="fas fa-plus mr-2"></i>
+                                    Thêm người dùng
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tên đăng nhập</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Họ tên</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vai trò</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thao tác</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200" id="users-table-body">
+                                        <!-- Users data will be populated by JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Roles Management Tab -->
+                <div id="roles" class="tab-content">
+                    <div class="bg-white rounded-lg border border-gray-200">
+                        <div class="p-6 border-b border-gray-200">
+                            <h3 class="text-xl font-semibold text-gray-900">Quản lý Phân quyền</h3>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-600">Nội dung quản lý phân quyền sẽ được hiển thị tại đây.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Analytics Tab -->
+                <div id="analytics" class="tab-content">
+                    <div class="bg-white rounded-lg border border-gray-200">
+                        <div class="p-6 border-b border-gray-200">
+                            <h3 class="text-xl font-semibold text-gray-900">Phân tích & Báo cáo</h3>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-600">Nội dung phân tích và báo cáo sẽ được hiển thị tại đây.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Settings Tab -->
+                <div id="settings" class="tab-content">
+                    <div class="bg-white rounded-lg border border-gray-200">
+                        <div class="p-6 border-b border-gray-200">
+                            <h3 class="text-xl font-semibold text-gray-900">Cài đặt Hệ thống</h3>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-600">Cấu hình hệ thống và các tùy chọn nâng cao.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Logs Tab -->
+                <div id="logs" class="tab-content">
+                    <div class="bg-white rounded-lg border border-gray-200">
+                        <div class="p-6 border-b border-gray-200">
+                            <h3 class="text-xl font-semibold text-gray-900">Nhật ký Hệ thống</h3>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-600">Nhật ký hoạt động hệ thống sẽ được hiển thị tại đây.</p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- News Modal -->
+    <div id="news-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <h3 id="news-modal-title" class="text-lg font-semibold text-gray-900">Thêm tin tức mới</h3>
+                    <button id="close-news-modal" class="text-gray-400 hover:text-gray-500">
+                        <i class="fas fa-times text-lg"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="p-6">
+                <form id="news-form" class="space-y-4">
+                    <input type="hidden" id="news-id" value="">
+                    <div>
+                        <label for="news-title" class="block text-sm font-medium text-gray-700 mb-1">Tiêu đề</label>
+                        <input type="text" id="news-title" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="news-date" class="block text-sm font-medium text-gray-700 mb-1">Ngày</label>
+                            <input type="date" id="news-date" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                        </div>
+                        <div>
+                            <label for="news-type" class="block text-sm font-medium text-gray-700 mb-1">Loại</label>
+                            <select id="news-type" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                                <option value="">Chọn loại</option>
+                                <option value="emergency">Khẩn cấp</option>
+                                <option value="warning">Cảnh báo</option>
+                                <option value="info">Thông tin</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="news-content" class="block text-sm font-medium text-gray-700 mb-1">Nội dung</label>
+                        <textarea id="news-content" rows="4" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"></textarea>
+                    </div>
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button type="button" id="cancel-news" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-md font-medium hover:bg-gray-50 transition">
+                            Hủy bỏ
+                        </button>
+                        <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded-md font-medium hover:bg-red-700 transition flex items-center">
+                            <i class="fas fa-save mr-2"></i>
+                            Lưu tin tức
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Weather Modal -->
+    <div id="weather-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <h3 id="weather-modal-title" class="text-lg font-semibold text-gray-900">Thêm dự báo thời tiết</h3>
+                    <button id="close-weather-modal" class="text-gray-400 hover:text-gray-500">
+                        <i class="fas fa-times text-lg"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="p-6">
+                <form id="weather-form" class="space-y-4">
+                    <input type="hidden" id="weather-id" value="">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="weather-date" class="block text-sm font-medium text-gray-700 mb-1">Ngày</label>
+                            <input type="date" id="weather-date" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label for="weather-region" class="block text-sm font-medium text-gray-700 mb-1">Khu vực</label>
+                            <select id="weather-region" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="">Chọn khu vực</option>
+                                <option value="north">Miền Bắc</option>
+                                <option value="central">Miền Trung</option>
+                                <option value="south">Miền Nam</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-4">
+                        <div>
+                            <label for="weather-type" class="block text-sm font-medium text-gray-700 mb-1">Loại thời tiết</label>
+                            <select id="weather-type" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="">Chọn loại</option>
+                                <option value="sunny">Nắng</option>
+                                <option value="cloudy">Nhiều mây</option>
+                                <option value="rainy">Mưa</option>
+                                <option value="storm">Bão</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="weather-temp-min" class="block text-sm font-medium text-gray-700 mb-1">Nhiệt độ thấp nhất</label>
+                            <input type="number" id="weather-temp-min" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label for="weather-temp-max" class="block text-sm font-medium text-gray-700 mb-1">Nhiệt độ cao nhất</label>
+                            <input type="number" id="weather-temp-max" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="weather-description" class="block text-sm font-medium text-gray-700 mb-1">Mô tả</label>
+                        <textarea id="weather-description" rows="3" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+                    </div>
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button type="button" id="cancel-weather" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-md font-medium hover:bg-gray-50 transition">
+                            Hủy bỏ
+                        </button>
+                        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md font-medium hover:bg-blue-700 transition flex items-center">
+                            <i class="fas fa-save mr-2"></i>
+                            Lưu dự báo
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Notification -->
+    <div id="success-notification" class="hidden fixed top-4 right-4 bg-green-500 text-white px-4 py-3 rounded-lg shadow-lg z-50">
+        <div class="flex items-center">
+            <i class="fas fa-check-circle mr-2"></i>
+            <span id="notification-message">Đã lưu thành công!</span>
+        </div>
+    </div>
+
+    <script src="assets/js/admin.js"></script>
+</body>
+</html>
