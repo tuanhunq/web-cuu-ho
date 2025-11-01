@@ -4,370 +4,604 @@
 const newsData = [
     // Sự cố khẩn cấp
     {
-        id: 1,
-        title: "SẠT LỞ ĐẤT: 3 hộ dân bị vùi lấp tại huyện Mù Cang Chải",
-        summary: "Mưa lớn kéo dài gây sạt lở đất tại xã La Pán Tẩn, huyện Mù Cang Chải, tỉnh Yên Bái.",
-        content: `
-            <p class="text-lg font-semibold text-red-600 mb-4">THÔNG BÁO KHẨN CẤP từ Ban Chỉ huy PCTT&TKCN tỉnh Yên Bái</p>
-            <p class="mb-4">Vào lúc 03h30 sáng nay, một vụ sạt lở đất đã xảy ra tại thôn Pá Mỳ, xã La Pán Tẩn, huyện Mù Cang Chải, tỉnh Yên Bái.</p>
-            <p class="mb-4">Theo thông tin ban đầu, có 3 hộ dân với 12 nhân khẩu bị vùi lấp. Lực lượng cứu hộ đang khẩn trương tìm kiếm, cứu nạn.</p>
-            
-            <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-4">
-                <p class="font-semibold">THÔNG TIN CHI TIẾT:</p>
-                <ul class="list-disc ml-5 mt-2 space-y-2">
-                    <li><strong>Địa điểm:</strong> Thôn Pá Mỳ, xã La Pán Tẩn, huyện Mù Cang Chải</li>
-                    <li><strong>Thời gian:</strong> 03h30 ngày 25/09/2023</li>
-                    <li><strong>Số người bị ảnh hưởng:</strong> 3 hộ dân (12 nhân khẩu)</li>
-                    <li><strong>Nguyên nhân:</strong> Mưa lớn kéo dài nhiều ngày</li>
-                    <li><strong>Diện tích sạt lở:</strong> Khoảng 500m²</li>
-                </ul>
-            </div>
-            
-            <div class="bg-orange-50 border-l-4 border-orange-400 p-4 mb-4">
-                <p class="font-semibold">CÔNG TÁC ỨNG PHÓ:</p>
-                <ul class="list-disc ml-5 mt-2 space-y-2">
-                    <li>Huy động 50 cán bộ, chiến sĩ tham gia cứu hộ</li>
-                    <li>Điều phương tiện máy xúc, máy ủi đến hiện trường</li>
-                    <li>Sơ tán 15 hộ dân xung quanh khu vực nguy hiểm</li>
-                    <li>Thiết lập các điểm cảnh báo xung quanh khu vực</li>
-                </ul>
-            </div>
-            
-            <div class="map-preview">
-                <div class="text-center">
-                    <i data-feather="map" class="w-12 h-12 mx-auto mb-2"></i>
-                    <p>Bản đồ hiển thị vị trí sự cố sạt lở đất</p>
-                    <p class="text-sm text-gray-500 mt-1">Tọa độ: 21.85, 104.10</p>
-                </div>
-            </div>
-            
-            <div class="flex justify-between mt-4">
-                <button class="flex items-center px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition report-incident">
-                    <i data-feather="alert-triangle" class="mr-2 w-4 h-4"></i> Báo cáo sự cố
-                </button>
-                <button class="flex items-center px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition view-on-map" data-location="21.85,104.10">
-                    <i data-feather="map" class="mr-2 w-4 h-4"></i> Xem trên bản đồ
-                </button>
-            </div>
-        `,
-        type: "emergency",
-        location: "mien-bac",
-        date: "2023-09-25",
-        time: "04:15",
-        priority: "high",
-        coordinates: { lat: 21.85, lng: 104.10 }
-    },
-    {
-        id: 2,
-        title: "CHÁY LỚN: Kho hàng tại KCN Bắc Thăng Long bốc cháy dữ dội",
-        summary: "Một kho hàng tại Khu công nghiệp Bắc Thăng Long, Hà Nội bất ngờ bốc cháy vào rạng sáng.",
-        content: `
-            <p class="text-lg font-semibold mb-4">THÔNG BÁO từ Cảnh sát PCCC Hà Nội</p>
-            <p class="mb-4">Vào lúc 02h30 sáng nay, một kho hàng chứa vật liệu xây dựng tại Khu công nghiệp Bắc Thăng Long, huyện Đông Anh, Hà Nội đã bốc cháy.</p>
-            
-            <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-4">
-                <p class="font-semibold">THÔNG TIN CHI TIẾT:</p>
-                <ul class="list-disc ml-5 mt-2 space-y-2">
-                    <li><strong>Địa điểm:</strong> Kho số A5, KCN Bắc Thăng Long, Đông Anh, Hà Nội</li>
-                    <li><strong>Thời gian:</strong> 02h30 ngày 25/09/2023</li>
-                    <li><strong>Loại hàng hóa:</strong> Vật liệu xây dựng, nhựa đường</li>
-                    <li><strong>Diện tích cháy:</strong> Khoảng 1.000m²</li>
-                    <li><strong>Thiệt hại ban đầu:</strong> Hàng trăm tỷ đồng</li>
-                </ul>
-            </div>
-            
-            <div class="bg-orange-50 border-l-4 border-orange-400 p-4 mb-4">
-                <p class="font-semibold">CÔNG TÁC CHỮA CHÁY:</p>
-                <ul class="list-disc ml-5 mt-2 space-y-2">
-                    <li>Huy động 10 xe chữa cháy, 50 cán bộ chiến sĩ</li>
-                    <li>Thiết lập vùng cách ly 500m xung quanh</li>
-                    <li>Sơ tán toàn bộ công nhân trong khu vực</li>
-                    <li>Phối hợp với lực lượng y tế sẵn sàng ứng phó</li>
-                </ul>
-            </div>
-            
-            <div class="bg-green-50 border-l-4 border-green-400 p-4 mb-4">
-                <p class="font-semibold">TÌNH HÌNH HIỆN TẠI:</p>
-                <ul class="list-disc ml-5 mt-2 space-y-2">
-                    <li>Đám cháy đã được khống chế 90%</li>
-                    <li>Chưa ghi nhận thiệt hại về người</li>
-                    <li>Nguyên nhân đang được điều tra làm rõ</li>
-                    <li>Khói đen bao phủ khu vực bán kính 2km</li>
-                </ul>
-            </div>
-            
-            <div class="map-preview">
-                <div class="text-center">
-                    <i data-feather="map" class="w-12 h-12 mx-auto mb-2"></i>
-                    <p>Bản đồ hiển thị vị trí đám cháy</p>
-                    <p class="text-sm text-gray-500 mt-1">Tọa độ: 21.12, 105.85</p>
-                </div>
-            </div>
-            
-            <div class="flex justify-between mt-4">
-                <button class="flex items-center px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition report-incident">
-                    <i data-feather="alert-triangle" class="mr-2 w-4 h-4"></i> Báo cáo sự cố
-                </button>
-                <button class="flex items-center px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition view-on-map" data-location="21.12,105.85">
-                    <i data-feather="map" class="mr-2 w-4 h-4"></i> Xem trên bản đồ
-                </button>
-            </div>
-        `,
-        type: "emergency",
-        location: "ha-noi",
-        date: "2023-09-25",
-        time: "03:00",
-        priority: "high",
-        coordinates: { lat: 21.12, lng: 105.85 }
-    },
-    {
-        id: 7,
-        title: "NGẬP LỤT: Nhiều tuyến đường tại TP.HCM ngập sâu 0.5-1m",
-        summary: "Mưa lớn kết hợp triều cường khiến nhiều khu vực tại TP.HCM chìm trong biển nước.",
-        content: `
-            <p class="text-lg font-semibold text-red-600 mb-4">THÔNG BÁO KHẨN từ Ban Chỉ huy PCTT TP.HCM</p>
-            <p class="mb-4">Do ảnh hưởng của mưa lớn kết hợp với triều cường dâng cao, nhiều tuyến đường tại TP.HCM đang chìm trong biển nước với mực nước ngập từ 0.5-1m.</p>
-            
-            <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-4">
-                <p class="font-semibold">THÔNG TIN CHI TIẾT:</p>
-                <ul class="list-disc ml-5 mt-2 space-y-2">
-                    <li><strong>Thời gian:</strong> Từ 06h00 đến nay (25/09/2023)</li>
-                    <li><strong>Mực nước triều:</strong> Đạt đỉnh 1.65m</li>
-                    <li><strong>Lượng mưa:</strong> 150mm trong 3 giờ</li>
-                    <li><strong>Khu vực ảnh hưởng:</strong> 12 quận, huyện</li>
-                </ul>
-            </div>
-            
-            <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4">
-                <p class="font-semibold">CÁC TUYẾN ĐƯỜNG NGẬP NẶNG:</p>
-                <ul class="list-disc ml-5 mt-2 space-y-2">
-                    <li>Nguyễn Hữu Cảnh (Quận 1): ngập 0.8m</li>
-                    <li>Kinh Dương Vương (Quận 6): ngập 1.0m</li>
-                    <li>Lê Văn Việt (Quận 9): ngập 0.6m</li>
-                    <li>Nguyễn Văn Linh (Quận 7): ngập 0.7m</li>
-                    <li>Xa lộ Hà Nội (Quận 2): ngập 0.5m</li>
-                </ul>
-            </div>
-            
-            <div class="bg-orange-50 border-l-4 border-orange-400 p-4 mb-4">
-                <p class="font-semibold">BIỆN PHÁP ỨNG PHÓ:</p>
-                <ul class="list-disc ml-5 mt-2 space-y-2">
-                    <li>Huy động 20 trạm bơm hoạt động hết công suất</li>
-                    <li>Phân luồng giao thông tại 35 điểm ngập</li>
-                    <li>Cử 150 cán bộ túc trực hỗ trợ người dân</li>
-                    <li>Sẵn sàng phương án sơ tán khi cần thiết</li>
-                </ul>
-            </div>
-            
-            <div class="flex justify-between mt-4">
-                <button class="flex items-center px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition report-incident">
-                    <i data-feather="alert-triangle" class="mr-2 w-4 h-4"></i> Báo cáo sự cố
-                </button>
-                <button class="flex items-center px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition view-on-map" data-location="10.75,106.65">
-                    <i data-feather="map" class="mr-2 w-4 h-4"></i> Xem trên bản đồ
-                </button>
-            </div>
-        `,
-        type: "emergency",
-        location: "tp-hcm",
-        date: "2023-09-25",
-        time: "07:30",
-        priority: "high",
-        coordinates: { lat: 10.75, lng: 106.65 }
-    },
-    // Kêu gọi cứu trợ (giữ nguyên)
-    {
-        id: 3,
-        title: "KÊU GỌI: Chung tay cứu trợ đồng bào vùng lũ Quảng Bình",
-        summary: "Hàng ngàn hộ dân tại Quảng Bình đang chịu ảnh hưởng nặng nề từ trận lũ lịch sử.",
-        content: `
-            <div class="mb-4">
-                <img src="https://images.unsplash.com/photo-1583337130417-0c94cddc0e82?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Cứu trợ lũ lụt" class="w-full h-64 object-cover rounded-lg">
-            </div>
-            <p class="text-lg font-semibold mb-4">KÊU GỌI CỨU TRỢ từ Quỹ Từ thiện Vì Cộng đồng</p>
-            <p class="mb-4">Trận lũ lịch sử tại Quảng Bình đã khiến hàng ngàn hộ dân mất nhà cửa, thiệt hại nặng nề về tài sản và hoa màu.</p>
-            
-            <div class="donation-info">
-                <div class="flex justify-between mb-2">
-                    <span class="font-medium">Mục tiêu quyên góp:</span>
-                    <span class="font-bold">500,000,000 VNĐ</span>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: 65%"></div>
-                </div>
-                <div class="flex justify-between text-sm text-gray-600">
-                    <span>Đã quyên góp: 325,000,000 VNĐ</span>
-                    <span>65%</span>
-                </div>
-            </div>
-            
-            <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4">
-                <p class="font-semibold">NHU CẦU CỨU TRỢ:</p>
-                <ul class="list-disc ml-5 mt-2">
-                    <li>Lương thực: Gạo, mì tôm, nước uống</li>
-                    <li>Vật dụng: Chăn màn, quần áo ấm, thuốc men</li>
-                    <li>Vật tư xây dựng: Tôn, gỗ, xi măng</li>
-                </ul>
-            </div>
-            
-            <div class="flex space-x-4 mt-6">
-                <button class="flex-1 bg-green-500 text-white py-3 rounded-md hover:bg-green-600 transition font-medium donate-btn">
-                    Ủng hộ ngay
-                </button>
-                <button class="flex-1 bg-blue-500 text-white py-3 rounded-md hover:bg-blue-600 transition font-medium share-btn">
-                    Chia sẻ
-                </button>
-            </div>
-        `,
-        type: "assistance",
-        location: "mien-trung",
-        date: "2023-09-24",
-        time: "09:30",
-        priority: "medium"
-    },
-    {
-        id: 4,
-        title: "HỖ TRỢ: Cần gấp máy phát điện cho trạm y tế vùng lũ",
-        summary: "Trạm y tế xã Hải Lộc, huyện Hải Hậu cần máy phát điện khẩn cấp để duy trì hoạt động.",
-        content: `
-            <div class="mb-4">
-                <img src="https://images.unsplash.com/photo-1582750433449-648ed127bb54?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Trạm y tế" class="w-full h-64 object-cover rounded-lg">
-            </div>
-            <p class="text-lg font-semibold mb-4">KÊU GỌI HỖ TRỢ từ Trạm Y tế xã Hải Lộc</p>
-            <p class="mb-4">Do mất điện kéo dài sau bão, trạm y tế xã Hải Lộc không thể vận hành các thiết bị y tế thiết yếu, ảnh hưởng đến việc khám chữa bệnh cho người dân.</p>
-            
-            <div class="donation-info">
-                <div class="flex justify-between mb-2">
-                    <span class="font-medium">Mục tiêu quyên góp:</span>
-                    <span class="font-bold">50,000,000 VNĐ</span>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: 40%"></div>
-                </div>
-                <div class="flex justify-between text-sm text-gray-600">
-                    <span>Đã quyên góp: 20,000,000 VNĐ</span>
-                    <span>40%</span>
-                </div>
-            </div>
-            
-            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">
-                <p class="font-semibold">NHU CẦU HỖ TRỢ:</p>
-                <ul class="list-disc ml-5 mt-2">
-                    <li>Máy phát điện công suất 5-10KVA</li>
-                    <li>Thuốc men thiết yếu</li>
-                    <li>Vật tư y tế: bông, băng, gạc</li>
-                </ul>
-            </div>
-            
-            <div class="flex space-x-4 mt-6">
-                <button class="flex-1 bg-green-500 text-white py-3 rounded-md hover:bg-green-600 transition font-medium donate-btn">
-                    Ủng hộ ngay
-                </button>
-                <button class="flex-1 bg-blue-500 text-white py-3 rounded-md hover:bg-blue-600 transition font-medium share-btn">
-                    Chia sẻ
-                </button>
-            </div>
-        `,
-        type: "assistance",
-        location: "mien-bac",
-        date: "2023-09-23",
-        time: "14:20",
-        priority: "high"
-    },
-    // Đoàn thiện nguyện (giữ nguyên)
-    {
-        id: 5,
-        title: "THIỆN NGUYỆN: Đoàn từ thiện Hoa Mặt Trời đang trên đường đến Quảng Bình",
-        summary: "Đoàn gồm 15 tình nguyện viên mang theo 5 tấn hàng cứu trợ đang di chuyển đến vùng lũ.",
-        content: `
-            <div class="mb-4">
-                <img src="https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Đoàn thiện nguyện" class="w-full h-64 object-cover rounded-lg">
-            </div>
-            <p class="text-lg font-semibold mb-4">THÔNG TIN ĐOÀN THIỆN NGUYỆN</p>
-            <p class="mb-4">Đoàn từ thiện Hoa Mặt Trời xuất phát từ Hà Nội, dự kiến sẽ đến Quảng Bình vào chiều nay với 5 tấn hàng cứu trợ gồm lương thực, thuốc men và vật dụng thiết yếu.</p>
-            
-            <div class="flex items-center mb-4">
-                <span class="volunteer-status status-en-route">
-                    <i data-feather="truck" class="mr-1 w-4 h-4"></i> Đang di chuyển
-                </span>
-                <span class="ml-4 text-sm text-gray-600">Dự kiến đến nơi: 15:30 chiều nay</span>
-            </div>
-            
-            <div class="bg-green-50 border-l-4 border-green-400 p-4 mb-4">
-                <p class="font-semibold">THÔNG TIN HÀNG CỨU TRỢ:</p>
-                <ul class="list-disc ml-5 mt-2">
-                    <li>2 tấn gạo, 1 tấn mì tôm</li>
-                    <li>500 chai nước uống, 200 thùng sữa</li>
-                    <li>Thuốc men và vật tư y tế</li>
-                    <li>500 bộ quần áo ấm, chăn màn</li>
-                </ul>
-            </div>
-            
-            <div class="map-preview">
-                <div class="text-center">
-                    <i data-feather="map" class="w-12 h-12 mx-auto mb-2"></i>
-                    <p>Bản đồ hiển thị lộ trình đoàn thiện nguyện</p>
-                </div>
-            </div>
-            
-            <div class="flex justify-between mt-4">
-                <button class="flex items-center px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition contact-volunteer">
-                    <i data-feather="phone" class="mr-2 w-4 h-4"></i> Liên hệ đoàn
-                </button>
-                <button class="flex items-center px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition view-on-map" data-location="18.50,105.50">
-                    <i data-feather="map" class="mr-2 w-4 h-4"></i> Theo dõi lộ trình
-                </button>
-            </div>
-        `,
-        type: "volunteer",
-        location: "mien-trung",
-        date: "2023-09-24",
-        time: "10:45",
-        priority: "medium"
-    },
-    {
-        id: 6,
-        title: "THIỆN NGUYỆN: Nhóm bác sĩ tình nguyện đã có mặt tại Đắk Lắk",
-        summary: "Nhóm 8 bác sĩ từ TP.HCM đã đến Đắk Lắk để khám chữa bệnh miễn phí cho đồng bào vùng sâu.",
-        content: `
-            <div class="mb-4">
-                <img src="https://images.unsplash.com/photo-1551601651-2a8555f1a136?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Bác sĩ tình nguyện" class="w-full h-64 object-cover rounded-lg">
-            </div>
-            <p class="text-lg font-semibold mb-4">THÔNG TIN ĐOÀN BÁC SĨ TÌNH NGUYỆN</p>
-            <p class="mb-4">Nhóm 8 bác sĩ chuyên khoa từ các bệnh viện tại TP.HCM đã đến xã Ea Tul, huyện Cư M'gar, tỉnh Đắk Lắk để tổ chức khám chữa bệnh miễn phí cho đồng bào dân tộc thiểu số.</p>
-            
-            <div class="flex items-center mb-4">
-                <span class="volunteer-status status-arrived">
-                    <i data-feather="check-circle" class="mr-1 w-4 h-4"></i> Đã đến nơi
-                </span>
-                <span class="ml-4 text-sm text-gray-600">Đang hoạt động tại trường Tiểu học Ea Tul</span>
-            </div>
-            
-            <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4">
-                <p class="font-semibold">DỊCH VỤ CUNG CẤP:</p>
-                <ul class="list-disc ml-5 mt-2">
-                    <li>Khám bệnh miễn phí các chuyên khoa</li>
-                    <li>Phát thuốc miễn phí</li>
-                    <li>Tư vấn sức khỏe cộng đồng</li>
-                    <li>Hướng dẫn phòng chống dịch bệnh</li>
-                </ul>
-            </div>
-            
-            <div class="flex justify-between mt-4">
-                <button class="flex items-center px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition contact-volunteer">
-                    <i data-feather="phone" class="mr-2 w-4 h-4"></i> Liên hệ đoàn
-                </button>
-                <button class="flex items-center px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition view-on-map" data-location="12.75,108.05">
-                    <i data-feather="map" class="mr-2 w-4 h-4"></i> Xem vị trí
-                </button>
-            </div>
-        `,
-        type: "volunteer",
-        location: "dak-lak",
-        date: "2023-09-23",
-        time: "08:30",
-        priority: "medium"
-    }
+                id: 'INC001',
+                type: 'fire',
+                status: 'active',
+                priority: 'high',
+                title: 'Cháy chung cư tại Cầu Giấy',
+                address: '123 Trần Duy Hưng, Cầu Giấy, Hà Nội',
+                province: 'Hà Nội',
+                time: '15:30, 12/11/2023',
+                description: 'Cháy lớn tại tầng 12 chung cư Golden West, nhiều người mắc kẹt bên trong. Lực lượng cứu hộ đang có mặt tại hiện trường.',
+                reporter: { name: 'Nguyễn Văn A', phone: '0912 345 678' },
+                timeline: [
+                    { time: '15:25', action: 'Tiếp nhận báo cáo sự cố' },
+                    { time: '15:28', action: 'Điều động đội PCCC' },
+                    { time: '15:35', action: 'Lực lượng có mặt tại hiện trường' }
+                ]
+            },
+            {
+                id: 'INC002',
+                type: 'flood',
+                status: 'active',
+                priority: 'medium',
+                title: 'Ngập nước nghiêm trọng tại Quận 1',
+                address: 'Đường Nguyễn Huệ, Quận 1, TP.HCM',
+                province: 'TP.HCM',
+                time: '14:15, 12/11/2023',
+                description: 'Ngập nước sâu 0.5m sau cơn mưa lớn, nhiều phương tiện bị kẹt. Đội cứu hộ đang hỗ trợ người dân di chuyển.',
+                reporter: { name: 'Trần Thị B', phone: '0934 567 890' },
+                timeline: [
+                    { time: '14:10', action: 'Tiếp nhận báo cáo sự cố' },
+                    { time: '14:12', action: 'Cảnh báo người dân' },
+                    { time: '14:20', action: 'Triển khai lực lượng ứng phó' }
+                ]
+            },
+            {
+                id: 'INC003',
+                type: 'accident',
+                status: 'resolved',
+                priority: 'high',
+                title: 'Tai nạn giao thông trên cầu Sông Hàn',
+                address: 'Cầu Sông Hàn, Đà Nẵng',
+                province: 'Đà Nẵng',
+                time: '10:45, 12/11/2023',
+                description: 'Va chạm giữa xe tải và xe máy, một người bị thương nặng. Sự cố đã được xử lý, giao thông thông suốt trở lại.',
+                reporter: { name: 'Lê Văn C', phone: '0978 901 234' },
+                timeline: [
+                    { time: '10:40', action: 'Tiếp nhận báo cáo sự cố' },
+                    { time: '10:43', action: 'Điều động xe cứu thương' },
+                    { time: '10:50', action: 'Lực lượng có mặt tại hiện trường' },
+                    { time: '11:15', action: 'Sự cố đã được giải quyết' }
+                ]
+            },
+            {
+                id: 'INC004',
+                type: 'disaster',
+                status: 'active',
+                priority: 'high',
+                title: 'Sạt lở đất tại huyện A Lưới',
+                address: 'Xã Hồng Vân, Huyện A Lưới, Thừa Thiên Huế',
+                province: 'Thừa Thiên Huế',
+                time: '09:20, 12/11/2023',
+                description: 'Sạt lở đất sau mưa lớn, nhiều hộ dân bị ảnh hưởng. Lực lượng cứu hộ đang tiến hành sơ tán người dân.',
+                reporter: { name: 'Phạm Thị D', phone: '0901 234 567' },
+                timeline: [
+                    { time: '09:15', action: 'Tiếp nhận báo cáo sự cố' },
+                    { time: '09:18', action: 'Cảnh báo và sơ tán người dân' },
+                    { time: '09:30', action: 'Triển khai lực lượng cứu hộ' }
+                ]
+            },
+            {
+                id: 'INC005',
+                type: 'fire',
+                status: 'active',
+                priority: 'high',
+                title: 'Cháy nhà máy sản xuất',
+                address: 'Khu công nghiệp Vĩnh Tuy, Hà Đông, Hà Nội',
+                province: 'Hà Nội',
+                time: '13:10, 12/11/2023',
+                description: 'Cháy lớn tại nhà máy sản xuất linh kiện điện tử, khói đen bao phủ khu vực. Đang điều động thêm lực lượng.',
+                reporter: { name: 'Hoàng Văn E', phone: '0987 654 321' },
+                timeline: [
+                    { time: '13:05', action: 'Tiếp nhận báo cáo sự cố' },
+                    { time: '13:08', action: 'Điều động 5 xe chữa cháy' },
+                    { time: '13:15', action: 'Lực lượng có mặt tại hiện trường' }
+                ]
+            },
+            {
+                id: 'INC006',
+                type: 'flood',
+                status: 'active',
+                priority: 'medium',
+                title: 'Ngập lụt khu vực trung tâm',
+                address: 'Đường 30/4, Quận Ninh Kiều, Cần Thơ',
+                province: 'Cần Thơ',
+                time: '11:30, 12/11/2023',
+                description: 'Ngập nước sâu 0.7m do triều cường kết hợp mưa lớn. Đang tiến hành hút nước và phân luồng giao thông.',
+                reporter: { name: 'Lý Thị F', phone: '0965 432 109' },
+                timeline: [
+                    { time: '11:25', action: 'Tiếp nhận báo cáo sự cố' },
+                    { time: '11:28', action: 'Cảnh báo người dân' },
+                    { time: '11:35', action: 'Triển khai lực lượng ứng phó' }
+                ]
+            },
+            {
+                id: 'INC007',
+                type: 'accident',
+                status: 'active',
+                priority: 'high',
+                title: 'Tai nạn liên hoàn trên cao tốc',
+                address: 'Cao tốc Hà Nội - Hải Phòng, Km25',
+                province: 'Hải Phòng',
+                time: '08:45, 12/11/2023',
+                description: 'Va chạm liên hoàn giữa 5 xe ô tô, nhiều người bị thương. Đang điều động xe cứu thương.',
+                reporter: { name: 'Vũ Văn G', phone: '0943 218 765' },
+                timeline: [
+                    { time: '08:40', action: 'Tiếp nhận báo cáo sự cố' },
+                    { time: '08:43', action: 'Điều động 3 xe cứu thương' },
+                    { time: '08:50', action: 'Lực lượng có mặt tại hiện trường' }
+                ]
+            },
+            {
+                id: 'INC008',
+                type: 'disaster',
+                status: 'active',
+                priority: 'high',
+                title: 'Lũ quét tại huyện miền núi',
+                address: 'Xã Trung Sơn, Huyện Quan Hóa, Thanh Hóa',
+                province: 'Thanh Hóa',
+                time: '07:20, 12/11/2023',
+                description: 'Lũ quét sau mưa lớn, nhiều nhà cửa bị cuốn trôi. Đang tiến hành cứu hộ khẩn cấp.',
+                reporter: { name: 'Đặng Thị H', phone: '0918 765 432' },
+                timeline: [
+                    { time: '07:15', action: 'Tiếp nhận báo cáo sự cố' },
+                    { time: '07:18', action: 'Cảnh báo và sơ tán người dân' },
+                    { time: '07:30', action: 'Triển khai lực lượng cứu hộ' }
+                ]
+            },
+            {
+                id: 'INC009',
+                type: 'fire',
+                status: 'resolved',
+                priority: 'medium',
+                title: 'Cháy rừng tại Vườn Quốc gia',
+                address: 'Vườn Quốc gia Pù Mát, Con Cuông, Nghệ An',
+                province: 'Nghệ An',
+                time: '16:40, 11/11/2023',
+                description: 'Cháy rừng quy mô nhỏ, đã được khống chế. Không có thiệt hại về người.',
+                reporter: { name: 'Bùi Văn I', phone: '0976 543 210' },
+                timeline: [
+                    { time: '16:35', action: 'Tiếp nhận báo cáo sự cố' },
+                    { time: '16:38', action: 'Điều động lực lượng' },
+                    { time: '17:10', action: 'Dập tắt đám cháy' },
+                    { time: '17:30', action: 'Sự cố đã được giải quyết' }
+                ]
+            },
+            {
+                id: 'INC010',
+                type: 'accident',
+                status: 'active',
+                priority: 'medium',
+                title: 'Tai nạn xe container',
+                address: 'Quốc lộ 1A, Thành phố Bắc Ninh',
+                province: 'Bắc Ninh',
+                time: '12:15, 12/11/2023',
+                description: 'Xe container mất lái đâm vào nhà dân. Đang xử lý hiện trường.',
+                reporter: { name: 'Ngô Văn K', phone: '0932 109 876' },
+                timeline: [
+                    { time: '12:10', action: 'Tiếp nhận báo cáo sự cố' },
+                    { time: '12:13', action: 'Điều động cảnh sát GT' },
+                    { time: '12:20', action: 'Lực lượng có mặt tại hiện trường' }
+                ]
+            },
+            {
+                id: 'INC011',
+                type: 'flood',
+                status: 'active',
+                priority: 'high',
+                title: 'Ngập lụt diện rộng tại huyện Cái Bè',
+                address: 'Huyện Cái Bè, Tiền Giang',
+                province: 'Tiền Giang',
+                time: '09:45, 12/11/2023',
+                description: 'Ngập nước sâu 1m do vỡ đê, nhiều hộ dân bị cô lập. Đang cứu hộ khẩn cấp.',
+                reporter: { name: 'Trần Văn L', phone: '0915 678 432' },
+                timeline: [
+                    { time: '09:40', action: 'Tiếp nhận báo cáo sự cố' },
+                    { time: '09:43', action: 'Cảnh báo và sơ tán người dân' },
+                    { time: '09:50', action: 'Triển khai lực lượng cứu hộ' }
+                ]
+            },
+            {
+                id: 'INC012',
+                type: 'disaster',
+                status: 'active',
+                priority: 'high',
+                title: 'Sạt lở đất tại Đà Lạt',
+                address: 'Đường Hồ Tùng Mậu, Đà Lạt, Lâm Đồng',
+                province: 'Lâm Đồng',
+                time: '08:30, 12/11/2023',
+                description: 'Sạt lở đất sau mưa lớn, một số nhà bị vùi lấp. Đang tìm kiếm người mất tích.',
+                reporter: { name: 'Phan Thị M', phone: '0986 543 210' },
+                timeline: [
+                    { time: '08:25', action: 'Tiếp nhận báo cáo sự cố' },
+                    { time: '08:28', action: 'Điều động lực lượng cứu hộ' },
+                    { time: '08:35', action: 'Lực lượng có mặt tại hiện trường' }
+                ]
+            },
+            {
+                id: 'INC013',
+                type: 'fire',
+                status: 'active',
+                priority: 'high',
+                title: 'Cháy kho xưởng tại Nha Trang',
+                address: 'Khu công nghiệp Bắc Nha Trang, Khánh Hòa',
+                province: 'Khánh Hòa',
+                time: '16:20, 12/11/2023',
+                description: 'Cháy lớn tại kho chứa vật liệu xây dựng, khói đen dày đặc. Đang chữa cháy.',
+                reporter: { name: 'Lê Văn N', phone: '0975 432 109' },
+                timeline: [
+                    { time: '16:15', action: 'Tiếp nhận báo cáo sự cố' },
+                    { time: '16:18', action: 'Điều động 4 xe chữa cháy' },
+                    { time: '16:25', action: 'Lực lượng có mặt tại hiện trường' }
+                ]
+            },
+            {
+                id: 'INC014',
+                type: 'accident',
+                status: 'active',
+                priority: 'medium',
+                title: 'Tai nạn giao thông trên Quốc lộ 5',
+                address: 'Quốc lộ 5, Km45, Hải Dương',
+                province: 'Hải Dương',
+                time: '14:50, 12/11/2023',
+                description: 'Va chạm giữa xe khách và xe tải, 5 người bị thương. Đang cấp cứu.',
+                reporter: { name: 'Nguyễn Thị O', phone: '0967 890 123' },
+                timeline: [
+                    { time: '14:45', action: 'Tiếp nhận báo cáo sự cố' },
+                    { time: '14:48', action: 'Điều động 2 xe cứu thương' },
+                    { time: '14:55', action: 'Lực lượng có mặt tại hiện trường' }
+                ]
+            },
+            {
+                id: 'INC015',
+                type: 'flood',
+                status: 'resolved',
+                priority: 'low',
+                title: 'Ngập cục bộ tại trung tâm thành phố',
+                address: 'Đường Phan Ngọc Hiển, TP. Cà Mau',
+                province: 'Cà Mau',
+                time: '10:15, 11/11/2023',
+                description: 'Ngập nước nhẹ do triều cường, đã rút hết. Giao thông thông suốt.',
+                reporter: { name: 'Võ Văn P', phone: '0933 444 555' },
+                timeline: [
+                    { time: '10:10', action: 'Tiếp nhận báo cáo sự cố' },
+                    { time: '10:12', action: 'Thông báo cho công ty thoát nước' },
+                    { time: '11:30', action: 'Nước đã rút hết' }
+                ]
+            },
+            {
+                id: 'INC016',
+                type: 'fire',
+                status: 'active',
+                priority: 'high',
+                title: 'Cháy chợ nổi Cái Răng',
+                address: 'Chợ nổi Cái Răng, Quận Cái Răng, Cần Thơ',
+                province: 'Cần Thơ',
+                time: '03:15, 13/11/2023',
+                description: 'Cháy lớn tại khu vực chợ nổi, nhiều thuyền buôn bị thiêu rụi. Đang chữa cháy.',
+                reporter: { name: 'Lâm Văn Q', phone: '0919 876 543' },
+                timeline: [
+                    { time: '03:10', action: 'Tiếp nhận báo cáo sự cố' },
+                    { time: '03:13', action: 'Điều động 3 xe chữa cháy' },
+                    { time: '03:20', action: 'Lực lượng có mặt tại hiện trường' }
+                ]
+            },
+            {
+                id: 'INC017',
+                type: 'flood',
+                status: 'active',
+                priority: 'high',
+                title: 'Ngập lụt khu vực trung tâm thành phố Huế',
+                address: 'Đường Lê Lợi, TP. Huế, Thừa Thiên Huế',
+                province: 'Thừa Thiên Huế',
+                time: '17:45, 13/11/2023',
+                description: 'Ngập nước sâu 0.8m do mưa lớn kết hợp triều cường. Đang hỗ trợ người dân.',
+                reporter: { name: 'Trần Thị R', phone: '0935 678 901' },
+                timeline: [
+                    { time: '17:40', action: 'Tiếp nhận báo cáo sự cố' },
+                    { time: '17:43', action: 'Cảnh báo người dân' },
+                    { time: '17:50', action: 'Triển khai lực lượng ứng phó' }
+                ]
+            },
+            {
+                id: 'INC018',
+                type: 'accident',
+                status: 'active',
+                priority: 'high',
+                title: 'Tai nạn xe buýt trên cầu Vĩnh Tuy',
+                address: 'Cầu Vĩnh Tuy, Hà Nội',
+                province: 'Hà Nội',
+                time: '08:20, 13/11/2023',
+                description: 'Xe buýt mất lái đâm vào lan can cầu, nhiều hành khách bị thương. Đang cấp cứu.',
+                reporter: { name: 'Nguyễn Văn S', phone: '0971 234 567' },
+                timeline: [
+                    { time: '08:15', action: 'Tiếp nhận báo cáo sự cố' },
+                    { time: '08:18', action: 'Điều động 4 xe cứu thương' },
+                    { time: '08:25', action: 'Lực lượng có mặt tại hiện trường' }
+                ]
+            },
+            {
+                id: 'INC019',
+                type: 'disaster',
+                status: 'active',
+                priority: 'high',
+                title: 'Lở đất tại đèo Prenn',
+                address: 'Đèo Prenn, Đà Lạt, Lâm Đồng',
+                province: 'Lâm Đồng',
+                time: '14:30, 13/11/2023',
+                description: 'Sạt lở đất chặn hoàn toàn quốc lộ 20, nhiều xe bị mắc kẹt. Đang thông đường.',
+                reporter: { name: 'Phạm Văn T', phone: '0982 345 678' },
+                timeline: [
+                    { time: '14:25', action: 'Tiếp nhận báo cáo sự cố' },
+                    { time: '14:28', action: 'Cảnh báo và chặn đường' },
+                    { time: '14:35', action: 'Triển khai lực lượng cứu hộ' }
+                ]
+            },
+            {
+                id: 'INC020',
+                type: 'fire',
+                status: 'active',
+                priority: 'medium',
+                title: 'Cháy kho hàng tại cảng',
+                address: 'Cảng Hải Phòng, Quận Hải An, Hải Phòng',
+                province: 'Hải Phòng',
+                time: '22:10, 13/11/2023',
+                description: 'Cháy tại kho chứa hàng hóa xuất khẩu, thiệt hại ban đầu khoảng 2 tỷ đồng.',
+                reporter: { name: 'Lê Thị U', phone: '0916 789 012' },
+                timeline: [
+                    { time: '22:05', action: 'Tiếp nhận báo cáo sự cố' },
+                    { time: '22:08', action: 'Điều động 2 xe chữa cháy' },
+                    { time: '22:15', action: 'Lực lượng có mặt tại hiện trường' }
+                ]
+            },
+            {
+                id: 'INC021',
+                type: 'flood',
+                status: 'active',
+                priority: 'medium',
+                title: 'Ngập lụt khu du lịch Bãi Sau',
+                address: 'Bãi Sau, TP. Vũng Tàu, Bà Rịa - Vũng Tàu',
+                province: 'Bà Rịa - Vũng Tàu',
+                time: '16:45, 13/11/2023',
+                description: 'Ngập nước do triều cường dâng cao kết hợp mưa lớn.',
+                reporter: { name: 'Võ Văn V', phone: '0936 789 123' },
+                timeline: [
+                    { time: '16:40', action: 'Tiếp nhận báo cáo sự cố' },
+                    { time: '16:43', action: 'Cảnh báo du khách' },
+                    { time: '16:50', action: 'Triển khai lực lượng ứng phó' }
+                ]
+            },
+            {
+                id: 'INC022',
+                type: 'accident',
+                status: 'resolved',
+                priority: 'medium',
+                title: 'Tai nạn tại ngã tư trung tâm',
+                address: 'Ngã tư đường Ngô Gia Tự - Lê Chân, TP. Bắc Ninh',
+                province: 'Bắc Ninh',
+                time: '11:30, 13/11/2023',
+                description: 'Va chạm giữa xe container và xe máy, một người bị thương nhẹ.',
+                reporter: { name: 'Nguyễn Thị W', phone: '0972 345 678' },
+                timeline: [
+                    { time: '11:25', action: 'Tiếp nhận báo cáo sự cố' },
+                    { time: '11:28', action: 'Điều động xe cứu thương' },
+                    { time: '11:35', action: 'Lực lượng có mặt tại hiện trường' },
+                    { time: '12:00', action: 'Sự cố đã được giải quyết' }
+                ]
+            },
+            {
+                id: 'INC023',
+                type: 'disaster',
+                status: 'active',
+                priority: 'high',
+                title: 'Lũ lụt tại huyện Đại Lộc',
+                address: 'Huyện Đại Lộc, Quảng Nam',
+                province: 'Quảng Nam',
+                time: '09:15, 13/11/2023',
+                description: 'Lũ lụt diện rộng, nhiều xã bị cô lập, cần cứu hộ khẩn cấp.',
+                reporter: { name: 'Trần Văn X', phone: '0917 890 123' },
+                timeline: [
+                    { time: '09:10', action: 'Tiếp nhận báo cáo sự cố' },
+                    { time: '09:13', action: 'Cảnh báo và sơ tán người dân' },
+                    { time: '09:20', action: 'Triển khai lực lượng cứu hộ' }
+                ]
+            },
+            {
+                id: 'INC024',
+                type: 'fire',
+                status: 'active',
+                priority: 'high',
+                title: 'Cháy khách sạn tại trung tâm Nha Trang',
+                address: 'Khách sạn A, đường Trần Phú, TP. Nha Trang',
+                province: 'Khánh Hòa',
+                time: '02:30, 14/11/2023',
+                description: 'Cháy lớn tại tầng 5 khách sạn, nhiều du khách mắc kẹt.',
+                reporter: { name: 'Lê Thị Y', phone: '0983 456 789' },
+                timeline: [
+                    { time: '02:25', action: 'Tiếp nhận báo cáo sự cố' },
+                    { time: '02:28', action: 'Điều động 4 xe chữa cháy' },
+                    { time: '02:35', action: 'Lực lượng có mặt tại hiện trường' }
+                ]
+            },
+            {
+                id: 'INC025',
+                type: 'flood',
+                status: 'active',
+                priority: 'medium',
+                title: 'Ngập lụt khu vực nông thôn',
+                address: 'Xã Mỹ Phước, Huyện Cái Bè, Tiền Giang',
+                province: 'Tiền Giang',
+                time: '13:20, 14/11/2023',
+                description: 'Ngập nước sâu 0.6m ảnh hưởng đến sản xuất nông nghiệp.',
+                reporter: { name: 'Phan Văn Z', phone: '0937 890 123' },
+                timeline: [
+                    { time: '13:15', action: 'Tiếp nhận báo cáo sự cố' },
+                    { time: '13:18', action: 'Đánh giá thiệt hại' },
+                    { time: '13:25', action: 'Triển khai lực lượng ứng phó' }
+                ]
+            },
+            {
+                id: 'INC026',
+                type: 'accident',
+                status: 'active',
+                priority: 'high',
+                title: 'Tai nạn xe tải chở hóa chất',
+                address: 'Quốc lộ 5, Km38, Hải Dương',
+                province: 'Hải Dương',
+                time: '10:45, 14/11/2023',
+                description: 'Xe tải chở hóa chất bị lật, có nguy cơ rò rỉ hóa chất.',
+                reporter: { name: 'Nguyễn Văn AA', phone: '0918 901 234' },
+                timeline: [
+                    { time: '10:40', action: 'Tiếp nhận báo cáo sự cố' },
+                    { time: '10:43', action: 'Cảnh báo khu vực xung quanh' },
+                    { time: '10:50', action: 'Triển khai lực lượng đặc biệt' }
+                ]
+            },
+            {
+                id: 'INC027',
+                type: 'disaster',
+                status: 'active',
+                priority: 'high',
+                title: 'Lốc xoáy tại huyện Quỳnh Lưu',
+                address: 'Huyện Quỳnh Lưu, Nghệ An',
+                province: 'Nghệ An',
+                time: '15:30, 14/11/2023',
+                description: 'Lốc xoáy làm tốc mái nhiều nhà dân, cây cối đổ ngã.',
+                reporter: { name: 'Trần Thị BB', phone: '0984 567 890' },
+                timeline: [
+                    { time: '15:25', action: 'Tiếp nhận báo cáo sự cố' },
+                    { time: '15:28', action: 'Đánh giá thiệt hại' },
+                    { time: '15:35', action: 'Triển khai lực lượng cứu hộ' }
+                ]
+            },
+            {
+                id: 'INC028',
+                type: 'fire',
+                status: 'resolved',
+                priority: 'medium',
+                title: 'Cháy rừng phòng hộ',
+                address: 'Rừng phòng hộ Ninh Sơn, Ninh Thuận',
+                province: 'Ninh Thuận',
+                time: '12:15, 14/11/2023',
+                description: 'Cháy rừng quy mô nhỏ, đã được khống chế thành công.',
+                reporter: { name: 'Lê Văn CC', phone: '0938 901 234' },
+                timeline: [
+                    { time: '12:10', action: 'Tiếp nhận báo cáo sự cố' },
+                    { time: '12:13', action: 'Điều động lực lượng' },
+                    { time: '12:40', action: 'Dập tắt đám cháy' },
+                    { time: '13:00', action: 'Sự cố đã được giải quyết' }
+                ]
+            },
+            {
+                id: 'INC029',
+                type: 'flood',
+                status: 'active',
+                priority: 'medium',
+                title: 'Ngập lụt khu vực ven biển',
+                address: 'Huyện Trần Đề, Sóc Trăng',
+                province: 'Sóc Trăng',
+                time: '18:30, 14/11/2023',
+                description: 'Ngập nước do triều cường dâng cao, ảnh hưởng đến nuôi trồng thủy sản.',
+                reporter: { name: 'Phạm Thị DD', phone: '0919 012 345' },
+                timeline: [
+                    { time: '18:25', action: 'Tiếp nhận báo cáo sự cố' },
+                    { time: '18:28', action: 'Đánh giá thiệt hại' },
+                    { time: '18:35', action: 'Triển khai lực lượng ứng phó' }
+                ]
+            },
+            {
+                id: 'INC030',
+                type: 'accident',
+                status: 'active',
+                priority: 'high',
+                title: 'Tai nạn xe khách trên cao tốc',
+                address: 'Cao tốc TP.HCM - Long Thành - Dầu Giây, Km50',
+                province: 'Đồng Nai',
+                time: '07:45, 15/11/2023',
+                description: 'Xe khách va chạm với xe tải, 10 người bị thương.',
+                reporter: { name: 'Nguyễn Văn EE', phone: '0973 456 789' },
+                timeline: [
+                    { time: '07:40', action: 'Tiếp nhận báo cáo sự cố' },
+                    { time: '07:43', action: 'Điều động 3 xe cứu thương' },
+                    { time: '07:50', action: 'Lực lượng có mặt tại hiện trường' }
+                ]
+            },
+            {
+                id: 'INC031',
+                type: 'disaster',
+                status: 'active',
+                priority: 'high',
+                title: 'Sạt lở núi tại huyện Vĩnh Thạnh',
+                address: 'Huyện Vĩnh Thạnh, Bình Định',
+                province: 'Bình Định',
+                time: '11:20, 15/11/2023',
+                description: 'Sạt lở đất chặn đường liên xã, nhiều hộ dân bị cô lập.',
+                reporter: { name: 'Trần Văn FF', phone: '0985 678 901' },
+                timeline: [
+                    { time: '11:15', action: 'Tiếp nhận báo cáo sự cố' },
+                    { time: '11:18', action: 'Cảnh báo và sơ tán người dân' },
+                    { time: '11:25', action: 'Triển khai lực lượng cứu hộ' }
+                ]
+            },
+            {
+                id: 'INC032',
+                type: 'fire',
+                status: 'active',
+                priority: 'medium',
+                title: 'Cháy xưởng gỗ',
+                address: 'Xưởng sản xuất đồ gỗ, TP. Thái Nguyên',
+                province: 'Thái Nguyên',
+                time: '14:10, 15/11/2023',
+                description: 'Cháy tại xưởng sản xuất đồ gỗ, thiệt hại khoảng 500 triệu đồng.',
+                reporter: { name: 'Lê Thị GG', phone: '0939 012 345' },
+                timeline: [
+                    { time: '14:05', action: 'Tiếp nhận báo cáo sự cố' },
+                    { time: '14:08', action: 'Điều động 2 xe chữa cháy' },
+                    { time: '14:15', action: 'Lực lượng có mặt tại hiện trường' }
+                ]
+            },
+            {
+                id: 'INC033',
+                type: 'flood',
+                status: 'active',
+                priority: 'low',
+                title: 'Ngập cục bộ sau mưa',
+                address: 'Đường Trần Hưng Đạo, TP. Nam Định',
+                province: 'Nam Định',
+                time: '19:30, 15/11/2023',
+                description: 'Ngập nước nhẹ do hệ thống thoát nước quá tải.',
+                reporter: { name: 'Phạm Văn HH', phone: '0912 345 678' },
+                timeline: [
+                    { time: '19:25', action: 'Tiếp nhận báo cáo sự cố' },
+                    { time: '19:28', action: 'Kiểm tra hệ thống thoát nước' },
+                    { time: '19:35', action: 'Xử lý điểm ngập' }
+                ]
+            },
+            {
+                id: 'INC034',
+                type: 'accident',
+                status: 'active',
+                priority: 'high',
+                title: 'Tai nạn tàu thủy trên sông Vàm Cỏ',
+                address: 'Sông Vàm Cỏ, Huyện Cần Giuộc, Long An',
+                province: 'Long An',
+                time: '09:15, 16/11/2023',
+                description: 'Va chạm giữa tàu chở hàng và tàu cá, 3 người mất tích.',
+                reporter: { name: 'Nguyễn Thị II', phone: '0986 789 012' },
+                timeline: [
+                    { time: '09:10', action: 'Tiếp nhận báo cáo sự cố' },
+                    { time: '09:13', action: 'Điều động tàu cứu hộ' },
+                    { time: '09:20', action: 'Lực lượng có mặt tại hiện trường' }
+                ]
+            },
+            {
+                id: 'INC035',
+                type: 'disaster',
+                status: 'active',
+                priority: 'high',
+                title: 'Lở đất tại Sa Pa',
+                address: 'Xã San Sả Hồ, Huyện Sa Pa, Lào Cai',
+                province: 'Lào Cai',
+                time: '13:45, 16/11/2023',
+                description: 'Sạt lở đất do mưa lớn kéo dài, nhiều nhà bị vùi lấp.',
+                reporter: { name: 'Trần Văn JJ', phone: '0913 456 789' },
+                timeline: [
+                    { time: '13:40', action: 'Tiếp nhận báo cáo sự cố' },
+                    { time: '13:43', action: 'Cảnh báo và sơ tán người dân' },
+                    { time: '13:50', action: 'Triển khai lực lượng cứu hộ' }
+                ]
+            }
 ];
 
 // Cấu hình phân trang

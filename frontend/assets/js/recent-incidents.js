@@ -601,481 +601,658 @@ const allIncidents = [
     }
 ];
 
+
+// Biến toàn cục
+let currentNews = [];
 let currentPage = 1;
-const incidentsPerPage = 8;
+const itemsPerPage = 6;
+let currentFilters = {
+    type: 'all',
+    location: 'all',
+    priority: 'all'
+};
 
-// Khởi tạo phần Sự Cố Gần Đây
-function initRecentIncidents() {
-    displayRecentIncidents();
-    updateRecentStatistics();
-    setupRecentEventListeners();
-    initMap(); // Khởi tạo bản đồ
-}
+// Khởi tạo trang
+document.addEventListener('DOMContentLoaded', function() {
+    initializePage();
+    setupEventListeners();
+});
 
-// Khởi tạo bản đồ
-function initMap() {
-    // Tạo bản đồ với trung tâm là Việt Nam
-    const map = L.map('incident-map').setView([16.0, 108.0], 6);
-    
-    // Thêm layer bản đồ
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
-    }).addTo(map);
-    
-    // Lưu bản đồ vào biến toàn cục để sử dụng sau
-    window.incidentMap = map;
-    
-    // Thêm marker cho tất cả sự cố
-    addIncidentsToMap(map, allIncidents);
-}
-
-// Thêm các sự cố lên bản đồ
-function addIncidentsToMap(map, incidents) {
-    // Xóa các marker cũ (nếu có)
-    if (window.incidentMarkers) {
-        window.incidentMarkers.clearLayers();
+function initializePage() {
+    // Khởi tạo Feather Icons
+    if (typeof feather !== 'undefined') {
+        feather.replace();
     }
     
-    // Tạo layer group mới
-    window.incidentMarkers = L.layerGroup().addTo(map);
+    // Tải dữ liệu ban đầu
+    loadNewsData();
     
-    // Tọa độ mẫu cho các tỉnh thành (trong thực tế cần API geocoding)
-    const provinceCoordinates = {
-        'Hà Nội': [21.0278, 105.8342],
-        'TP.HCM': [10.8231, 106.6297],
-        'Đà Nẵng': [16.0544, 108.2022],
-        'Thừa Thiên Huế': [16.4637, 107.5909],
-        'Cần Thơ': [10.0458, 105.7469],
-        'Hải Phòng': [20.8449, 106.6881],
-        'Thanh Hóa': [19.8076, 105.7764],
-        'Nghệ An': [18.6796, 105.6813],
-        'Bắc Ninh': [21.1861, 106.0763],
-        'Tiền Giang': [10.4493, 106.3425],
-        'Lâm Đồng': [11.9404, 108.4583],
-        'Khánh Hòa': [12.2388, 109.1967],
-        'Hải Dương': [20.9373, 106.3146],
-        'Cà Mau': [9.1776, 105.1521],
-        'Bà Rịa - Vũng Tàu': [10.4114, 107.1362],
-        'Quảng Nam': [15.5394, 108.0191],
-        'Ninh Thuận': [11.6739, 108.8638],
-        'Sóc Trăng': [9.6025, 105.9739],
-        'Đồng Nai': [11.0041, 107.0750],
-        'Bình Định': [13.7696, 109.2319],
-        'Thái Nguyên': [21.5925, 105.8442],
-        'Nam Định': [20.2581, 106.1789],
-        'Long An': [10.6956, 106.1741],
-        'Lào Cai': [22.3402, 104.1479]
-    };
-    
-    incidents.forEach(incident => {
-        // Lấy tọa độ từ tên tỉnh/thành phố
-        const coords = provinceCoordinates[incident.province] || [16.0, 108.0];
-        
-        // Tạo icon dựa trên loại sự cố
-        let iconColor, iconType;
-        switch(incident.type) {
-            case 'fire':
-                iconColor = 'red';
-                iconType = 'flame';
-                break;
-            case 'flood':
-                iconColor = 'blue';
-                iconType = 'droplet';
-                break;
-            case 'accident':
-                iconColor = 'orange';
-                iconType = 'activity';
-                break;
-            case 'disaster':
-                iconColor = 'purple';
-                iconType = 'alert-octagon';
-                break;
-        }
-        
-        // Tạo custom icon
-        const customIcon = L.divIcon({
-            className: `custom-marker ${incident.type}`,
-            html: `
-                <div class="marker-icon bg-${iconColor}-500 border-2 border-white shadow-lg rounded-full w-8 h-8 flex items-center justify-center text-white text-xs font-bold">
-                    <i data-feather="${iconType}" class="w-3 h-3"></i>
-                </div>
-            `,
-            iconSize: [32, 32],
-            iconAnchor: [16, 16]
-        });
-        
-        // Tạo marker
-        const marker = L.marker(coords, { icon: customIcon }).addTo(window.incidentMarkers);
-        
-        // Thêm popup thông tin
-        marker.bindPopup(`
-            <div class="incident-popup">
-                <h4 class="font-bold text-lg mb-2">${incident.title}</h4>
-                <div class="space-y-1 text-sm">
-                    <p><strong>ID:</strong> ${incident.id}</p>
-                    <p><strong>Loại:</strong> ${getIncidentTypeText(incident.type)}</p>
-                    <p><strong>Trạng thái:</strong> ${incident.status === 'active' ? 'Đang xử lý' : 'Đã giải quyết'}</p>
-                    <p><strong>Ưu tiên:</strong> ${getPriorityText(incident.priority)}</p>
-                    <p><strong>Địa chỉ:</strong> ${incident.address}</p>
-                    <p><strong>Thời gian:</strong> ${incident.time}</p>
-                </div>
-                <button onclick="focusOnIncident('${incident.id}')" class="mt-3 w-full bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition">
-                    Xem chi tiết
-                </button>
-            </div>
-        `);
-        
-        // Lưu thông tin incident vào marker
-        marker.incidentId = incident.id;
-    });
-    
-    feather.replace();
+    // Hiển thị bản tin đầu tiên
+    displayNews(currentPage);
 }
 
-// Hiển thị danh sách sự cố
-function displayRecentIncidents(incidents = allIncidents) {
-    const container = document.getElementById('recent-incidents-list');
-    container.innerHTML = '';
+function setupEventListeners() {
+    // Lọc theo loại tin
+    document.getElementById('filter-type').addEventListener('change', function(e) {
+        currentFilters.type = e.target.value;
+        applyFilters();
+    });
+    
+    // Lọc theo khu vực
+    document.getElementById('filter-location').addEventListener('change', function(e) {
+        currentFilters.location = e.target.value;
+        applyFilters();
+    });
+    
+    // Làm mới bản tin
+    document.getElementById('refresh-news').addEventListener('click', function() {
+        refreshNews();
+    });
+    
+    // Tab lọc nhanh
+    document.querySelectorAll('.filter-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            const filter = this.getAttribute('data-filter');
+            handleQuickFilter(filter);
+        });
+    });
+    
+    // Đặt lại bộ lọc
+    document.getElementById('reset-filters').addEventListener('click', function() {
+        resetFilters();
+    });
+    
+    // Đóng modal
+    document.getElementById('close-modal').addEventListener('click', closeModal);
+    
+    // Đóng modal khi click bên ngoài
+    document.getElementById('news-modal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeModal();
+        }
+    });
+}
 
-    // Phân trang
-    const startIndex = (currentPage - 1) * incidentsPerPage;
-    const endIndex = startIndex + incidentsPerPage;
-    const paginatedIncidents = incidents.slice(startIndex, endIndex);
+function loadNewsData() {
+    // Trong thực tế, đây sẽ là API call
+    // Hiện tại sử dụng dữ liệu mẫu
+    currentNews = [...sampleNewsData];
+}
 
-    if (paginatedIncidents.length === 0) {
-        container.innerHTML = `
-            <div class="col-span-2 text-center py-12">
-                <i data-feather="search" class="w-16 h-16 text-gray-400 mx-auto mb-4"></i>
-                <h3 class="text-lg font-medium text-gray-900 mb-2">Không tìm thấy sự cố nào</h3>
-                <p class="text-gray-500">Hãy thử thay đổi bộ lọc hoặc từ khóa tìm kiếm</p>
+function displayNews(page = 1) {
+    const newsGrid = document.getElementById('news-grid');
+    const loadingIndicator = document.getElementById('loading-indicator');
+    const emptyState = document.getElementById('empty-state');
+    
+    // Hiển thị loading
+    showLoading(true);
+    
+    // Giả lập delay loading
+    setTimeout(() => {
+        const filteredNews = getFilteredNews();
+        const paginatedNews = paginateNews(filteredNews, page);
+        
+        if (paginatedNews.data.length === 0) {
+            newsGrid.classList.add('hidden');
+            emptyState.classList.remove('hidden');
+        } else {
+            newsGrid.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+            renderNewsCards(paginatedNews.data);
+        }
+        
+        renderPagination(paginatedNews.totalPages, page);
+        showLoading(false);
+        
+        // Cập nhật Feather Icons cho các thẻ mới
+        if (typeof feather !== 'undefined') {
+            feather.replace();
+        }
+    }, 500);
+}
+
+function getFilteredNews() {
+    return currentNews.filter(news => {
+        const typeMatch = currentFilters.type === 'all' || news.type === currentFilters.type;
+        const locationMatch = currentFilters.location === 'all' || news.location === currentFilters.location;
+        const priorityMatch = currentFilters.priority === 'all' || 
+                             (currentFilters.priority === 'high-priority' && news.priority === 'high');
+        
+        return typeMatch && locationMatch && priorityMatch;
+    });
+}
+
+function paginateNews(news, page) {
+    const startIndex = (page - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedData = news.slice(startIndex, endIndex);
+    const totalPages = Math.ceil(news.length / itemsPerPage);
+    
+    return {
+        data: paginatedData,
+        totalPages: totalPages,
+        currentPage: page
+    };
+}
+
+function renderNewsCards(news) {
+    const newsGrid = document.getElementById('news-grid');
+    
+    newsGrid.innerHTML = news.map(item => `
+        <div class="news-card bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer border border-gray-200" data-id="${item.id}">
+            <div class="relative">
+                <img src="${item.image}" alt="${item.title}" class="w-full h-48 object-cover">
+                <div class="absolute top-4 left-4 flex flex-wrap gap-2">
+                    <span class="type-badge ${getTypeBadgeClass(item.type)} px-3 py-1 rounded-full text-xs font-medium text-white">
+                        ${getTypeText(item.type)}
+                    </span>
+                    ${item.priority === 'high' ? `
+                    <span class="priority-badge bg-red-500 px-3 py-1 rounded-full text-xs font-medium text-white">
+                        Ưu tiên cao
+                    </span>
+                    ` : ''}
+                    ${item.verified ? `
+                    <span class="verified-badge bg-green-500 px-3 py-1 rounded-full text-xs font-medium text-white">
+                        Đã xác minh
+                    </span>
+                    ` : ''}
+                </div>
             </div>
-        `;
-        feather.replace();
+            <div class="p-6">
+                <h3 class="text-xl font-bold text-gray-900 mb-3 line-clamp-2">${item.title}</h3>
+                <div class="flex items-center text-gray-500 text-sm mb-4">
+                    <i data-feather="map-pin" class="w-4 h-4 mr-1"></i>
+                    <span class="mr-4">${getLocationText(item.location)}</span>
+                    <i data-feather="clock" class="w-4 h-4 mr-1"></i>
+                    <span>${formatTimeAgo(item.timestamp)}</span>
+                </div>
+                <p class="text-gray-600 mb-4 line-clamp-3">${item.description}</p>
+                <div class="flex justify-between items-center">
+                    <button class="view-details-btn px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition text-sm font-medium">
+                        Xem chi tiết
+                    </button>
+                    <span class="status-indicator ${item.status === 'active' ? 'text-green-500' : 'text-gray-400'} text-sm">
+                        ${item.status === 'active' ? 'Đang hoạt động' : 'Đã kết thúc'}
+                    </span>
+                </div>
+            </div>
+        </div>
+    `).join('');
+    
+    // Thêm event listeners cho các thẻ tin
+    document.querySelectorAll('.news-card').forEach(card => {
+        card.addEventListener('click', function() {
+            const newsId = parseInt(this.getAttribute('data-id'));
+            openNewsModal(newsId);
+        });
+    });
+    
+    document.querySelectorAll('.view-details-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const card = this.closest('.news-card');
+            const newsId = parseInt(card.getAttribute('data-id'));
+            openNewsModal(newsId);
+        });
+    });
+}
+
+function renderPagination(totalPages, currentPage) {
+    const paginationContainer = document.getElementById('pagination');
+    
+    if (totalPages <= 1) {
+        paginationContainer.innerHTML = '';
         return;
     }
-
-    paginatedIncidents.forEach(incident => {
-        let typeClass = '';
-        let typeIcon = '';
-        let typeColor = '';
-        
-        switch(incident.type) {
-            case 'fire':
-                typeClass = 'incident-fire';
-                typeIcon = 'flame';
-                typeColor = 'red';
-                break;
-            case 'flood':
-                typeClass = 'incident-flood';
-                typeIcon = 'droplet';
-                typeColor = 'blue';
-                break;
-            case 'accident':
-                typeClass = 'incident-accident';
-                typeIcon = 'activity';
-                typeColor = 'orange';
-                break;
-            case 'disaster':
-                typeClass = 'incident-disaster';
-                typeIcon = 'alert-octagon';
-                typeColor = 'purple';
-                break;
-        }
-        
-        const incidentCard = document.createElement('div');
-        incidentCard.className = `incident-card bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300 ${typeClass}`;
-        incidentCard.innerHTML = `
-            <div class="flex justify-between items-start mb-4">
-                <div class="flex-1">
-                    <h4 class="font-bold text-lg text-gray-900 mb-2">${incident.title}</h4>
-                    <div class="flex items-center space-x-2 mb-3">
-                        <span class="status-badge ${incident.status === 'active' ? 'status-active' : 'status-resolved'}">
-                            ${incident.status === 'active' ? 'Đang xử lý' : 'Đã giải quyết'}
-                        </span>
-                        <span class="status-badge ${incident.priority === 'high' ? 'priority-high' : incident.priority === 'medium' ? 'priority-medium' : 'priority-low'}">
-                            ${incident.priority === 'high' ? 'Ưu tiên cao' : incident.priority === 'medium' ? 'Ưu tiên trung bình' : 'Ưu tiên thấp'}
-                        </span>
-                    </div>
-                </div>
-                <div class="w-12 h-12 rounded-full flex items-center justify-center bg-${typeColor}-100 text-${typeColor}-600">
-                    <i data-feather="${typeIcon}" class="w-6 h-6"></i>
-                </div>
-            </div>
-            
-            <p class="text-gray-600 mb-4 line-clamp-2">${incident.description}</p>
-            
-            <div class="space-y-2 mb-4">
-                <div class="flex items-center text-sm text-gray-500">
-                    <i data-feather="map-pin" class="w-4 h-4 mr-2"></i>
-                    <span>${incident.address}</span>
-                </div>
-                <div class="flex items-center text-sm text-gray-500">
-                    <i data-feather="clock" class="w-4 h-4 mr-2"></i>
-                    <span>${incident.time}</span>
-                </div>
-            </div>
-            
-            <div class="flex justify-between items-center pt-4 border-t border-gray-100">
-                <span class="text-sm text-gray-500">${incident.id}</span>
-                <div class="flex space-x-2">
-                    <button class="px-4 py-2 bg-${typeColor}-500 text-white rounded-lg hover:bg-${typeColor}-600 transition flex items-center view-on-map" data-id="${incident.id}">
-                        <i data-feather="map" class="w-4 h-4 mr-1"></i>
-                        Xem trên bản đồ
-                    </button>
-                </div>
-            </div>
-        `;
-        
-        container.appendChild(incidentCard);
-    });
     
-    setupPagination(incidents.length);
-    feather.replace();
-    
-    // Thêm sự kiện click để hiển thị trên bản đồ
-    document.querySelectorAll('.view-on-map').forEach(button => {
-        button.addEventListener('click', function() {
-            const incidentId = this.getAttribute('data-id');
-            focusOnIncident(incidentId);
-        });
-    });
-}
-
-// Tập trung vào sự cố trên bản đồ
-function focusOnIncident(incidentId) {
-    const incident = allIncidents.find(i => i.id === incidentId);
-    if (!incident || !window.incidentMap) return;
-    
-    // Tìm marker tương ứng
-    let targetMarker = null;
-    window.incidentMarkers.eachLayer(layer => {
-        if (layer.incidentId === incidentId) {
-            targetMarker = layer;
-        }
-    });
-    
-    if (targetMarker) {
-        // Phóng to và di chuyển bản đồ đến marker
-        window.incidentMap.setView(targetMarker.getLatLng(), 13);
-        
-        // Mở popup
-        targetMarker.openPopup();
-        
-        // Highlight marker
-        highlightMarker(targetMarker);
-    }
-    
-    // Chuyển sang tab bản đồ
-    switchToMapView();
-}
-
-// Highlight marker
-function highlightMarker(marker) {
-    // Reset tất cả markers
-    window.incidentMarkers.eachLayer(layer => {
-        const icon = layer.getElement();
-        if (icon) {
-            icon.classList.remove('marker-highlight');
-            icon.classList.add('marker-normal');
-        }
-    });
-    
-    // Highlight marker được chọn
-    const icon = marker.getElement();
-    if (icon) {
-        icon.classList.remove('marker-normal');
-        icon.classList.add('marker-highlight');
-        
-        // Thêm hiệu ứng pulse
-        icon.classList.add('animate-pulse');
-        setTimeout(() => {
-            icon.classList.remove('animate-pulse');
-        }, 2000);
-    }
-}
-
-// Chuyển sang chế độ xem bản đồ
-function switchToMapView() {
-    // Ẩn danh sách, hiện bản đồ
-    document.getElementById('recent-incidents-container').classList.add('hidden');
-    document.getElementById('map-view-container').classList.remove('hidden');
-    
-    // Cập nhật nút
-    document.getElementById('show-list-view').classList.remove('hidden');
-    document.getElementById('show-map-view').classList.add('hidden');
-}
-
-// Chuyển sang chế độ xem danh sách
-function switchToListView() {
-    // Ẩn bản đồ, hiện danh sách
-    document.getElementById('map-view-container').classList.add('hidden');
-    document.getElementById('recent-incidents-container').classList.remove('hidden');
-    
-    // Cập nhật nút
-    document.getElementById('show-map-view').classList.remove('hidden');
-    document.getElementById('show-list-view').classList.add('hidden');
-}
-
-// Áp dụng bộ lọc cho cả danh sách và bản đồ
-function applyRecentFilters() {
-    const searchTerm = document.getElementById('search-recent-incidents').value.toLowerCase();
-    const typeFilter = document.getElementById('recent-type-filter').value;
-    const statusFilter = document.getElementById('recent-status-filter').value;
-    const sortBy = document.getElementById('sort-by').value;
-    
-    let filteredIncidents = allIncidents.filter(incident => {
-        const searchMatch = searchTerm === '' || 
-            incident.title.toLowerCase().includes(searchTerm) ||
-            incident.address.toLowerCase().includes(searchTerm) ||
-            incident.description.toLowerCase().includes(searchTerm);
-        
-        const typeMatch = typeFilter === 'all' || incident.type === typeFilter;
-        const statusMatch = statusFilter === 'all' || incident.status === statusFilter;
-        
-        return searchMatch && typeMatch && statusMatch;
-    });
-    
-    // Sắp xếp
-    switch(sortBy) {
-        case 'newest':
-            filteredIncidents.sort((a, b) => new Date(b.time) - new Date(a.time));
-            break;
-        case 'oldest':
-            filteredIncidents.sort((a, b) => new Date(a.time) - new Date(b.time));
-            break;
-        case 'priority':
-            const priorityOrder = { high: 3, medium: 2, low: 1 };
-            filteredIncidents.sort((a, b) => priorityOrder[b.priority] - priorityOrder[a.priority]);
-            break;
-    }
-    
-    currentPage = 1;
-    displayRecentIncidents(filteredIncidents);
-    
-    // Cập nhật bản đồ với các sự cố đã lọc
-    if (window.incidentMap) {
-        addIncidentsToMap(window.incidentMap, filteredIncidents);
-    }
-    
-    updateRecentStatistics();
-}
-
-// Các hàm còn lại giữ nguyên...
-function setupPagination(totalIncidents) {
-    const paginationContainer = document.getElementById('recent-pagination');
-    const totalPages = Math.ceil(totalIncidents / incidentsPerPage);
-    
-    paginationContainer.innerHTML = '';
-    
-    if (totalPages <= 1) return;
+    let paginationHTML = '';
     
     // Nút Previous
     if (currentPage > 1) {
-        const prevButton = document.createElement('button');
-        prevButton.className = 'px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center';
-        prevButton.innerHTML = '<i data-feather="chevron-left" class="w-4 h-4"></i>';
-        prevButton.addEventListener('click', () => {
-            currentPage--;
-            displayRecentIncidents();
-        });
-        paginationContainer.appendChild(prevButton);
+        paginationHTML += `
+            <button class="pagination-btn px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition" data-page="${currentPage - 1}">
+                <i data-feather="chevron-left" class="w-4 h-4"></i>
+            </button>
+        `;
     }
     
-    // Các nút trang
+    // Các trang
     for (let i = 1; i <= totalPages; i++) {
-        const pageButton = document.createElement('button');
-        pageButton.className = `px-3 py-2 border rounded-lg ${
-            i === currentPage 
-            ? 'bg-red-500 text-white border-red-500' 
-            : 'border-gray-300 hover:bg-gray-50'
-        }`;
-        pageButton.textContent = i;
-        pageButton.addEventListener('click', () => {
-            currentPage = i;
-            displayRecentIncidents();
-        });
-        paginationContainer.appendChild(pageButton);
+        if (i === currentPage) {
+            paginationHTML += `
+                <button class="pagination-btn px-4 py-2 bg-red-500 text-white border border-red-500 rounded-md font-medium" data-page="${i}">
+                    ${i}
+                </button>
+            `;
+        } else {
+            paginationHTML += `
+                <button class="pagination-btn px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition" data-page="${i}">
+                    ${i}
+                </button>
+            `;
+        }
     }
     
     // Nút Next
     if (currentPage < totalPages) {
-        const nextButton = document.createElement('button');
-        nextButton.className = 'px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center';
-        nextButton.innerHTML = '<i data-feather="chevron-right" class="w-4 h-4"></i>';
-        nextButton.addEventListener('click', () => {
-            currentPage++;
-            displayRecentIncidents();
-        });
-        paginationContainer.appendChild(nextButton);
+        paginationHTML += `
+            <button class="pagination-btn px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition" data-page="${currentPage + 1}">
+                <i data-feather="chevron-right" class="w-4 h-4"></i>
+            </button>
+        `;
     }
     
-    feather.replace();
+    paginationContainer.innerHTML = paginationHTML;
+    
+    // Thêm event listeners cho phân trang
+    document.querySelectorAll('.pagination-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const page = parseInt(this.getAttribute('data-page'));
+            currentPage = page;
+            displayNews(page);
+            
+            // Scroll to top
+            document.getElementById('news-section').scrollIntoView({ 
+                behavior: 'smooth' 
+            });
+        });
+    });
+    
+    // Cập nhật Feather Icons
+    if (typeof feather !== 'undefined') {
+        feather.replace();
+    }
 }
 
-function updateRecentStatistics() {
-    const total = allIncidents.length;
-    const active = allIncidents.filter(i => i.status === 'active').length;
-    const resolved = allIncidents.filter(i => i.status === 'resolved').length;
-    const today = allIncidents.filter(i => i.time.includes('12/11/2023') || i.time.includes('13/11/2023')).length;
+function openNewsModal(newsId) {
+    const newsItem = currentNews.find(item => item.id === newsId);
+    if (!newsItem) return;
     
-    document.getElementById('recent-total-incidents').textContent = total;
-    document.getElementById('recent-active-incidents').textContent = active;
-    document.getElementById('recent-resolved-incidents').textContent = resolved;
-    document.getElementById('recent-today-incidents').textContent = today;
+    const modal = document.getElementById('news-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalContent = document.getElementById('modal-content');
+    
+    modalTitle.textContent = newsItem.title;
+    modalContent.innerHTML = generateModalContent(newsItem);
+    
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    
+    // Thêm event listeners cho các nút trong modal
+    setupModalButtons(newsItem);
+    
+    // Cập nhật Feather Icons
+    if (typeof feather !== 'undefined') {
+        feather.replace();
+    }
 }
 
-function setupRecentEventListeners() {
-    // Bộ lọc tìm kiếm
-    document.getElementById('search-recent-incidents').addEventListener('input', applyRecentFilters);
-    document.getElementById('recent-type-filter').addEventListener('change', applyRecentFilters);
-    document.getElementById('recent-status-filter').addEventListener('change', applyRecentFilters);
-    document.getElementById('sort-by').addEventListener('change', applyRecentFilters);
+function generateModalContent(newsItem) {
+    let content = `
+        <div class="flex flex-wrap gap-4 mb-6">
+            <span class="${getTypeBadgeClass(newsItem.type)} px-3 py-1 rounded-full text-sm font-medium text-white">
+                ${getTypeText(newsItem.type)}
+            </span>
+            ${newsItem.priority === 'high' ? `
+            <span class="bg-red-500 px-3 py-1 rounded-full text-sm font-medium text-white">
+                Ưu tiên cao
+            </span>
+            ` : ''}
+            ${newsItem.verified ? `
+            <span class="bg-green-500 px-3 py-1 rounded-full text-sm font-medium text-white">
+                Đã xác minh
+            </span>
+            ` : ''}
+            <span class="bg-blue-500 px-3 py-1 rounded-full text-sm font-medium text-white">
+                ${getLocationText(newsItem.location)}
+            </span>
+        </div>
+        
+        <div class="flex items-center text-gray-600 mb-6">
+            <i data-feather="clock" class="w-5 h-5 mr-2"></i>
+            <span>${formatDateTime(newsItem.timestamp)}</span>
+        </div>
+        
+        <div class="prose max-w-none">
+            <p class="text-gray-700 text-lg leading-relaxed">${newsItem.description}</p>
+        </div>
+    `;
     
-    // Nút đặt lại
-    document.getElementById('reset-recent-filters').addEventListener('click', resetRecentFilters);
+    // Nội dung cụ thể theo loại tin
+    switch (newsItem.type) {
+        case 'emergency':
+            content += `
+                <div class="bg-red-50 border border-red-200 rounded-lg p-6 mt-6">
+                    <h4 class="font-bold text-red-800 mb-4 flex items-center">
+                        <i data-feather="alert-triangle" class="w-5 h-5 mr-2"></i>
+                        Thông tin khẩn cấp
+                    </h4>
+                    <div class="space-y-3">
+                        <div class="flex items-start">
+                            <i data-feather="users" class="w-4 h-4 mr-2 mt-1 text-red-600"></i>
+                            <span class="text-red-700"><strong>Thương vong:</strong> ${newsItem.casualties}</span>
+                        </div>
+                        <div class="flex items-start">
+                            <i data-feather="map" class="w-4 h-4 mr-2 mt-1 text-red-600"></i>
+                            <span class="text-red-700"><strong>Khu vực ảnh hưởng:</strong> ${newsItem.affectedAreas}</span>
+                        </div>
+                        <div class="flex items-start">
+                            <i data-feather="tool" class="w-4 h-4 mr-2 mt-1 text-red-600"></i>
+                            <span class="text-red-700"><strong>Hỗ trợ cần thiết:</strong> ${newsItem.requiredSupport.join(', ')}</span>
+                        </div>
+                        <div class="flex items-start">
+                            <i data-feather="phone" class="w-4 h-4 mr-2 mt-1 text-red-600"></i>
+                            <span class="text-red-700"><strong>Liên hệ:</strong> ${newsItem.contact}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            break;
+            
+        case 'assistance':
+            content += `
+                <div class="bg-orange-50 border border-orange-200 rounded-lg p-6 mt-6">
+                    <h4 class="font-bold text-orange-800 mb-4 flex items-center">
+                        <i data-feather="heart" class="w-5 h-5 mr-2"></i>
+                        Thông tin cứu trợ
+                    </h4>
+                    <div class="space-y-3">
+                        <div class="flex items-start">
+                            <i data-feather="package" class="w-4 h-4 mr-2 mt-1 text-orange-600"></i>
+                            <span class="text-orange-700"><strong>Vật phẩm cần thiết:</strong> ${newsItem.donationsNeeded.join(', ')}</span>
+                        </div>
+                        <div class="flex items-start">
+                            <i data-feather="map-pin" class="w-4 h-4 mr-2 mt-1 text-orange-600"></i>
+                            <span class="text-orange-700"><strong>Điểm tập kết:</strong><br>${newsItem.collectionPoints.join('<br>')}</span>
+                        </div>
+                        <div class="flex items-start">
+                            <i data-feather="phone" class="w-4 h-4 mr-2 mt-1 text-orange-600"></i>
+                            <span class="text-orange-700"><strong>Liên hệ:</strong> ${newsItem.contact}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            break;
+            
+        case 'volunteer':
+            content += `
+                <div class="bg-green-50 border border-green-200 rounded-lg p-6 mt-6">
+                    <h4 class="font-bold text-green-800 mb-4 flex items-center">
+                        <i data-feather="users" class="w-5 h-5 mr-2"></i>
+                        Thông tin tình nguyện
+                    </h4>
+                    <div class="space-y-3">
+                        <div class="flex items-start">
+                            <i data-feather="user-check" class="w-4 h-4 mr-2 mt-1 text-green-600"></i>
+                            <span class="text-green-700"><strong>Cần tình nguyện viên:</strong> ${newsItem.volunteerNeeds.join(', ')}</span>
+                        </div>
+                        <div class="flex items-start">
+                            <i data-feather="map-pin" class="w-4 h-4 mr-2 mt-1 text-green-600"></i>
+                            <span class="text-green-700"><strong>Điểm hẹn:</strong> ${newsItem.meetingPoint}</span>
+                        </div>
+                        <div class="flex items-start">
+                            <i data-feather="phone" class="w-4 h-4 mr-2 mt-1 text-green-600"></i>
+                            <span class="text-green-700"><strong>Liên hệ:</strong> ${newsItem.contact}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            break;
+    }
     
-    // Nút chuyển đổi giữa danh sách và bản đồ
-    document.getElementById('show-map-view').addEventListener('click', switchToMapView);
-    document.getElementById('show-list-view').addEventListener('click', switchToListView);
+    return content;
 }
 
-function resetRecentFilters() {
-    document.getElementById('search-recent-incidents').value = '';
-    document.getElementById('recent-type-filter').value = 'all';
-    document.getElementById('recent-status-filter').value = 'all';
-    document.getElementById('sort-by').value = 'newest';
+function setupModalButtons(newsItem) {
+    // Xem trên bản đồ
+    document.querySelector('.view-on-map').addEventListener('click', function() {
+        alert(`Chuyển hướng đến bản đồ: ${newsItem.title}`);
+        // Trong thực tế: window.location.href = `map.html?news=${newsItem.id}`;
+    });
+    
+    // Báo cáo sự cố
+    document.querySelector('.report-incident').addEventListener('click', function() {
+        window.location.href = 'post.html#report';
+    });
+    
+    // Ủng hộ
+    document.querySelector('.donate-btn').addEventListener('click', function() {
+        alert(`Chuyển hướng đến trang ủng hộ cho: ${newsItem.title}`);
+    });
+    
+    // Chia sẻ
+    document.querySelector('.share-btn').addEventListener('click', function() {
+        if (navigator.share) {
+            navigator.share({
+                title: newsItem.title,
+                text: newsItem.description,
+                url: window.location.href
+            });
+        } else {
+            // Fallback: copy to clipboard
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                alert('Đã sao chép liên kết vào clipboard!');
+            });
+        }
+    });
+    
+    // Liên hệ tình nguyện (chỉ hiển thị với loại volunteer)
+    const contactBtn = document.querySelector('.contact-volunteer');
+    if (newsItem.type === 'volunteer') {
+        contactBtn.style.display = 'flex';
+        contactBtn.addEventListener('click', function() {
+            alert(`Liên hệ: ${newsItem.contact}`);
+        });
+    } else {
+        contactBtn.style.display = 'none';
+    }
+}
+
+function closeModal() {
+    const modal = document.getElementById('news-modal');
+    modal.classList.add('hidden');
+    document.body.style.overflow = 'auto';
+}
+
+function applyFilters() {
+    currentPage = 1;
+    displayNews(currentPage);
+    updateActiveFilterTabs();
+}
+
+function handleQuickFilter(filter) {
+    // Cập nhật active tab
+    document.querySelectorAll('.filter-tab').forEach(tab => {
+        tab.classList.remove('filter-active');
+    });
+    event.target.classList.add('filter-active');
+    
+    // Áp dụng bộ lọc
+    if (filter === 'all') {
+        currentFilters = { type: 'all', location: 'all', priority: 'all' };
+    } else if (filter === 'high-priority') {
+        currentFilters = { type: 'all', location: 'all', priority: 'high-priority' };
+    } else {
+        currentFilters = { type: filter, location: 'all', priority: 'all' };
+    }
+    
+    // Cập nhật dropdowns
+    document.getElementById('filter-type').value = currentFilters.type;
+    document.getElementById('filter-location').value = currentFilters.location;
     
     currentPage = 1;
-    displayRecentIncidents();
+    displayNews(currentPage);
+}
+
+function updateActiveFilterTabs() {
+    // Reset all tabs
+    document.querySelectorAll('.filter-tab').forEach(tab => {
+        tab.classList.remove('filter-active');
+    });
     
-    // Reset bản đồ
-    if (window.incidentMap) {
-        addIncidentsToMap(window.incidentMap, allIncidents);
+    // Find and activate matching tab
+    let activeTab = document.querySelector('.filter-tab[data-filter="all"]');
+    
+    if (currentFilters.priority === 'high-priority') {
+        activeTab = document.querySelector('.filter-tab[data-filter="high-priority"]');
+    } else if (currentFilters.type !== 'all') {
+        activeTab = document.querySelector(`.filter-tab[data-filter="${currentFilters.type}"]`);
     }
     
-    updateRecentStatistics();
-}
-
-function getIncidentTypeText(type) {
-    switch(type) {
-        case 'fire': return 'Hỏa hoạn';
-        case 'flood': return 'Ngập lụt';
-        case 'accident': return 'Tai nạn giao thông';
-        case 'disaster': return 'Thiên tai';
-        default: return 'Không xác định';
+    if (activeTab) {
+        activeTab.classList.add('filter-active');
     }
 }
 
-function getPriorityText(priority) {
-    switch(priority) {
-        case 'high': return 'Cao';
-        case 'medium': return 'Trung bình';
-        case 'low': return 'Thấp';
-        default: return 'Không xác định';
+function resetFilters() {
+    currentFilters = { type: 'all', location: 'all', priority: 'all' };
+    document.getElementById('filter-type').value = 'all';
+    document.getElementById('filter-location').value = 'all';
+    
+    document.querySelectorAll('.filter-tab').forEach(tab => {
+        tab.classList.remove('filter-active');
+    });
+    document.querySelector('.filter-tab[data-filter="all"]').classList.add('filter-active');
+    
+    currentPage = 1;
+    displayNews(currentPage);
+}
+
+function refreshNews() {
+    const refreshBtn = document.getElementById('refresh-news');
+    refreshBtn.disabled = true;
+    refreshBtn.innerHTML = '<i data-feather="refresh-cw" class="w-4 h-4 animate-spin"></i> Đang làm mới...';
+    
+    // Giả lập refresh data
+    setTimeout(() => {
+        loadNewsData();
+        displayNews(currentPage);
+        
+        refreshBtn.disabled = false;
+        refreshBtn.innerHTML = '<i data-feather="refresh-cw" class="w-4 h-4"></i> Làm mới';
+        
+        if (typeof feather !== 'undefined') {
+            feather.replace();
+        }
+        
+        // Hiển thị thông báo
+        showNotification('Đã cập nhật bản tin mới nhất!', 'success');
+    }, 1000);
+}
+
+function showLoading(show) {
+    const loadingIndicator = document.getElementById('loading-indicator');
+    if (show) {
+        loadingIndicator.classList.remove('hidden');
+    } else {
+        loadingIndicator.classList.add('hidden');
     }
 }
 
-// Khởi tạo khi DOM loaded
-document.addEventListener('DOMContentLoaded', function() {
-    initRecentIncidents();
+function showNotification(message, type = 'info') {
+    // Tạo notification element
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 z-50 px-6 py-4 rounded-lg shadow-lg transition-all duration-300 transform translate-x-full ${
+        type === 'success' ? 'bg-green-500 text-white' : 
+        type === 'error' ? 'bg-red-500 text-white' : 
+        'bg-blue-500 text-white'
+    }`;
+    notification.innerHTML = `
+        <div class="flex items-center">
+            <i data-feather="${type === 'success' ? 'check-circle' : type === 'error' ? 'alert-circle' : 'info'}" class="w-5 h-5 mr-2"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Hiển thị notification
+    setTimeout(() => {
+        notification.classList.remove('translate-x-full');
+    }, 100);
+    
+    // Ẩn notification sau 3 giây
+    setTimeout(() => {
+        notification.classList.add('translate-x-full');
+        setTimeout(() => {
+            document.body.removeChild(notification);
+        }, 300);
+    }, 3000);
+    
+    // Cập nhật Feather Icons
+    if (typeof feather !== 'undefined') {
+        feather.replace();
+    }
+}
+
+// Utility functions
+function getTypeBadgeClass(type) {
+    switch (type) {
+        case 'emergency': return 'bg-red-500';
+        case 'assistance': return 'bg-orange-500';
+        case 'volunteer': return 'bg-green-500';
+        default: return 'bg-gray-500';
+    }
+}
+
+function getTypeText(type) {
+    switch (type) {
+        case 'emergency': return 'Sự cố khẩn cấp';
+        case 'assistance': return 'Kêu gọi cứu trợ';
+        case 'volunteer': return 'Đoàn thiện nguyện';
+        default: return 'Khác';
+    }
+}
+
+function getLocationText(location) {
+    const locations = {
+        'ha-noi': 'Hà Nội',
+        'tp-hcm': 'TP.HCM',
+        'da-nang': 'Đà Nẵng',
+        'mien-bac': 'Miền Bắc',
+        'mien-trung': 'Miền Trung',
+        'tay-nguyen': 'Tây Nguyên',
+        'dak-lak': 'Đắk Lắk',
+        'binh-dinh': 'Bình Định',
+        'thai-nguyen': 'Thái Nguyên'
+    };
+    return locations[location] || location;
+}
+
+function formatTimeAgo(timestamp) {
+    const now = new Date();
+    const time = new Date(timestamp);
+    const diffInSeconds = Math.floor((now - time) / 1000);
+    
+    if (diffInSeconds < 60) return 'Vừa xong';
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} phút trước`;
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} giờ trước`;
+    return `${Math.floor(diffInSeconds / 86400)} ngày trước`;
+}
+
+function formatDateTime(timestamp) {
+    const date = new Date(timestamp);
+    return date.toLocaleString('vi-VN', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+}
+
+// Xử lý responsive menu
+document.getElementById('menu-toggle')?.addEventListener('click', function() {
+    const mobileMenu = document.getElementById('mobile-menu');
+    mobileMenu.classList.toggle('hidden');
+});
+
+// Đóng mobile menu khi click ra ngoài
+document.addEventListener('click', function(e) {
+    const mobileMenu = document.getElementById('mobile-menu');
+    const menuToggle = document.getElementById('menu-toggle');
+    
+    if (mobileMenu && !mobileMenu.contains(e.target) && menuToggle && !menuToggle.contains(e.target)) {
+        mobileMenu.classList.add('hidden');
+    }
 });
