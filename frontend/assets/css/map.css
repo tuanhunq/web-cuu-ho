@@ -1944,3 +1944,25 @@ nav {
         transition: none;
     }
 }
+
+
+
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.incident-card {
+    transition: all 0.3s ease;
+}
+
+.incident-card:hover {
+    transform: translateY(-2px);
+}
+
+.team-status {
+    font-weight: 500;
+    font-size: 0.75rem;
+}

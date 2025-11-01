@@ -2572,3 +2572,149 @@ footer {
 
 
 
+/* Custom styles for better UX */
+.emergency-btn {
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+}
+
+.emergency-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.6);
+}
+
+.service-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.sticky-panel {
+    position: sticky;
+    top: 100px;
+}
+
+.map-container {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.hero-section {
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                url('https://www.tapchicongsan.org.vn/image/journal/article?img_id=114021286&t=1622418445678');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+.nav-link {
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(to right, #ef4444, #f97316);
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover::after,
+.nav-link.text-red-500::after {
+    width: 100%;
+}
+
+.fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.fade-in-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.loading {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.pulse-animation {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Emergency Modal Styles */
+.emergency-modal {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.emergency-modal-content {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.emergency-type-btn {
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.emergency-type-btn:hover {
+    border-color: #ef4444;
+    background-color: #fef2f2;
+    transform: translateY(-2px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .hero-section {
+        background-attachment: scroll;
+    }
+    
+    .emergency-buttons {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .emergency-buttons button,
+    .emergency-buttons a {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Loading states */
+.btn-loading {
+    position: relative;
+    color: transparent;
+}
+
+.btn-loading::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 50%;
+    left: 50%;
+    margin-left: -10px;
+    margin-top: -10px;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
