@@ -3,402 +3,538 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng nhập - Hệ thống Cứu hộ Khẩn cấp</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Hệ Thống Cứu Hộ Quốc Gia</title>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="assets/css/styles.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        :root {
-            --primary: #1a73e8;
-            --primary-dark: #0d47a1;
-            --danger: #e53935;
-            --warning: #ff9800;
-            --success: #43a047;
-            --dark: #263238;
-            --light: #f5f7fa;
-        }
-
-        body {
-            background: linear-gradient(135deg, #1a2980, #26d0ce);
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: var(--dark);
-            position: relative;
-            overflow: hidden;
-        }
-
-        body::before {
-            content: "";
+        .dropdown-menu {
+            display: none;
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3QgZmlsbD0idXJsKCNwYXR0ZXJuKSIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIvPjwvc3ZnPg==');
-            opacity: 0.3;
-            z-index: -1;
-        }
-
-        .login-container {
-            display: flex;
-            width: 900px;
-            height: 550px;
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-        }
-
-        .login-left {
-            flex: 1;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white;
-            padding: 40px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            position: relative;
+            right: 0;
+            top: 100%;
+            background-color: white;
+            min-width: 200px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            z-index: 1000;
             overflow: hidden;
         }
-
-        .login-left::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3QgZmlsbD0idXJsKCNwYXR0ZXJuKSIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIvPjwvc3ZnPg==');
-            opacity: 0.2;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .logo-icon {
-            font-size: 32px;
-            margin-right: 15px;
-            color: #ffeb3b;
-        }
-
-        .logo-text {
-            font-size: 24px;
-            font-weight: 700;
-        }
-
-        .welcome-text {
-            font-size: 28px;
-            font-weight: 600;
-            margin-bottom: 15px;
-        }
-
-        .description {
-            font-size: 16px;
-            line-height: 1.6;
-            margin-bottom: 30px;
-            opacity: 0.9;
-        }
-
-        .features {
-            list-style: none;
-            margin-top: 20px;
-        }
-
-        .features li {
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-        }
-
-        .features i {
-            margin-right: 10px;
-            color: #4fc3f7;
-            font-size: 18px;
-        }
-
-        .login-right {
-            flex: 1;
-            padding: 50px 40px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .login-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .login-header h2 {
-            color: var(--primary);
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-
-        .login-header p {
-            color: #666;
-            font-size: 15px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
+        
+        .dropdown-menu.show {
             display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #444;
-            font-size: 14px;
         }
-
-        .input-with-icon {
-            position: relative;
-        }
-
-        .input-with-icon i {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #777;
-        }
-
-        .input-with-icon input {
-            width: 100%;
-            padding: 14px 14px 14px 45px;
-            border: 2px solid #e1e5ee;
-            border-radius: 8px;
-            font-size: 15px;
-            transition: all 0.3s;
-        }
-
-        .input-with-icon input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.2);
-        }
-
-        .options {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            font-size: 14px;
-        }
-
-        .remember-me {
+        
+        .dropdown-item {
             display: flex;
             align-items: center;
-        }
-
-        .remember-me input {
-            margin-right: 8px;
-        }
-
-        .forgot-password {
-            color: var(--primary);
+            padding: 12px 16px;
+            color: #4b5563;
             text-decoration: none;
-            font-weight: 500;
+            transition: all 0.2s;
+            border-bottom: 1px solid #f3f4f6;
         }
-
-        .forgot-password:hover {
-            text-decoration: underline;
+        
+        .dropdown-item:hover {
+            background-color: #f9fafb;
+            color: #1f2937;
         }
-
-        .login-btn {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(to right, var(--primary), var(--primary-dark));
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(26, 115, 232, 0.3);
+        
+        .dropdown-item i {
+            margin-right: 8px;
+            width: 16px;
+            height: 16px;
         }
-
-        .login-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(26, 115, 232, 0.4);
-        }
-
-        .login-btn:active {
-            transform: translateY(0);
-        }
-
-        .emergency-call {
-            margin-top: 25px;
-            text-align: center;
-            padding: 15px;
-            background-color: #ffebee;
-            border-radius: 8px;
-            border-left: 4px solid var(--danger);
-        }
-
-        .emergency-call p {
-            font-size: 14px;
-            color: #c62828;
-            margin-bottom: 10px;
-        }
-
-        .emergency-btn {
-            display: inline-flex;
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            display: flex;
             align-items: center;
-            padding: 10px 20px;
-            background-color: var(--danger);
+            justify-content: center;
             color: white;
-            border: none;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .emergency-btn i {
+            font-weight: bold;
             margin-right: 8px;
         }
-
-        .emergency-btn:hover {
-            background-color: #c62828;
-            transform: scale(1.05);
+        
+        .role-badge {
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: 8px;
         }
-
-        .footer {
-            margin-top: 30px;
-            text-align: center;
-            font-size: 13px;
-            color: #777;
+        
+        .role-user {
+            background-color: #dbeafe;
+            color: #1e40af;
         }
-
-        @media (max-width: 950px) {
-            .login-container {
-                width: 95%;
-                height: auto;
-                flex-direction: column;
-            }
-            
-            .login-left, .login-right {
-                padding: 30px;
-            }
+        
+        .role-rescuer {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+        
+        .role-admin {
+            background-color: #fef3c7;
+            color: #92400e;
         }
     </style>
 </head>
-<body>
-    <div class="login-container">
-        <div class="login-left">
-            <div class="logo">
-                <i class="fas fa-life-ring logo-icon"></i>
-                <div class="logo-text">CỨU HỘ 24/7</div>
+<body class="bg-gray-50">
+   <!-- Navigation -->
+<nav id="navbar" class="shadow-md sticky top-0 z-50 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-20 items-center">
+            <div class="flex items-center space-x-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+                <span class="text-2xl font-bold bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">CỨU HỘ QUỐC GIA</span>
             </div>
-            <h1 class="welcome-text">Hệ thống Quản lý Cứu hộ Khẩn cấp</h1>
-            <p class="description">Đăng nhập để truy cập vào hệ thống quản lý và điều phối các hoạt động cứu hộ khẩn cấp. Hệ thống cung cấp các công cụ cần thiết để phản ứng nhanh với các tình huống khẩn cấp.</p>
-            
-            <ul class="features">
-                <li><i class="fas fa-check-circle"></i> Theo dõi và quản lý đội cứu hộ</li>
-                <li><i class="fas fa-check-circle"></i> Nhận thông báo khẩn cấp</li>
-                <li><i class="fas fa-check-circle"></i> Phân tích và báo cáo tình huống</li>
-                <li><i class="fas fa-check-circle"></i> Điều phối phương tiện cứu hộ</li>
-            </ul>
-        </div>
-        
-        <div class="login-right">
-            <div class="login-header">
-                <h2>Đăng nhập</h2>
-                <p>Vui lòng nhập thông tin đăng nhập của bạn</p>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="adminindex.html" class="nav-link text-red-500 font-bold transition">Trang chủ</a>
+                <a href="adminmap.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Bản đồ cứu hộ</a>
+                <a href="adminrequest.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Bản tin</a>
+                <a href="adminposst.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Báo tin</a>
+                <div class="flex space-x-4">
+                    <a href="admin.html" class="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-lg font-medium transition-all shadow hover:shadow-lg">Admin</a>
+                    
+                    <!-- Phần tài khoản người dùng -->
+                    <div class="relative">
+                        <button id="user-menu-btn" class="flex items-center bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-all shadow hover:shadow-lg">
+                            <div id="user-avatar" class="user-avatar">?</div>
+                            <span id="user-name">Tài khoản</span>
+                            <span id="user-role" class="role-badge role-user ml-2">Người dùng</span>
+                            <i data-feather="chevron-down" class="ml-2 w-4 h-4"></i>
+                        </button>
+                        
+                        <div id="user-dropdown" class="dropdown-menu">
+                            <div class="px-4 py-3 border-b">
+                                <div class="font-medium" id="dropdown-user-name">Tài khoản</div>
+                                <div class="text-sm text-gray-500" id="dropdown-user-email">Chưa đăng nhập</div>
+                            </div>
+                            <a href="profile.html" class="dropdown-item">
+                                <i data-feather="user"></i>
+                                Hồ sơ cá nhân
+                            </a>
+                            <a href="settings.html" class="dropdown-item">
+                                <i data-feather="settings"></i>
+                                Cài đặt
+                            </a>
+                            <a href="my-requests.html" class="dropdown-item">
+                                <i data-feather="list"></i>
+                                Yêu cầu của tôi
+                            </a>
+                            <div id="admin-menu" class="hidden">
+                                <div class="border-t"></div>
+                                <a href="admin.html" class="dropdown-item">
+                                    <i data-feather="shield"></i>
+                                    Quản trị hệ thống
+                                </a>
+                                <a href="user-management.html" class="dropdown-item">
+                                    <i data-feather="users"></i>
+                                    Quản lý người dùng
+                                </a>
+                            </div>
+                            <div id="rescuer-menu" class="hidden">
+                                <div class="border-t"></div>
+                                <a href="rescuer-dashboard.html" class="dropdown-item">
+                                    <i data-feather="activity"></i>
+                                    Bảng điều khiển cứu hộ
+                                </a>
+                                <a href="rescuer-missions.html" class="dropdown-item">
+                                    <i data-feather="target"></i>
+                                    Nhiệm vụ của tôi
+                                </a>
+                            </div>
+                            <div class="border-t"></div>
+                            <a href="#" id="login-btn" class="dropdown-item">
+                                <i data-feather="log-in"></i>
+                                Đăng nhập
+                            </a>
+                            <a href="#" id="logout-btn" class="dropdown-item hidden text-red-500">
+                                <i data-feather="log-out"></i>
+                                Đăng xuất
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
-            
-            <form id="loginForm">
-                <div class="form-group">
-                    <label for="username">Tên đăng nhập</label>
-                    <div class="input-with-icon">
-                        <i class="fas fa-user"></i>
-                        <input type="text" id="username" placeholder="Nhập tên đăng nhập" required>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="password">Mật khẩu</label>
-                    <div class="input-with-icon">
-                        <i class="fas fa-lock"></i>
-                        <input type="password" id="password" placeholder="Nhập mật khẩu" required>
-                    </div>
-                </div>
-                
-                <div class="options">
-                    <div class="remember-me">
-                        <input type="checkbox" id="remember">
-                        <label for="remember">Ghi nhớ đăng nhập</label>
-                    </div>
-                    <a href="#" class="forgot-password">Quên mật khẩu?</a>
-                </div>
-                
-                <button type="submit" class="login-btn">ĐĂNG NHẬP</button>
-                
-                <div class="emergency-call">
-                    <p><strong>Tình huống khẩn cấp?</strong> Không thể đăng nhập vào hệ thống?</p>
-                    <button type="button" class="emergency-btn">
-                        <i class="fas fa-phone-alt"></i> Gọi đường dây nóng: 0243.834.5678
-                    </button>
-                </div>
-            </form>
-            
-            <div class="footer">
-                <p>© 2023 Hệ thống Cứu hộ Khẩn cấp. Phiên bản 2.1.4</p>
+            <div class="md:hidden flex items-center">
+                <button id="menu-toggle" class="text-gray-700 hover:text-red-600" aria-label="Toggle menu">
+                    <i data-feather="menu"></i>
+                </button>
             </div>
         </div>
     </div>
-
-    <script>
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            
-            // Hiệu ứng loading
-            const loginBtn = document.querySelector('.login-btn');
-            const originalText = loginBtn.textContent;
-            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ĐANG XÁC THỰC...';
-            loginBtn.disabled = true;
-            
-            // Giả lập xác thực
-            setTimeout(() => {
-                if(username && password) {
-                    // Thông báo đăng nhập thành công
-                    alert('Đăng nhập thành công! Chào mừng bạn trở lại hệ thống cứu hộ.');
-                    // Chuyển hướng đến trang chính (giả lập)
-                    window.location.href = 'dashboard.html';
-                } else {
-                    alert('Vui lòng nhập đầy đủ thông tin đăng nhập!');
-                    loginBtn.textContent = originalText;
-                    loginBtn.disabled = false;
-                }
-            }, 1500);
-        });
+    <div id="mobile-menu" class="hidden md:hidden bg-white py-2 px-4 shadow-lg">
+        <a href="index.html#home" class="block py-2 text-gray-700 hover:text-red-600 transition">Trang chủ</a>
+        <a href="map.html" class="block py-2 text-gray-700 hover:text-red-600 transition">Bản đồ cứu hộ</a>
+        <a href="request.html" class="block py-2 text-red-600 font-bold transition">Bản tin</a>
+        <a href="post.html#report" class="block py-2 text-gray-700 hover:text-red-600 transition">Báo tin</a>
         
-        // Hiệu ứng cho nút khẩn cấp
-        const emergencyBtn = document.querySelector('.emergency-btn');
-        emergencyBtn.addEventListener('click', function() {
-            if(confirm('Bạn có chắc muốn gọi đường dây nóng cứu hộ khẩn cấp?')) {
-                alert('Đang kết nối đến tổng đài cứu hộ...');
-                // Giả lập cuộc gọi
-                setTimeout(() => {
-                    alert('Đã kết nối. Vui lòng mô tả tình huống khẩn cấp.');
-                }, 2000);
+        <!-- Menu tài khoản cho mobile -->
+        <div class="border-t pt-2 mt-2">
+            <div class="flex items-center py-2">
+                <div id="mobile-user-avatar" class="user-avatar">?</div>
+                <div>
+                    <span id="mobile-user-name" class="font-medium">Tài khoản</span>
+                    <span id="mobile-user-role" class="role-badge role-user ml-2">Người dùng</span>
+                </div>
+            </div>
+            <a href="profile.html" class="block py-2 text-gray-700 hover:text-red-600 transition">
+                <i data-feather="user" class="inline w-4 h-4 mr-2"></i>
+                Hồ sơ cá nhân
+            </a>
+            <a href="settings.html" class="block py-2 text-gray-700 hover:text-red-600 transition">
+                <i data-feather="settings" class="inline w-4 h-4 mr-2"></i>
+                Cài đặt
+            </a>
+            <a href="my-requests.html" class="block py-2 text-gray-700 hover:text-red-600 transition">
+                <i data-feather="list" class="inline w-4 h-4 mr-2"></i>
+                Yêu cầu của tôi
+            </a>
+            <div id="mobile-admin-menu" class="hidden">
+                <a href="admin.html" class="block py-2 text-gray-700 hover:text-red-600 transition">
+                    <i data-feather="shield" class="inline w-4 h-4 mr-2"></i>
+                    Quản trị hệ thống
+                </a>
+                <a href="user-management.html" class="block py-2 text-gray-700 hover:text-red-600 transition">
+                    <i data-feather="users" class="inline w-4 h-4 mr-2"></i>
+                    Quản lý người dùng
+                </a>
+            </div>
+            <div id="mobile-rescuer-menu" class="hidden">
+                <a href="rescuer-dashboard.html" class="block py-2 text-gray-700 hover:text-red-600 transition">
+                    <i data-feather="activity" class="inline w-4 h-4 mr-2"></i>
+                    Bảng điều khiển cứu hộ
+                </a>
+                <a href="rescuer-missions.html" class="block py-2 text-gray-700 hover:text-red-600 transition">
+                    <i data-feather="target" class="inline w-4 h-4 mr-2"></i>
+                    Nhiệm vụ của tôi
+                </a>
+            </div>
+            <a href="#" id="mobile-login-btn" class="block py-2 text-blue-600 font-medium transition">
+                <i data-feather="log-in" class="inline w-4 h-4 mr-2"></i>
+                Đăng nhập
+            </a>
+            <a href="#" id="mobile-logout-btn" class="block py-2 text-red-500 font-medium transition hidden">
+                <i data-feather="log-out" class="inline w-4 h-4 mr-2"></i>
+                Đăng xuất
+            </a>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<section id="home" class="hero-section py-20 min-h-[80vh]" style="background-image: url('https://www.tapchicongsan.org.vn/image/journal/article?img_id=114021286&t=1622418445678'); background-size: cover; background-position: center; position: relative;">
+    <div class="absolute inset-0 bg-black opacity-50" style="z-index: 1;"></div> <!-- Overlay mờ hơn để tăng thẩm mỹ và dễ đọc -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative" style="z-index: 2;">
+        <div class="flex flex-col md:flex-row items-center">
+            <div class="md:w-1/2 mb-10 md:mb-0">
+                <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-6">
+                    <span class="bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">Hệ Thống Cứu Hộ</span> <br>
+                    
+                </h1>
+                <p class="text-lg text-white mb-8 max-w-lg leading-relaxed"> <!-- Thay text-gray-600 thành text-white để thẩm mỹ hơn -->
+                    Kết nối người dân với lực lượng cứu hộ trong các tình huống khẩn cấp như thiên tai, hỏa hoạn, tai nạn giao thông và các sự cố đe dọa tính mạng.
+                </p>
+                <div class="flex space-x-4">
+                    <a href="adminposst.html" class="emergency-btn bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white px-6 py-3 rounded-lg font-medium transition-all shadow-lg flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                        BÁO TIN
+                    </a>
+                    <a href="adminmap.html" class="border-2 border-red-500 text-red-500 hover:bg-red-50 px-6 py-3 rounded-lg font-medium transition-all shadow flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>  
+                        XEM BẢN ĐỒ
+                    </a>
+                </div>
+            </div>  
+        </div>
+    </div>
+</section>
+
+<!-- Demo User Selection -->
+<section class="py-8 bg-white">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Demo: Chọn loại tài khoản để xem</h3>
+            <p class="text-gray-600 mb-4">Chọn một loại tài khoản để xem cách phần tài khoản thay đổi theo vai trò người dùng:</p>
+            <div class="flex flex-wrap gap-3">
+                <button id="demo-guest" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg transition">
+                    Khách (Chưa đăng nhập)
+                </button>
+                <button id="demo-user" class="bg-blue-100 hover:bg-blue-200 text-blue-800 px-4 py-2 rounded-lg transition">
+                    Người dùng thường
+                </button>
+                <button id="demo-rescuer" class="bg-green-100 hover:bg-green-200 text-green-800 px-4 py-2 rounded-lg transition">
+                    Người cứu hộ
+                </button>
+                <button id="demo-admin" class="bg-yellow-100 hover:bg-yellow-200 text-yellow-800 px-4 py-2 rounded-lg transition">
+                    Quản trị viên
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Rest of the page content remains the same -->
+<!-- ... -->
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js"></script>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/map.js"></script>
+    <script src="assets/js/auth-manager.js"></script>   
+    <script src="assets/js/user-manager.js"></script>
+    <script src="assets/js/security-manager.js"></script>
+    
+    <script>
+        // Hàm để cập nhật giao diện người dùng dựa trên thông tin tài khoản
+        function updateUserInterface(user) {
+            // Các phần tử DOM
+            const userAvatar = document.getElementById('user-avatar');
+            const userName = document.getElementById('user-name');
+            const userRole = document.getElementById('user-role');
+            const dropdownUserName = document.getElementById('dropdown-user-name');
+            const dropdownUserEmail = document.getElementById('dropdown-user-email');
+            const loginBtn = document.getElementById('login-btn');
+            const logoutBtn = document.getElementById('logout-btn');
+            const adminMenu = document.getElementById('admin-menu');
+            const rescuerMenu = document.getElementById('rescuer-menu');
+            
+            // Các phần tử mobile
+            const mobileUserAvatar = document.getElementById('mobile-user-avatar');
+            const mobileUserName = document.getElementById('mobile-user-name');
+            const mobileUserRole = document.getElementById('mobile-user-role');
+            const mobileLoginBtn = document.getElementById('mobile-login-btn');
+            const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
+            const mobileAdminMenu = document.getElementById('mobile-admin-menu');
+            const mobileRescuerMenu = document.getElementById('mobile-rescuer-menu');
+            
+            if (user) {
+                // Người dùng đã đăng nhập
+                userAvatar.textContent = user.avatar || user.name.charAt(0).toUpperCase();
+                userName.textContent = user.name;
+                dropdownUserName.textContent = user.name;
+                dropdownUserEmail.textContent = user.email || 'Đã đăng nhập';
+                
+                // Mobile
+                mobileUserAvatar.textContent = user.avatar || user.name.charAt(0).toUpperCase();
+                mobileUserName.textContent = user.name;
+                
+                // Cập nhật vai trò
+                updateRoleDisplay(user.role, userRole, mobileUserRole);
+                
+                // Hiển thị menu theo vai trò
+                if (user.role === 'admin') {
+                    adminMenu.classList.remove('hidden');
+                    mobileAdminMenu.classList.remove('hidden');
+                    rescuerMenu.classList.add('hidden');
+                    mobileRescuerMenu.classList.add('hidden');
+                } else if (user.role === 'rescuer') {
+                    rescuerMenu.classList.remove('hidden');
+                    mobileRescuerMenu.classList.remove('hidden');
+                    adminMenu.classList.add('hidden');
+                    mobileAdminMenu.classList.add('hidden');
+                } else {
+                    adminMenu.classList.add('hidden');
+                    mobileAdminMenu.classList.add('hidden');
+                    rescuerMenu.classList.add('hidden');
+                    mobileRescuerMenu.classList.add('hidden');
+                }
+                
+                // Hiển thị nút đăng xuất, ẩn nút đăng nhập
+                loginBtn.classList.add('hidden');
+                logoutBtn.classList.remove('hidden');
+                mobileLoginBtn.classList.add('hidden');
+                mobileLogoutBtn.classList.remove('hidden');
+            } else {
+                // Người dùng chưa đăng nhập
+                userAvatar.textContent = '?';
+                userName.textContent = 'Tài khoản';
+                dropdownUserName.textContent = 'Tài khoản';
+                dropdownUserEmail.textContent = 'Chưa đăng nhập';
+                
+                // Mobile
+                mobileUserAvatar.textContent = '?';
+                mobileUserName.textContent = 'Tài khoản';
+                
+                // Vai trò mặc định
+                updateRoleDisplay('guest', userRole, mobileUserRole);
+                
+                // Ẩn các menu đặc quyền
+                adminMenu.classList.add('hidden');
+                rescuerMenu.classList.add('hidden');
+                mobileAdminMenu.classList.add('hidden');
+                mobileRescuerMenu.classList.add('hidden');
+                
+                // Hiển thị nút đăng nhập, ẩn nút đăng xuất
+                loginBtn.classList.remove('hidden');
+                logoutBtn.classList.add('hidden');
+                mobileLoginBtn.classList.remove('hidden');
+                mobileLogoutBtn.classList.add('hidden');
             }
+        }
+        
+        // Hàm cập nhật hiển thị vai trò
+        function updateRoleDisplay(role, desktopElement, mobileElement) {
+            // Xóa tất cả các lớp vai trò cũ
+            desktopElement.classList.remove('role-user', 'role-rescuer', 'role-admin');
+            mobileElement.classList.remove('role-user', 'role-rescuer', 'role-admin');
+            
+            // Thêm lớp vai trò mới và cập nhật văn bản
+            switch(role) {
+                case 'user':
+                    desktopElement.textContent = 'Người dùng';
+                    mobileElement.textContent = 'Người dùng';
+                    desktopElement.classList.add('role-user');
+                    mobileElement.classList.add('role-user');
+                    break;
+                case 'rescuer':
+                    desktopElement.textContent = 'Cứu hộ';
+                    mobileElement.textContent = 'Cứu hộ';
+                    desktopElement.classList.add('role-rescuer');
+                    mobileElement.classList.add('role-rescuer');
+                    break;
+                case 'admin':
+                    desktopElement.textContent = 'Quản trị';
+                    mobileElement.textContent = 'Quản trị';
+                    desktopElement.classList.add('role-admin');
+                    mobileElement.classList.add('role-admin');
+                    break;
+                default:
+                    desktopElement.textContent = 'Khách';
+                    mobileElement.textContent = 'Khách';
+                    desktopElement.classList.add('role-user');
+                    mobileElement.classList.add('role-user');
+            }
+        }
+        
+        // Dữ liệu người dùng mẫu
+        const demoUsers = {
+            guest: null,
+            user: {
+                name: 'Nguyễn Văn A',
+                email: 'nguyenvana@example.com',
+                role: 'user',
+                avatar: 'NA'
+            },
+            rescuer: {
+                name: 'Trần Thị B',
+                email: 'tranthib@example.com',
+                role: 'rescuer',
+                avatar: 'TB'
+            },
+            admin: {
+                name: 'Lê Văn C',
+                email: 'levanc@example.com',
+                role: 'admin',
+                avatar: 'LC'
+            }
+        };
+        
+        // Khởi tạo với trạng thái khách
+        let currentUser = demoUsers.guest;
+        updateUserInterface(currentUser);
+        
+        // Xử lý sự kiện khi DOM đã tải xong
+        document.addEventListener('DOMContentLoaded', function() {
+            // Khởi tạo feather icons
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            }
+            
+            // Xử lý dropdown menu cho tài khoản
+            const userMenuBtn = document.getElementById('user-menu-btn');
+            const userDropdown = document.getElementById('user-dropdown');
+            
+            if (userMenuBtn && userDropdown) {
+                userMenuBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    userDropdown.classList.toggle('show');
+                });
+                
+                // Đóng dropdown khi click ra ngoài
+                document.addEventListener('click', function() {
+                    userDropdown.classList.remove('show');
+                });
+            }
+            
+            // Xử lý đăng nhập/đăng xuất
+            const loginBtn = document.getElementById('login-btn');
+            const logoutBtn = document.getElementById('logout-btn');
+            const mobileLoginBtn = document.getElementById('mobile-login-btn');
+            const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
+            
+            if (loginBtn) {
+                loginBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // Mở modal đăng nhập hoặc chuyển hướng đến trang đăng nhập
+                    window.location.href = 'login.html';
+                });
+            }
+            
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // Đăng xuất
+                    currentUser = demoUsers.guest;
+                    updateUserInterface(currentUser);
+                    alert('Đã đăng xuất thành công!');
+                });
+            }
+            
+            if (mobileLoginBtn) {
+                mobileLoginBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // Mở modal đăng nhập hoặc chuyển hướng đến trang đăng nhập
+                    window.location.href = 'login.html';
+                });
+            }
+            
+            if (mobileLogoutBtn) {
+                mobileLogoutBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // Đăng xuất
+                    currentUser = demoUsers.guest;
+                    updateUserInterface(currentUser);
+                    alert('Đã đăng xuất thành công!');
+                });
+            }
+            
+            // Xử lý demo chọn tài khoản
+            document.getElementById('demo-guest').addEventListener('click', function() {
+                currentUser = demoUsers.guest;
+                updateUserInterface(currentUser);
+            });
+            
+            document.getElementById('demo-user').addEventListener('click', function() {
+                currentUser = demoUsers.user;
+                updateUserInterface(currentUser);
+            });
+            
+            document.getElementById('demo-rescuer').addEventListener('click', function() {
+                currentUser = demoUsers.rescuer;
+                updateUserInterface(currentUser);
+            });
+            
+            document.getElementById('demo-admin').addEventListener('click', function() {
+                currentUser = demoUsers.admin;
+                updateUserInterface(currentUser);
+            });
         });
     </script>
 </body>

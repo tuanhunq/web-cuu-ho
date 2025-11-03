@@ -1198,3 +1198,313 @@ window.deleteNews = function(id) {
                 alert('Xuất dữ liệu thành công!');
             }, 1000);
         }
+
+
+
+
+// quản lý bài viết bản tin
+ // Initialize Quill Editor
+        let quill;
+        
+        // Sample news data
+        const sampleNews = [
+            {
+                id: 'N001',
+                title: 'Cảnh báo bão số 8 hướng vào đất liền',
+                category: 'emergency',
+                status: 'published',
+                excerpt: 'Bão số 8 dự kiến đổ bộ vào các tỉnh miền Trung với sức gió mạnh cấp 10-11, giật cấp 13...',
+                views: 2400,
+                time: '2 giờ trước',
+                author: 'Admin System',
+                priority: 'high'
+            },
+            {
+                id: 'N002',
+                title: 'Hướng dẫn sơ cứu khi bị điện giật',
+                category: 'guidance', 
+                status: 'published',
+                excerpt: 'Các bước sơ cứu cơ bản khi gặp nạn nhân bị điện giật cần thực hiện ngay lập tức...',
+                views: 1800,
+                time: '5 giờ trước',
+                author: 'Nguyễn Văn A',
+                priority: 'medium'
+            },
+            {
+                id: 'N003',
+                title: 'Thông báo lịch cứu hộ dịp lễ 30/4',
+                category: 'info',
+                status: 'scheduled',
+                excerpt: 'Lịch trực và phương án cứu hộ được triển khai trong dịp lễ 30/4 - 1/5...',
+                views: 950,
+                time: '1 ngày trước',
+                author: 'Trần Thị B',
+                priority: 'low'
+            }
+        ];
+
+        // DOM Content Loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeNewsManagement();
+            loadNewsData();
+        });
+
+        function initializeNewsManagement() {
+            // Initialize Quill editor
+            quill = new Quill('#editor-container', {
+                theme: 'snow',
+                modules: {
+                    toolbar: [
+                        [{ 'header': [1, 2, 3, false] }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        [{ 'color': [] }, { 'background': [] }],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        ['link', 'image', 'video'],
+                        ['clean']
+                    ]
+                },
+                placeholder: 'Nhập nội dung bài viết...'
+            });
+
+            // Event listeners for news management
+            document.getElementById('add-news-btn').addEventListener('click', openNewsModal);
+            document.getElementById('close-news-modal').addEventListener('click', closeNewsModal);
+            document.getElementById('cancel-news').addEventListener('click', closeNewsModal);
+            document.getElementById('toggle-filters').addEventListener('click', toggleAdvancedFilters);
+            document.getElementById('news-status').addEventListener('change', handleStatusChange);
+            document.getElementById('upload-trigger').addEventListener('click', triggerImageUpload);
+            document.getElementById('image-upload').addEventListener('change', handleImageUpload);
+            document.getElementById('publish-news-btn').addEventListener('click', publishNews);
+            document.getElementById('save-draft-btn').addEventListener('click', saveDraft);
+            
+            // Filter events
+            document.getElementById('search-input').addEventListener('input', applyFilters);
+            document.getElementById('category-filter').addEventListener('change', applyFilters);
+            document.getElementById('status-filter').addEventListener('change', applyFilters);
+        }
+
+        function loadNewsData() {
+            const container = document.getElementById('news-grid-container');
+            container.innerHTML = '';
+
+            sampleNews.forEach(news => {
+                const categoryNames = {
+                    'emergency': 'Khẩn cấp',
+                    'warning': 'Cảnh báo', 
+                    'info': 'Thông tin',
+                    'guidance': 'Hướng dẫn',
+                    'news': 'Tin tức'
+                };
+
+                const statusNames = {
+                    'published': 'Đã xuất bản',
+                    'draft': 'Bản nháp',
+                    'scheduled': 'Lên lịch',
+                    'archived': 'Đã lưu trữ'
+                };
+
+                const categoryColors = {
+                    'emergency': 'bg-red-100 text-red-800',
+                    'warning': 'bg-orange-100 text-orange-800',
+                    'info': 'bg-blue-100 text-blue-800',
+                    'guidance': 'bg-green-100 text-green-800',
+                    'news': 'bg-purple-100 text-purple-800'
+                };
+
+                const statusColors = {
+                    'published': 'status-published',
+                    'draft': 'status-draft',
+                    'scheduled': 'status-scheduled',
+                    'archived': 'status-archived'
+                };
+
+                const card = document.createElement('div');
+                card.className = `news-card ${news.category} bg-white rounded-xl shadow-sm overflow-hidden`;
+                card.innerHTML = `
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="category-badge ${categoryColors[news.category]}">
+                                ${categoryNames[news.category]}
+                            </span>
+                            <div class="flex items-center text-sm text-gray-500">
+                                <span class="status-dot ${statusColors[news.status]}"></span>
+                                ${statusNames[news.status]}
+                            </div>
+                        </div>
+                        <h3 class="font-bold text-lg mb-2 text-gray-900 line-clamp-2">${news.title}</h3>
+                        <p class="text-gray-600 text-sm mb-4 line-clamp-3">${news.excerpt}</p>
+                        
+                        <div class="flex items-center justify-between text-sm text-gray-500 mb-3">
+                            <div class="flex items-center">
+                                <i class="fas fa-eye mr-1"></i>
+                                <span>${news.views.toLocaleString()}</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-clock mr-1"></i>
+                                <span>${news.time}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-500">Bởi <strong>${news.author}</strong></span>
+                            <div class="flex space-x-2">
+                                <button class="text-blue-600 hover:text-blue-800 p-1 view-news" data-id="${news.id}" title="Xem chi tiết">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="text-green-600 hover:text-green-800 p-1 edit-news" data-id="${news.id}" title="Chỉnh sửa">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="text-red-600 hover:text-red-800 p-1 delete-news" data-id="${news.id}" title="Xóa">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            // Add event listeners to action buttons
+            container.querySelectorAll('.view-news').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = e.currentTarget.getAttribute('data-id');
+                    viewNews(id);
+                });
+            });
+
+            container.querySelectorAll('.edit-news').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = e.currentTarget.getAttribute('data-id');
+                    editNews(id);
+                });
+            });
+
+            container.querySelectorAll('.delete-news').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = e.currentTarget.getAttribute('data-id');
+                    deleteNews(id);
+                });
+            });
+        }
+
+        function openNewsModal() {
+            document.getElementById('news-modal-title').textContent = 'Thêm bài viết mới';
+            document.getElementById('news-form').reset();
+            quill.setText('');
+            document.getElementById('image-preview').classList.add('hidden');
+            document.getElementById('schedule-field').classList.add('hidden');
+            document.getElementById('news-modal').classList.remove('hidden');
+        }
+
+        function closeNewsModal() {
+            document.getElementById('news-modal').classList.add('hidden');
+        }
+
+        function toggleAdvancedFilters() {
+            const filters = document.getElementById('advanced-filters');
+            filters.classList.toggle('hidden');
+        }
+
+        function handleStatusChange(e) {
+            const scheduleField = document.getElementById('schedule-field');
+            if (e.target.value === 'scheduled') {
+                scheduleField.classList.remove('hidden');
+            } else {
+                scheduleField.classList.add('hidden');
+            }
+        }
+
+        function triggerImageUpload() {
+            document.getElementById('image-upload').click();
+        }
+
+        function handleImageUpload(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    document.getElementById('image-preview').querySelector('img').src = e.target.result;
+                    document.getElementById('image-preview').classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function publishNews() {
+            // Validate form
+            const title = document.getElementById('news-title').value;
+            const category = document.getElementById('news-category').value;
+            
+            if (!title || !category) {
+                showNotification('Vui lòng điền đầy đủ thông tin bắt buộc', 'error');
+                return;
+            }
+
+            // Simulate saving news
+            showNotification('Bài viết đã được xuất bản thành công!');
+            closeNewsModal();
+            // In real application, you would send data to server here
+        }
+
+        function saveDraft() {
+            showNotification('Đã lưu bản nháp thành công!');
+            closeNewsModal();
+        }
+
+        function viewNews(id) {
+            const news = sampleNews.find(item => item.id === id);
+            if (news) {
+                alert(`Xem chi tiết: ${news.title}`);
+                // In real application, you would open a detail modal
+            }
+        }
+
+        function editNews(id) {
+            const news = sampleNews.find(item => item.id === id);
+            if (news) {
+                document.getElementById('news-modal-title').textContent = 'Chỉnh sửa bài viết';
+                document.getElementById('news-title').value = news.title;
+                document.getElementById('news-category').value = news.category;
+                document.getElementById('news-status').value = news.status;
+                document.getElementById('news-priority').value = news.priority;
+                document.getElementById('news-excerpt').value = news.excerpt;
+                quill.setText(news.excerpt);
+                
+                if (news.status === 'scheduled') {
+                    document.getElementById('schedule-field').classList.remove('hidden');
+                }
+                
+                document.getElementById('news-modal').classList.remove('hidden');
+            }
+        }
+
+        function deleteNews(id) {
+            if (confirm('Bạn có chắc chắn muốn xóa bài viết này?')) {
+                showNotification('Bài viết đã được xóa thành công!');
+                // In real application, you would remove from array and re-render
+            }
+        }
+
+        function applyFilters() {
+            // Filter logic would be implemented here
+            console.log('Applying filters...');
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('success-notification');
+            const messageElement = document.getElementById('notification-message');
+            
+            messageElement.textContent = message;
+            
+            if (type === 'error') {
+                notification.className = 'hidden fixed top-4 right-4 bg-red-500 text-white px-4 py-3 rounded-lg shadow-lg z-50';
+            } else {
+                notification.className = 'hidden fixed top-4 right-4 bg-green-500 text-white px-4 py-3 rounded-lg shadow-lg z-50';
+            }
+            
+            notification.classList.remove('hidden');
+            
+            setTimeout(() => {
+                notification.classList.add('hidden');
+            }, 3000);
+        }

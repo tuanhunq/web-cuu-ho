@@ -3085,3 +3085,15 @@ window.focusOnMap = function(coordinates, title) {
 
 
 
+// Thêm vào cuối file map.js để đồng bộ dữ liệu
+console.log('Map incidents loaded:', incidents.length);
+
+// Đồng bộ dữ liệu với recent incidents nếu hàm tồn tại
+setTimeout(() => {
+    if (typeof updateRecentIncidentsFromMap === 'function') {
+        updateRecentIncidentsFromMap(incidents);
+        console.log('✅ Đã đồng bộ dữ liệu với recent incidents');
+    } else {
+        console.log('⚠️ Hàm updateRecentIncidentsFromMap chưa khả dụng');
+    }
+}, 1000);

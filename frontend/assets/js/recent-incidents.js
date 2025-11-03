@@ -5,11 +5,15 @@ const incidentsPerPage = 6;
 
 // Hàm khởi tạo phần sự cố gần đây
 function initRecentIncidents() {
-    // Lấy dữ liệu sự cố từ bản đồ (giả sử có biến global mapIncidents)
-    if (typeof mapIncidents !== 'undefined') {
-        allIncidents = [...mapIncidents];
+    console.log('Đang khởi tạo recent incidents...');
+    
+    // Lấy dữ liệu sự cố từ biến global incidents (từ map.js)
+    if (typeof incidents !== 'undefined' && incidents.length > 0) {
+        allIncidents = [...incidents];
+        console.log('Lấy dữ liệu từ map.js:', allIncidents.length, 'sự cố');
     } else {
         // Nếu không có dữ liệu từ bản đồ, tạo dữ liệu mẫu
+        console.log('Tạo dữ liệu mẫu vì không tìm thấy incidents');
         allIncidents = generateSampleIncidents();
     }
     
@@ -31,7 +35,7 @@ function generateSampleIncidents() {
     
     const incidents = [];
     
-    for (let i = 1; i <= 12; i++) {
+    for (let i = 1; i <= 183; i++) {
         const type = incidentTypes[Math.floor(Math.random() * incidentTypes.length)];
         const status = statuses[Math.floor(Math.random() * statuses.length)];
         const province = provinces[Math.floor(Math.random() * provinces.length)];
@@ -65,10 +69,15 @@ function displayRecentIncidents(filteredIncidents = null) {
     const incidentsList = document.getElementById('recent-incidents-list');
     const pagination = document.getElementById('recent-pagination');
     
-    if (!incidentsList) return;
+    if (!incidentsList) {
+        console.error('Không tìm thấy element #recent-incidents-list');
+        return;
+    }
     
     // Sử dụng dữ liệu đã lọc hoặc tất cả sự cố
     const incidentsToShow = filteredIncidents || allIncidents;
+    
+    console.log('Hiển thị sự cố:', incidentsToShow.length); // Debug
     
     // Sắp xếp sự cố
     const sortedIncidents = sortIncidents(incidentsToShow);
@@ -90,7 +99,7 @@ function displayRecentIncidents(filteredIncidents = null) {
                 <p class="text-gray-500">Không tìm thấy sự cố phù hợp với bộ lọc của bạn.</p>
             </div>
         `;
-        feather.replace();
+        if (typeof feather !== 'undefined') feather.replace();
         return;
     }
     
@@ -100,43 +109,45 @@ function displayRecentIncidents(filteredIncidents = null) {
     });
     
     // Hiển thị phân trang
-    displayPagination(totalPages, pagination);
+    if (pagination) {
+        displayPagination(totalPages, pagination);
+    }
     
     // Cập nhật biểu tượng feather
-    feather.replace();
+    if (typeof feather !== 'undefined') feather.replace();
 }
 
-// Hàm tạo thẻ sự cố
+// Hàm tạo thẻ sự cố - ĐÃ SỬA LỖI MÀU SẮC
 function createIncidentCard(incident) {
     const card = document.createElement('div');
-    card.className = 'bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition cursor-pointer';
+    card.className = 'bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition cursor-pointer incident-card';
     card.setAttribute('data-incident-id', incident.id);
     
-    // Xác định màu sắc dựa trên loại sự cố
-    let typeColor, typeIcon, typeText;
+    // Xác định màu sắc dựa trên loại sự cố - SỬA: sử dụng class CSS cố định
+    let typeColorClass, typeIcon, typeText;
     switch (incident.type) {
         case 'fire':
-            typeColor = 'red';
+            typeColorClass = 'fire-color';
             typeIcon = 'flame';
             typeText = 'Hỏa hoạn';
             break;
         case 'flood':
-            typeColor = 'blue';
+            typeColorClass = 'flood-color';
             typeIcon = 'droplet';
             typeText = 'Ngập lụt';
             break;
         case 'accident':
-            typeColor = 'orange';
+            typeColorClass = 'accident-color';
             typeIcon = 'activity';
             typeText = 'Tai nạn';
             break;
         case 'disaster':
-            typeColor = 'purple';
+            typeColorClass = 'disaster-color';
             typeIcon = 'alert-octagon';
             typeText = 'Thiên tai';
             break;
         default:
-            typeColor = 'gray';
+            typeColorClass = 'other-color';
             typeIcon = 'alert-triangle';
             typeText = 'Khác';
     }
@@ -148,8 +159,8 @@ function createIncidentCard(incident) {
         <div class="p-5">
             <div class="flex justify-between items-start mb-3">
                 <div class="flex items-center">
-                    <div class="w-10 h-10 bg-${typeColor}-100 rounded-full flex items-center justify-center mr-3">
-                        <i data-feather="${typeIcon}" class="text-${typeColor}-600 w-5 h-5"></i>
+                    <div class="incident-icon ${typeColorClass}">
+                        <i data-feather="${typeIcon}" class="icon-white"></i>
                     </div>
                     <div>
                         <h4 class="font-bold text-gray-800">${incident.title}</h4>
@@ -179,7 +190,7 @@ function createIncidentCard(incident) {
                     </div>
                     <span class="text-sm text-gray-600">${incident.reporter.name}</span>
                 </div>
-                <button class="text-${typeColor}-600 hover:text-${typeColor}-700 font-medium text-sm flex items-center">
+                <button class="view-details-btn ${typeColorClass}-text font-medium text-sm flex items-center">
                     Xem chi tiết
                     <i data-feather="chevron-right" class="w-4 h-4 ml-1"></i>
                 </button>
@@ -188,7 +199,17 @@ function createIncidentCard(incident) {
     `;
     
     // Thêm sự kiện click để hiển thị modal chi tiết
-    card.addEventListener('click', () => {
+    card.addEventListener('click', (e) => {
+        // Ngăn sự kiện khi click vào nút "Xem chi tiết" để tránh xung đột
+        if (!e.target.closest('.view-details-btn')) {
+            showIncidentDetail(incident);
+        }
+    });
+    
+    // Sự kiện cho nút "Xem chi tiết"
+    const viewDetailsBtn = card.querySelector('.view-details-btn');
+    viewDetailsBtn.addEventListener('click', (e) => {
+        e.stopPropagation(); // Ngăn sự kiện bubble lên card
         showIncidentDetail(incident);
     });
     
@@ -197,7 +218,7 @@ function createIncidentCard(incident) {
 
 // Hàm sắp xếp sự cố
 function sortIncidents(incidents) {
-    const sortBy = document.getElementById('sort-by').value;
+    const sortBy = document.getElementById('sort-by')?.value || 'newest';
     
     switch (sortBy) {
         case 'newest':
@@ -219,7 +240,7 @@ function displayPagination(totalPages, paginationElement) {
     
     // Nút Previous
     const prevButton = document.createElement('button');
-    prevButton.className = `px-3 py-2 border border-gray-300 rounded-lg ${currentPage === 1 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-white text-gray-700 hover:bg-gray-50'}`;
+    prevButton.className = `px-3 py-2 border border-gray-300 rounded-lg flex items-center ${currentPage === 1 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-white text-gray-700 hover:bg-gray-50'}`;
     prevButton.innerHTML = '<i data-feather="chevron-left" class="w-4 h-4"></i>';
     prevButton.disabled = currentPage === 1;
     prevButton.addEventListener('click', () => {
@@ -231,7 +252,34 @@ function displayPagination(totalPages, paginationElement) {
     paginationElement.appendChild(prevButton);
     
     // Các nút trang
-    for (let i = 1; i <= totalPages; i++) {
+    const maxVisiblePages = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+    
+    if (endPage - startPage + 1 < maxVisiblePages) {
+        startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+    
+    // Nút trang đầu
+    if (startPage > 1) {
+        const firstButton = document.createElement('button');
+        firstButton.className = 'px-3 py-2 border border-gray-300 bg-white text-gray-700 rounded-lg hover:bg-gray-50';
+        firstButton.textContent = '1';
+        firstButton.addEventListener('click', () => {
+            currentPage = 1;
+            displayRecentIncidents();
+        });
+        paginationElement.appendChild(firstButton);
+        
+        if (startPage > 2) {
+            const ellipsis = document.createElement('span');
+            ellipsis.className = 'px-2 py-2';
+            ellipsis.textContent = '...';
+            paginationElement.appendChild(ellipsis);
+        }
+    }
+    
+    for (let i = startPage; i <= endPage; i++) {
         const pageButton = document.createElement('button');
         pageButton.className = `px-3 py-2 border rounded-lg ${currentPage === i ? 'bg-red-500 text-white border-red-500' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'}`;
         pageButton.textContent = i;
@@ -242,9 +290,28 @@ function displayPagination(totalPages, paginationElement) {
         paginationElement.appendChild(pageButton);
     }
     
+    // Nút trang cuối
+    if (endPage < totalPages) {
+        if (endPage < totalPages - 1) {
+            const ellipsis = document.createElement('span');
+            ellipsis.className = 'px-2 py-2';
+            ellipsis.textContent = '...';
+            paginationElement.appendChild(ellipsis);
+        }
+        
+        const lastButton = document.createElement('button');
+        lastButton.className = 'px-3 py-2 border border-gray-300 bg-white text-gray-700 rounded-lg hover:bg-gray-50';
+        lastButton.textContent = totalPages;
+        lastButton.addEventListener('click', () => {
+            currentPage = totalPages;
+            displayRecentIncidents();
+        });
+        paginationElement.appendChild(lastButton);
+    }
+    
     // Nút Next
     const nextButton = document.createElement('button');
-    nextButton.className = `px-3 py-2 border border-gray-300 rounded-lg ${currentPage === totalPages ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-white text-gray-700 hover:bg-gray-50'}`;
+    nextButton.className = `px-3 py-2 border border-gray-300 rounded-lg flex items-center ${currentPage === totalPages ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-white text-gray-700 hover:bg-gray-50'}`;
     nextButton.innerHTML = '<i data-feather="chevron-right" class="w-4 h-4"></i>';
     nextButton.disabled = currentPage === totalPages;
     nextButton.addEventListener('click', () => {
@@ -255,7 +322,7 @@ function displayPagination(totalPages, paginationElement) {
     });
     paginationElement.appendChild(nextButton);
     
-    feather.replace();
+    if (typeof feather !== 'undefined') feather.replace();
 }
 
 // Hàm cập nhật thống kê
@@ -274,10 +341,15 @@ function updateRecentStats() {
     }).length;
     
     // Cập nhật DOM
-    document.getElementById('recent-total-incidents').textContent = totalIncidents;
-    document.getElementById('recent-active-incidents').textContent = activeIncidents;
-    document.getElementById('recent-resolved-incidents').textContent = resolvedIncidents;
-    document.getElementById('recent-today-incidents').textContent = todayIncidents;
+    const totalElement = document.getElementById('recent-total-incidents');
+    const activeElement = document.getElementById('recent-active-incidents');
+    const resolvedElement = document.getElementById('recent-resolved-incidents');
+    const todayElement = document.getElementById('recent-today-incidents');
+    
+    if (totalElement) totalElement.textContent = totalIncidents;
+    if (activeElement) activeElement.textContent = activeIncidents;
+    if (resolvedElement) resolvedElement.textContent = resolvedIncidents;
+    if (todayElement) todayElement.textContent = todayIncidents;
 }
 
 // Hàm thiết lập bộ lọc
@@ -287,6 +359,11 @@ function setupRecentFilters() {
     const statusFilter = document.getElementById('recent-status-filter');
     const resetButton = document.getElementById('reset-recent-filters');
     const sortSelect = document.getElementById('sort-by');
+    
+    if (!searchInput || !typeFilter || !statusFilter) {
+        console.warn('Không tìm thấy một hoặc nhiều phần tử filter');
+        return;
+    }
     
     // Hàm lọc sự cố
     function filterIncidents() {
@@ -314,17 +391,23 @@ function setupRecentFilters() {
     searchInput.addEventListener('input', filterIncidents);
     typeFilter.addEventListener('change', filterIncidents);
     statusFilter.addEventListener('change', filterIncidents);
-    sortSelect.addEventListener('change', () => {
-        displayRecentIncidents();
-    });
     
-    resetButton.addEventListener('click', () => {
-        searchInput.value = '';
-        typeFilter.value = 'all';
-        statusFilter.value = 'all';
-        currentPage = 1;
-        displayRecentIncidents();
-    });
+    if (sortSelect) {
+        sortSelect.addEventListener('change', () => {
+            displayRecentIncidents();
+        });
+    }
+    
+    if (resetButton) {
+        resetButton.addEventListener('click', () => {
+            searchInput.value = '';
+            typeFilter.value = 'all';
+            statusFilter.value = 'all';
+            if (sortSelect) sortSelect.value = 'newest';
+            currentPage = 1;
+            displayRecentIncidents();
+        });
+    }
 }
 
 // Hàm định dạng thời gian
@@ -348,11 +431,13 @@ function formatDate(date) {
     return new Date(date).toLocaleDateString('vi-VN', {
         day: '2-digit',
         month: '2-digit',
-        year: 'numeric'
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
     });
 }
 
-// Hàm hiển thị modal chi tiết sự cố
+// Hàm hiển thị modal chi tiết sự cố - ĐÃ SỬA
 function showIncidentDetail(incident) {
     // Điền thông tin vào modal
     document.getElementById('modal-id').textContent = incident.id;
@@ -377,22 +462,12 @@ function showIncidentDetail(incident) {
     
     // Hiển thị modal
     const modal = document.getElementById('emergency-detail-modal');
-    modal.classList.remove('hidden');
-    
-    // Thêm sự kiện đóng modal
-    const closeButtons = [
-        document.getElementById('close-modal'),
-        document.getElementById('modal-close-btn')
-    ];
-    
-    closeButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            modal.classList.add('hidden');
-        });
-    });
+    if (modal) {
+        modal.classList.remove('hidden');
+    }
     
     // Cập nhật biểu tượng feather
-    feather.replace();
+    if (typeof feather !== 'undefined') feather.replace();
 }
 
 // Hàm lấy văn bản loại sự cố
@@ -408,13 +483,121 @@ function getIncidentTypeText(type) {
 
 // Khởi tạo khi trang được tải
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('Đang khởi tạo recent incidents...');
     initRecentIncidents();
 });
 
-// Hàm để cập nhật sự cố từ bản đồ (có thể gọi từ file map.js)
+// Hàm để cập nhật sự cố từ bản đồ
 function updateRecentIncidentsFromMap(incidents) {
     allIncidents = [...incidents];
     currentPage = 1;
     displayRecentIncidents();
     updateRecentStats();
 }
+
+// Thêm CSS cần thiết
+function addRecentIncidentsStyles() {
+    const style = document.createElement('style');
+    style.textContent = `
+        .incident-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+        }
+        
+        .fire-color {
+            background-color: #fecaca;
+        }
+        
+        .flood-color {
+            background-color: #dbeafe;
+        }
+        
+        .accident-color {
+            background-color: #fed7aa;
+        }
+        
+        .disaster-color {
+            background-color: #e9d5ff;
+        }
+        
+        .other-color {
+            background-color: #e5e7eb;
+        }
+        
+        .icon-white {
+            color: white;
+        }
+        
+        .fire-color-text {
+            color: #dc2626;
+        }
+        
+        .flood-color-text {
+            color: #2563eb;
+        }
+        
+        .accident-color-text {
+            color: #ea580c;
+        }
+        
+        .disaster-color-text {
+            color: #7c3aed;
+        }
+        
+        .other-color-text {
+            color: #6b7280;
+        }
+        
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .status-active {
+            background-color: #fef2f2;
+            color: #dc2626;
+        }
+        
+        .status-resolved {
+            background-color: #f0fdf4;
+            color: #16a34a;
+        }
+        
+        .priority-1 {
+            background-color: #fef2f2;
+            color: #dc2626;
+        }
+        
+        .priority-2 {
+            background-color: #fffbeb;
+            color: #d97706;
+        }
+        
+        .priority-3 {
+            background-color: #f0fdf4;
+            color: #16a34a;
+        }
+        
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .incident-card:hover {
+            transform: translateY(-2px);
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+// Thêm CSS khi khởi tạo
+addRecentIncidentsStyles();

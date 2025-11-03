@@ -1,45 +1,683 @@
-<footer class="bg-gray-900 text-white py-16">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
-            <div>
-                <div class="flex items-center mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                    </svg>
-                    <span class="text-2xl font-bold bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">CỨU HỘ QUỐC GIA</span>
-                </div>
-                <p class="text-gray-400 leading-relaxed">Kết nối người dân với lực lượng cứu hộ trong các tình huống khẩn cấp.</p>
-            </div>
-            <div>
-                <h4 class="font-bold mb-4">Dịch Vụ</h4>
-                <ul class="space-y-2">
-                    <li><a href="#" class="text-gray-400 hover:text-white transition">Cứu hỏa</a></li>
-                    <li><a href="#" class="text-gray-400 hover:text-white transition">Cứu hộ giao thông</a></li>
-                    <li><a href="#" class="text-gray-400 hover:text-white transition">Y tế khẩn cấp</a></li>
-                    <li><a href="#" class="text-gray-400 hover:text-white transition">Ứng phó thiên tai</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4 class="font-bold mb-4">Liên Kết</h4>
-                <ul class="space-y-2">
-                    <li><a href="#" class="text-gray-400 hover:text-white transition">Bộ Công An</a></li>
-                    <li><a href="#" class="text-gray-400 hover:text-white transition">Bộ Y Tế</a></li>
-                    <li><a href="#" class="text-gray-400 hover:text-white transition">Ban Chỉ Đạo PCTT</a></li>
-                    <li><a href="#" class="text-gray-400 hover:text-white transition">Cục Cứu Hộ Cứu Nạn</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4 class="font-bold mb-4">Hỗ Trợ</h4>
-                <ul class="space-y-2">
-                    <li><a href="#" class="text-gray-400 hover:text-white transition">Câu hỏi thường gặp</a></li>
-                    <li><a href="#" class="text-gray-400 hover:text-white transition">Hướng dẫn sử dụng</a></li>
-                    <li><a href="#" class="text-gray-400 hover:text-white transition">Chính sách bảo mật</a></li>
-                    <li><a href="#" class="text-gray-400 hover:text-white transition">Điều khoản dịch vụ</a></li>
-                </ul>
-            </div>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Hệ Thống Cứu Hộ Quốc Gia</title>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    
+    <link rel="stylesheet" href="assets/css/admin.css">
+    <style>
+        .news-card {
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+        .news-card.emergency { border-left-color: #dc2626; }
+        .news-card.warning { border-left-color: #d97706; }
+        .news-card.info { border-left-color: #2563eb; }
+        .news-card.guidance { border-left-color: #059669; }
+        .news-card.news { border-left-color: #7c3aed; }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+        }
+        .status-published { background-color: #10b981; }
+        .status-draft { background-color: #f59e0b; }
+        .status-scheduled { background-color: #3b82f6; }
+        .status-archived { background-color: #6b7280; }
+        
+        .ql-editor {
+            min-height: 200px;
+            font-size: 14px;
+        }
+        
+        .image-preview {
+            max-height: 200px;
+            object-fit: cover;
+        }
+        
+        .stats-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .category-badge {
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+        
+        .advanced-filters {
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Data Sync Status -->
+    <div id="sync-status" class="data-sync-status sync-success hidden">
+        <i class="fas fa-check-circle mr-2"></i>
+        <span>Dữ liệu đã đồng bộ</span>
+    </div>
+
+    <!-- Layout Container -->
+    <div class="flex h-screen">
+        <!-- Sidebar (giữ nguyên) -->
+        <div class="sidebar bg-gray-900 w-64 flex flex-col flex-shrink-0">
+            <!-- ... (giữ nguyên sidebar code) ... -->
         </div>
-        <div class="border-t border-gray-700 mt-12 pt-8 text-center text-gray-400">
-            <p>© 2023 Hệ Thống Cứu Hộ Quốc Gia. Bản quyền thuộc về Bộ Công An.</p>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Header (giữ nguyên) -->
+            <header class="bg-white border-b border-gray-200">
+                <!-- ... (giữ nguyên header code) ... -->
+            </header>
+
+            <!-- Main Content Area -->
+            <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+                <!-- Dashboard Tab (giữ nguyên) -->
+                <div id="dashboard" class="tab-content active">
+                    <!-- ... (giữ nguyên dashboard code) ... -->
+                </div>
+                
+                <!-- News Management Tab - NÂNG CẤP -->
+                <div id="news" class="tab-content">
+                    <!-- Statistics Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                        <div class="stats-card rounded-xl p-6 shadow-lg">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-blue-100">Tổng bài viết</p>
+                                    <h3 class="text-3xl font-bold mt-2">156</h3>
+                                    <p class="text-green-300 text-sm mt-1">
+                                        <i class="fas fa-trending-up mr-1"></i>+12% so với tháng trước
+                                    </p>
+                                </div>
+                                <i class="fas fa-newspaper text-2xl text-blue-200"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-xl p-6 shadow-lg">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-gray-600">Bài viết đang hoạt động</p>
+                                    <h3 class="text-3xl font-bold mt-2 text-green-600">128</h3>
+                                    <p class="text-gray-500 text-sm mt-1">82% tổng số bài</p>
+                                </div>
+                                <i class="fas fa-eye text-2xl text-green-500"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-xl p-6 shadow-lg">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-gray-600">Tin khẩn cấp</p>
+                                    <h3 class="text-3xl font-bold mt-2 text-red-600">15</h3>
+                                    <p class="text-gray-500 text-sm mt-1">5 tin chưa xử lý</p>
+                                </div>
+                                <i class="fas fa-exclamation-triangle text-2xl text-red-500"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-xl p-6 shadow-lg">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-gray-600">Lượt xem hôm nay</p>
+                                    <h3 class="text-3xl font-bold mt-2 text-blue-600">2,847</h3>
+                                    <p class="text-green-500 text-sm mt-1">
+                                        <i class="fas fa-trending-up mr-1"></i>+8.5%
+                                    </p>
+                                </div>
+                                <i class="fas fa-chart-line text-2xl text-blue-500"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Bar -->
+                    <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                            <div class="flex flex-col sm:flex-row gap-4 flex-1">
+                                <div class="flex-1">
+                                    <input type="text" id="search-input" placeholder="Tìm kiếm bài viết..." 
+                                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                </div>
+                                <select id="category-filter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                    <option value="all">Tất cả danh mục</option>
+                                    <option value="emergency">Tin khẩn cấp</option>
+                                    <option value="warning">Cảnh báo</option>
+                                    <option value="info">Thông tin</option>
+                                    <option value="guidance">Hướng dẫn</option>
+                                    <option value="news">Tin tức</option>
+                                </select>
+                                <select id="status-filter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                    <option value="all">Tất cả trạng thái</option>
+                                    <option value="published">Đã xuất bản</option>
+                                    <option value="draft">Bản nháp</option>
+                                    <option value="scheduled">Lên lịch</option>
+                                    <option value="archived">Đã lưu trữ</option>
+                                </select>
+                            </div>
+                            <div class="flex space-x-3">
+                                <button id="sync-news-btn" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition flex items-center">
+                                    <i class="fas fa-sync-alt mr-2"></i>
+                                    Đồng bộ
+                                </button>
+                                <button id="export-news-btn" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition flex items-center">
+                                    <i class="fas fa-download mr-2"></i>
+                                    Xuất Excel
+                                </button>
+                                <button id="add-news-btn" class="bg-red-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-700 transition flex items-center">
+                                    <i class="fas fa-plus mr-2"></i>
+                                    Thêm bài viết
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Advanced Filters -->
+                        <div id="advanced-filters" class="advanced-filters mt-4 p-4 bg-gray-50 rounded-lg hidden">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Ngày đăng</label>
+                                    <input type="date" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Tác giả</label>
+                                    <select class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                        <option>Tất cả tác giả</option>
+                                        <option>Admin System</option>
+                                        <option>Nguyễn Văn A</option>
+                                        <option>Trần Thị B</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Sắp xếp</label>
+                                    <select class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                        <option>Mới nhất</option>
+                                        <option>Cũ nhất</option>
+                                        <option>Lượt xem nhiều</option>
+                                        <option>A-Z</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center mt-4">
+                            <button id="toggle-filters" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                <i class="fas fa-filter mr-1"></i>Bộ lọc nâng cao
+                            </button>
+                            <div class="text-sm text-gray-600">
+                                Tìm thấy <span id="results-count">24</span> kết quả
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- News Grid -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-8" id="news-grid-container">
+                        <!-- News cards will be populated dynamically -->
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="flex justify-center items-center space-x-2">
+                        <button class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="px-3 py-2 bg-blue-500 text-white rounded-lg">1</button>
+                        <button class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">2</button>
+                        <button class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">3</button>
+                        <span class="px-2">...</span>
+                        <button class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">10</button>
+                        <button class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Các tab khác giữ nguyên -->
+                <!-- Weather Management Tab -->
+                <div id="weather" class="tab-content">
+                    <!-- ... (giữ nguyên weather code) ... -->
+                </div>
+                
+                <!-- Reports Management Tab -->
+                <div id="reports" class="tab-content">
+                    <!-- ... (giữ nguyên reports code) ... -->
+                </div>
+                
+                <!-- Các tab còn lại giữ nguyên -->
+                <!-- ... -->
+            </main>
         </div>
     </div>
-</footer>
+
+    <!-- Enhanced News Modal -->
+    <div id="news-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl mx-4 max-h-[90vh] overflow-hidden">
+            <div class="flex justify-between items-center p-6 border-b">
+                <h2 class="text-xl font-bold text-gray-900" id="news-modal-title">Thêm bài viết mới</h2>
+                <button id="close-news-modal" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+            
+            <div class="p-6 overflow-y-auto" style="max-height: calc(90vh - 140px)">
+                <form id="news-form" class="space-y-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <label for="news-title" class="block text-sm font-medium text-gray-700 mb-2">Tiêu đề *</label>
+                            <input type="text" id="news-title" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Nhập tiêu đề bài viết">
+                        </div>
+                        
+                        <div>
+                            <label for="news-category" class="block text-sm font-medium text-gray-700 mb-2">Danh mục *</label>
+                            <select id="news-category" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <option value="">Chọn danh mục</option>
+                                <option value="emergency">Tin khẩn cấp</option>
+                                <option value="warning">Cảnh báo</option>
+                                <option value="info">Thông tin</option>
+                                <option value="guidance">Hướng dẫn</option>
+                                <option value="news">Tin tức</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div>
+                            <label for="news-status" class="block text-sm font-medium text-gray-700 mb-2">Trạng thái</label>
+                            <select id="news-status" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <option value="published">Xuất bản ngay</option>
+                                <option value="draft">Bản nháp</option>
+                                <option value="scheduled">Lên lịch</option>
+                            </select>
+                        </div>
+                        
+                        <div id="schedule-field" class="hidden">
+                            <label for="news-schedule" class="block text-sm font-medium text-gray-700 mb-2">Lên lịch đăng</label>
+                            <input type="datetime-local" id="news-schedule" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        
+                        <div>
+                            <label for="news-priority" class="block text-sm font-medium text-gray-700 mb-2">Độ ưu tiên</label>
+                            <select id="news-priority" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <option value="high">Cao</option>
+                                <option value="medium" selected>Trung bình</option>
+                                <option value="low">Thấp</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="news-excerpt" class="block text-sm font-medium text-gray-700 mb-2">Mô tả ngắn</label>
+                        <textarea id="news-excerpt" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" rows="3" placeholder="Mô tả ngắn về bài viết"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nội dung *</label>
+                        <div id="editor-container" class="border border-gray-300 rounded-lg">
+                            <!-- Quill editor will be initialized here -->
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Hình ảnh đại diện</label>
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                            <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                            <p class="text-gray-600">Kéo thả hình ảnh vào đây hoặc click để chọn</p>
+                            <input type="file" class="hidden" accept="image/*" id="image-upload">
+                            <button type="button" id="upload-trigger" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Chọn hình ảnh</button>
+                        </div>
+                        <div id="image-preview" class="mt-3 hidden">
+                            <img src="" alt="Preview" class="image-preview rounded-lg w-full">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <label for="news-tags" class="block text-sm font-medium text-gray-700 mb-2">Tags</label>
+                            <input type="text" id="news-tags" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Thêm tags, cách nhau bằng dấu phẩy">
+                        </div>
+                        
+                        <div>
+                            <label for="news-keywords" class="block text-sm font-medium text-gray-700 mb-2">Meta Keywords</label>
+                            <input type="text" id="news-keywords" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Từ khóa SEO">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="flex justify-end space-x-3 p-6 border-t bg-gray-50">
+                <button type="button" id="cancel-news" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">Hủy bỏ</button>
+                <button type="button" id="save-draft-btn" class="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600">Lưu nháp</button>
+                <button type="button" id="publish-news-btn" class="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">Xuất bản</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Notification -->
+    <div id="success-notification" class="hidden fixed top-4 right-4 bg-green-500 text-white px-4 py-3 rounded-lg shadow-lg z-50">
+        <div class="flex items-center">
+            <i class="fas fa-check-circle mr-2"></i>
+            <span id="notification-message">Đã lưu thành công!</span>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Quill Editor
+        let quill;
+        
+        // Sample news data
+        const sampleNews = [
+            {
+                id: 'N001',
+                title: 'Cảnh báo bão số 8 hướng vào đất liền',
+                category: 'emergency',
+                status: 'published',
+                excerpt: 'Bão số 8 dự kiến đổ bộ vào các tỉnh miền Trung với sức gió mạnh cấp 10-11, giật cấp 13...',
+                views: 2400,
+                time: '2 giờ trước',
+                author: 'Admin System',
+                priority: 'high'
+            },
+            {
+                id: 'N002',
+                title: 'Hướng dẫn sơ cứu khi bị điện giật',
+                category: 'guidance', 
+                status: 'published',
+                excerpt: 'Các bước sơ cứu cơ bản khi gặp nạn nhân bị điện giật cần thực hiện ngay lập tức...',
+                views: 1800,
+                time: '5 giờ trước',
+                author: 'Nguyễn Văn A',
+                priority: 'medium'
+            },
+            {
+                id: 'N003',
+                title: 'Thông báo lịch cứu hộ dịp lễ 30/4',
+                category: 'info',
+                status: 'scheduled',
+                excerpt: 'Lịch trực và phương án cứu hộ được triển khai trong dịp lễ 30/4 - 1/5...',
+                views: 950,
+                time: '1 ngày trước',
+                author: 'Trần Thị B',
+                priority: 'low'
+            }
+        ];
+
+        // DOM Content Loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeNewsManagement();
+            loadNewsData();
+        });
+
+        function initializeNewsManagement() {
+            // Initialize Quill editor
+            quill = new Quill('#editor-container', {
+                theme: 'snow',
+                modules: {
+                    toolbar: [
+                        [{ 'header': [1, 2, 3, false] }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        [{ 'color': [] }, { 'background': [] }],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        ['link', 'image', 'video'],
+                        ['clean']
+                    ]
+                },
+                placeholder: 'Nhập nội dung bài viết...'
+            });
+
+            // Event listeners for news management
+            document.getElementById('add-news-btn').addEventListener('click', openNewsModal);
+            document.getElementById('close-news-modal').addEventListener('click', closeNewsModal);
+            document.getElementById('cancel-news').addEventListener('click', closeNewsModal);
+            document.getElementById('toggle-filters').addEventListener('click', toggleAdvancedFilters);
+            document.getElementById('news-status').addEventListener('change', handleStatusChange);
+            document.getElementById('upload-trigger').addEventListener('click', triggerImageUpload);
+            document.getElementById('image-upload').addEventListener('change', handleImageUpload);
+            document.getElementById('publish-news-btn').addEventListener('click', publishNews);
+            document.getElementById('save-draft-btn').addEventListener('click', saveDraft);
+            
+            // Filter events
+            document.getElementById('search-input').addEventListener('input', applyFilters);
+            document.getElementById('category-filter').addEventListener('change', applyFilters);
+            document.getElementById('status-filter').addEventListener('change', applyFilters);
+        }
+
+        function loadNewsData() {
+            const container = document.getElementById('news-grid-container');
+            container.innerHTML = '';
+
+            sampleNews.forEach(news => {
+                const categoryNames = {
+                    'emergency': 'Khẩn cấp',
+                    'warning': 'Cảnh báo', 
+                    'info': 'Thông tin',
+                    'guidance': 'Hướng dẫn',
+                    'news': 'Tin tức'
+                };
+
+                const statusNames = {
+                    'published': 'Đã xuất bản',
+                    'draft': 'Bản nháp',
+                    'scheduled': 'Lên lịch',
+                    'archived': 'Đã lưu trữ'
+                };
+
+                const categoryColors = {
+                    'emergency': 'bg-red-100 text-red-800',
+                    'warning': 'bg-orange-100 text-orange-800',
+                    'info': 'bg-blue-100 text-blue-800',
+                    'guidance': 'bg-green-100 text-green-800',
+                    'news': 'bg-purple-100 text-purple-800'
+                };
+
+                const statusColors = {
+                    'published': 'status-published',
+                    'draft': 'status-draft',
+                    'scheduled': 'status-scheduled',
+                    'archived': 'status-archived'
+                };
+
+                const card = document.createElement('div');
+                card.className = `news-card ${news.category} bg-white rounded-xl shadow-sm overflow-hidden`;
+                card.innerHTML = `
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="category-badge ${categoryColors[news.category]}">
+                                ${categoryNames[news.category]}
+                            </span>
+                            <div class="flex items-center text-sm text-gray-500">
+                                <span class="status-dot ${statusColors[news.status]}"></span>
+                                ${statusNames[news.status]}
+                            </div>
+                        </div>
+                        <h3 class="font-bold text-lg mb-2 text-gray-900 line-clamp-2">${news.title}</h3>
+                        <p class="text-gray-600 text-sm mb-4 line-clamp-3">${news.excerpt}</p>
+                        
+                        <div class="flex items-center justify-between text-sm text-gray-500 mb-3">
+                            <div class="flex items-center">
+                                <i class="fas fa-eye mr-1"></i>
+                                <span>${news.views.toLocaleString()}</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-clock mr-1"></i>
+                                <span>${news.time}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-500">Bởi <strong>${news.author}</strong></span>
+                            <div class="flex space-x-2">
+                                <button class="text-blue-600 hover:text-blue-800 p-1 view-news" data-id="${news.id}" title="Xem chi tiết">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="text-green-600 hover:text-green-800 p-1 edit-news" data-id="${news.id}" title="Chỉnh sửa">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="text-red-600 hover:text-red-800 p-1 delete-news" data-id="${news.id}" title="Xóa">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            // Add event listeners to action buttons
+            container.querySelectorAll('.view-news').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = e.currentTarget.getAttribute('data-id');
+                    viewNews(id);
+                });
+            });
+
+            container.querySelectorAll('.edit-news').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = e.currentTarget.getAttribute('data-id');
+                    editNews(id);
+                });
+            });
+
+            container.querySelectorAll('.delete-news').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = e.currentTarget.getAttribute('data-id');
+                    deleteNews(id);
+                });
+            });
+        }
+
+        function openNewsModal() {
+            document.getElementById('news-modal-title').textContent = 'Thêm bài viết mới';
+            document.getElementById('news-form').reset();
+            quill.setText('');
+            document.getElementById('image-preview').classList.add('hidden');
+            document.getElementById('schedule-field').classList.add('hidden');
+            document.getElementById('news-modal').classList.remove('hidden');
+        }
+
+        function closeNewsModal() {
+            document.getElementById('news-modal').classList.add('hidden');
+        }
+
+        function toggleAdvancedFilters() {
+            const filters = document.getElementById('advanced-filters');
+            filters.classList.toggle('hidden');
+        }
+
+        function handleStatusChange(e) {
+            const scheduleField = document.getElementById('schedule-field');
+            if (e.target.value === 'scheduled') {
+                scheduleField.classList.remove('hidden');
+            } else {
+                scheduleField.classList.add('hidden');
+            }
+        }
+
+        function triggerImageUpload() {
+            document.getElementById('image-upload').click();
+        }
+
+        function handleImageUpload(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    document.getElementById('image-preview').querySelector('img').src = e.target.result;
+                    document.getElementById('image-preview').classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function publishNews() {
+            // Validate form
+            const title = document.getElementById('news-title').value;
+            const category = document.getElementById('news-category').value;
+            
+            if (!title || !category) {
+                showNotification('Vui lòng điền đầy đủ thông tin bắt buộc', 'error');
+                return;
+            }
+
+            // Simulate saving news
+            showNotification('Bài viết đã được xuất bản thành công!');
+            closeNewsModal();
+            // In real application, you would send data to server here
+        }
+
+        function saveDraft() {
+            showNotification('Đã lưu bản nháp thành công!');
+            closeNewsModal();
+        }
+
+        function viewNews(id) {
+            const news = sampleNews.find(item => item.id === id);
+            if (news) {
+                alert(`Xem chi tiết: ${news.title}`);
+                // In real application, you would open a detail modal
+            }
+        }
+
+        function editNews(id) {
+            const news = sampleNews.find(item => item.id === id);
+            if (news) {
+                document.getElementById('news-modal-title').textContent = 'Chỉnh sửa bài viết';
+                document.getElementById('news-title').value = news.title;
+                document.getElementById('news-category').value = news.category;
+                document.getElementById('news-status').value = news.status;
+                document.getElementById('news-priority').value = news.priority;
+                document.getElementById('news-excerpt').value = news.excerpt;
+                quill.setText(news.excerpt);
+                
+                if (news.status === 'scheduled') {
+                    document.getElementById('schedule-field').classList.remove('hidden');
+                }
+                
+                document.getElementById('news-modal').classList.remove('hidden');
+            }
+        }
+
+        function deleteNews(id) {
+            if (confirm('Bạn có chắc chắn muốn xóa bài viết này?')) {
+                showNotification('Bài viết đã được xóa thành công!');
+                // In real application, you would remove from array and re-render
+            }
+        }
+
+        function applyFilters() {
+            // Filter logic would be implemented here
+            console.log('Applying filters...');
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('success-notification');
+            const messageElement = document.getElementById('notification-message');
+            
+            messageElement.textContent = message;
+            
+            if (type === 'error') {
+                notification.className = 'hidden fixed top-4 right-4 bg-red-500 text-white px-4 py-3 rounded-lg shadow-lg z-50';
+            } else {
+                notification.className = 'hidden fixed top-4 right-4 bg-green-500 text-white px-4 py-3 rounded-lg shadow-lg z-50';
+            }
+            
+            notification.classList.remove('hidden');
+            
+            setTimeout(() => {
+                notification.classList.add('hidden');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
