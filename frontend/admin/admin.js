@@ -603,3 +603,598 @@ window.deleteNews = function(id) {
         loadNewsData();
     }
 };
+
+
+
+
+
+// banr tinn 
+ // Dữ liệu mẫu theo form mới
+        const sampleNewsData = [
+            // ... (dữ liệu bạn đã cung cấp)
+            // Để tiết kiệm không gian, tôi đã rút gọn dữ liệu ở đây
+            // Trong thực tế, bạn có thể dán toàn bộ dữ liệu vào đây
+            {
+                id: 'INC001',
+                type: 'fire',
+                status: 'active',
+                priority: 'high',
+                title: 'Cháy chung cư tại Cầu Giấy',
+                address: '123 Trần Duy Hưng, Cầu Giấy, Hà Nội',
+                province: 'Hà Nội',
+                time: '15:30, 12/11/2023',
+                description: 'Cháy lớn tại tầng 12 chung cư Golden West, nhiều người mắc kẹt bên trong. Lực lượng cứu hộ đang có mặt tại hiện trường.',
+                reporter: { name: 'Nguyễn Văn A', phone: '0912 345 678' },
+                timeline: [
+                    { time: '15:25', action: 'Tiếp nhận báo cáo sự cố' },
+                    { time: '15:28', action: 'Điều động đội PCCC' },
+                    { time: '15:35', action: 'Lực lượng có mặt tại hiện trường' }
+                ]
+            },
+            {
+                id: 'INC002',
+                type: 'flood',
+                status: 'active',
+                priority: 'medium',
+                title: 'Ngập nước nghiêm trọng tại Quận 1',
+                address: 'Đường Nguyễn Huệ, Quận 1, TP.HCM',
+                province: 'TP.HCM',
+                time: '14:15, 12/11/2023',
+                description: 'Ngập nước sâu 0.5m sau cơn mưa lớn, nhiều phương tiện bị kẹt. Đội cứu hộ đang hỗ trợ người dân di chuyển.',
+                reporter: { name: 'Trần Thị B', phone: '0934 567 890' },
+                timeline: [
+                    { time: '14:10', action: 'Tiếp nhận báo cáo sự cố' },
+                    { time: '14:12', action: 'Cảnh báo người dân' },
+                    { time: '14:20', action: 'Triển khai lực lượng ứng phó' }
+                ]
+            },
+            // ... thêm các mục khác
+        ];
+
+        // Biến toàn cục
+        let currentNewsData = [...sampleNewsData];
+        let currentEditingId = null;
+        let currentPage = 1;
+        const itemsPerPage = 10;
+
+        // Khởi tạo ứng dụng
+        document.addEventListener('DOMContentLoaded', function() {
+            renderNewsTable();
+            setupEventListeners();
+        });
+
+        // Render bảng tin tức
+        function renderNewsTable(data = currentNewsData) {
+            const tableBody = document.getElementById('news-table-body');
+            tableBody.innerHTML = '';
+
+            if (data.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="8">
+                            <div class="empty-state">
+                                <i class="fas fa-inbox"></i>
+                                <h3>Không có dữ liệu</h3>
+                                <p>Không tìm thấy sự cố nào phù hợp với bộ lọc của bạn.</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            // Tính toán phân trang
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedData = data.slice(startIndex, endIndex);
+
+            paginatedData.forEach(item => {
+                const row = document.createElement('tr');
+                
+                // Xác định class cho badge dựa trên loại sự cố
+                let typeClass = '';
+                let typeText = '';
+                switch(item.type) {
+                    case 'fire':
+                        typeClass = 'badge-fire';
+                        typeText = 'Cháy';
+                        break;
+                    case 'flood':
+                        typeClass = 'badge-flood';
+                        typeText = 'Ngập lụt';
+                        break;
+                    case 'accident':
+                        typeClass = 'badge-accident';
+                        typeText = 'Tai nạn';
+                        break;
+                    case 'disaster':
+                        typeClass = 'badge-disaster';
+                        typeText = 'Thiên tai';
+                        break;
+                }
+                
+                // Xác định class cho trạng thái
+                let statusClass = item.status === 'active' ? 'badge-active' : 'badge-resolved';
+                let statusText = item.status === 'active' ? 'Đang hoạt động' : 'Đã giải quyết';
+                
+                // Xác định class cho mức độ ưu tiên
+                let priorityClass = '';
+                let priorityText = '';
+                switch(item.priority) {
+                    case 'high':
+                        priorityClass = 'badge-high';
+                        priorityText = 'Cao';
+                        break;
+                    case 'medium':
+                        priorityClass = 'badge-medium';
+                        priorityText = 'Trung bình';
+                        break;
+                    case 'low':
+                        priorityClass = 'badge-low';
+                        priorityText = 'Thấp';
+                        break;
+                }
+                
+                row.innerHTML = `
+                    <td>${item.id}</td>
+                    <td>${item.title}</td>
+                    <td>${item.address}</td>
+                    <td>${item.time}</td>
+                    <td><span class="badge ${typeClass}">${typeText}</span></td>
+                    <td><span class="badge ${statusClass}">${statusText}</span></td>
+                    <td><span class="badge ${priorityClass}">${priorityText}</span></td>
+                    <td>
+                        <div class="actions">
+                            <button class="action-btn action-view" data-id="${item.id}">
+                                <i class="fas fa-eye"></i> Xem
+                            </button>
+                            <button class="action-btn action-edit" data-id="${item.id}">
+                                <i class="fas fa-edit"></i> Sửa
+                            </button>
+                            <button class="action-btn action-delete" data-id="${item.id}">
+                                <i class="fas fa-trash"></i> Xóa
+                            </button>
+                        </div>
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+            
+            renderPagination(data.length);
+        }
+
+        // Render phân trang
+        function renderPagination(totalItems) {
+            const pagination = document.getElementById('pagination');
+            pagination.innerHTML = '';
+            
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            
+            if (totalPages <= 1) return;
+            
+            // Nút Previous
+            const prevButton = document.createElement('button');
+            prevButton.innerHTML = '<i class="fas fa-chevron-left"></i>';
+            prevButton.disabled = currentPage === 1;
+            prevButton.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderNewsTable();
+                }
+            });
+            pagination.appendChild(prevButton);
+            
+            // Các nút trang
+            for (let i = 1; i <= totalPages; i++) {
+                const pageButton = document.createElement('button');
+                pageButton.textContent = i;
+                pageButton.classList.toggle('active', i === currentPage);
+                pageButton.addEventListener('click', () => {
+                    currentPage = i;
+                    renderNewsTable();
+                });
+                pagination.appendChild(pageButton);
+            }
+            
+            // Nút Next
+            const nextButton = document.createElement('button');
+            nextButton.innerHTML = '<i class="fas fa-chevron-right"></i>';
+            nextButton.disabled = currentPage === totalPages;
+            nextButton.addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderNewsTable();
+                }
+            });
+            pagination.appendChild(nextButton);
+        }
+
+        // Thiết lập event listeners
+        function setupEventListeners() {
+            // Nút thêm tin tức
+            document.getElementById('add-news-btn').addEventListener('click', openAddModal);
+            
+            // Nút đóng modal
+            document.getElementById('close-detail-modal').addEventListener('click', closeDetailModal);
+            document.getElementById('close-detail-btn').addEventListener('click', closeDetailModal);
+            document.getElementById('close-edit-modal').addEventListener('click', closeEditModal);
+            document.getElementById('cancel-edit-btn').addEventListener('click', closeEditModal);
+            
+            // Nút lưu tin tức
+            document.getElementById('save-news-btn').addEventListener('click', saveNews);
+            
+            // Nút thêm mốc thời gian
+            document.getElementById('add-timeline-btn').addEventListener('click', addTimelineItem);
+            
+            // Bộ lọc
+            document.getElementById('type-filter').addEventListener('change', applyFilters);
+            document.getElementById('status-filter').addEventListener('change', applyFilters);
+            document.getElementById('priority-filter').addEventListener('change', applyFilters);
+            document.getElementById('search').addEventListener('input', applyFilters);
+            
+            // Nút đồng bộ và xuất Excel
+            document.getElementById('sync-btn').addEventListener('click', syncData);
+            document.getElementById('export-btn').addEventListener('click', exportToExcel);
+            
+            // Xử lý sự kiện click trên bảng (cho các nút xem, sửa, xóa)
+            document.getElementById('news-table-body').addEventListener('click', function(e) {
+                const target = e.target.closest('button');
+                if (!target) return;
+                
+                const id = target.getAttribute('data-id');
+                if (!id) return;
+                
+                if (target.classList.contains('action-view')) {
+                    viewNewsDetail(id);
+                } else if (target.classList.contains('action-edit')) {
+                    editNews(id);
+                } else if (target.classList.contains('action-delete')) {
+                    deleteNews(id);
+                }
+            });
+        }
+
+        // Mở modal thêm tin tức
+        function openAddModal() {
+            currentEditingId = null;
+            document.getElementById('edit-modal-title').textContent = 'Thêm sự cố mới';
+            document.getElementById('news-form').reset();
+            
+            // Xóa tất cả các mục timeline trừ mẫu đầu tiên
+            const timelineContainer = document.getElementById('timeline-container');
+            timelineContainer.innerHTML = `
+                <div class="timeline-item">
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <input type="text" class="timeline-time" placeholder="Thời gian" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 10px; flex: 1;">
+                        <input type="text" class="timeline-action" placeholder="Hành động" required>
+                    </div>
+                    <button type="button" class="action-btn action-delete remove-timeline-btn" style="margin-left: 10px;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            
+            // Thêm event listener cho nút xóa timeline
+            document.querySelectorAll('.remove-timeline-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    this.closest('.timeline-item').remove();
+                });
+            });
+            
+            document.getElementById('edit-modal').style.display = 'flex';
+        }
+
+        // Đóng modal chi tiết
+        function closeDetailModal() {
+            document.getElementById('detail-modal').style.display = 'none';
+        }
+
+        // Đóng modal chỉnh sửa
+        function closeEditModal() {
+            document.getElementById('edit-modal').style.display = 'none';
+        }
+
+        // Xem chi tiết tin tức
+        function viewNewsDetail(id) {
+            const newsItem = currentNewsData.find(item => item.id === id);
+            if (!newsItem) return;
+            
+            const modalBody = document.getElementById('detail-modal-body');
+            
+            let typeText = '';
+            switch(newsItem.type) {
+                case 'fire':
+                    typeText = 'Cháy';
+                    break;
+                case 'flood':
+                    typeText = 'Ngập lụt';
+                    break;
+                case 'accident':
+                    typeText = 'Tai nạn';
+                    break;
+                case 'disaster':
+                    typeText = 'Thiên tai';
+                    break;
+            }
+            
+            let statusText = newsItem.status === 'active' ? 'Đang hoạt động' : 'Đã giải quyết';
+            
+            let priorityText = '';
+            switch(newsItem.priority) {
+                case 'high':
+                    priorityText = 'Cao';
+                    break;
+                case 'medium':
+                    priorityText = 'Trung bình';
+                    break;
+                case 'low':
+                    priorityText = 'Thấp';
+                    break;
+            }
+            
+            modalBody.innerHTML = `
+                <div class="form-group">
+                    <label>ID sự cố</label>
+                    <p>${newsItem.id}</p>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Loại sự cố</label>
+                        <p>${typeText}</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Trạng thái</label>
+                        <p>${statusText}</p>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Mức độ ưu tiên</label>
+                        <p>${priorityText}</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Thời gian</label>
+                        <p>${newsItem.time}</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Tiêu đề</label>
+                    <p>${newsItem.title}</p>
+                </div>
+                <div class="form-group">
+                    <label>Địa chỉ</label>
+                    <p>${newsItem.address}</p>
+                </div>
+                <div class="form-group">
+                    <label>Tỉnh/Thành phố</label>
+                    <p>${newsItem.province}</p>
+                </div>
+                <div class="form-group">
+                    <label>Mô tả</label>
+                    <p>${newsItem.description}</p>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Người báo cáo</label>
+                        <p>${newsItem.reporter.name}</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Số điện thoại</label>
+                        <p>${newsItem.reporter.phone}</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Dòng thời gian</label>
+                    <div class="timeline">
+                        ${newsItem.timeline.map(item => `
+                            <div class="timeline-item">
+                                <div class="timeline-time">${item.time}</div>
+                                <div class="timeline-action">${item.action}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('detail-modal').style.display = 'flex';
+        }
+
+        // Chỉnh sửa tin tức
+        function editNews(id) {
+            const newsItem = currentNewsData.find(item => item.id === id);
+            if (!newsItem) return;
+            
+            currentEditingId = id;
+            document.getElementById('edit-modal-title').textContent = 'Chỉnh sửa sự cố';
+            
+            // Điền dữ liệu vào form
+            document.getElementById('incident-id').value = newsItem.id;
+            document.getElementById('incident-type').value = newsItem.type;
+            document.getElementById('incident-status').value = newsItem.status;
+            document.getElementById('incident-priority').value = newsItem.priority;
+            document.getElementById('incident-title').value = newsItem.title;
+            document.getElementById('incident-address').value = newsItem.address;
+            document.getElementById('incident-province').value = newsItem.province;
+            document.getElementById('incident-time').value = newsItem.time;
+            document.getElementById('incident-description').value = newsItem.description;
+            document.getElementById('reporter-name').value = newsItem.reporter.name;
+            document.getElementById('reporter-phone').value = newsItem.reporter.phone;
+            
+            // Điền dữ liệu timeline
+            const timelineContainer = document.getElementById('timeline-container');
+            timelineContainer.innerHTML = '';
+            
+            newsItem.timeline.forEach(item => {
+                const timelineItem = document.createElement('div');
+                timelineItem.className = 'timeline-item';
+                timelineItem.innerHTML = `
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <input type="text" class="timeline-time" value="${item.time}" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 10px; flex: 1;">
+                        <input type="text" class="timeline-action" value="${item.action}" required>
+                    </div>
+                    <button type="button" class="action-btn action-delete remove-timeline-btn" style="margin-left: 10px;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                timelineContainer.appendChild(timelineItem);
+            });
+            
+            // Thêm event listener cho nút xóa timeline
+            document.querySelectorAll('.remove-timeline-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    this.closest('.timeline-item').remove();
+                });
+            });
+            
+            document.getElementById('edit-modal').style.display = 'flex';
+        }
+
+        // Thêm mốc thời gian
+        function addTimelineItem() {
+            const timelineContainer = document.getElementById('timeline-container');
+            const timelineItem = document.createElement('div');
+            timelineItem.className = 'timeline-item';
+            timelineItem.innerHTML = `
+                <div class="form-group" style="margin-bottom: 10px;">
+                    <input type="text" class="timeline-time" placeholder="Thời gian" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 10px; flex: 1;">
+                    <input type="text" class="timeline-action" placeholder="Hành động" required>
+                </div>
+                <button type="button" class="action-btn action-delete remove-timeline-btn" style="margin-left: 10px;">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            timelineContainer.appendChild(timelineItem);
+            
+            // Thêm event listener cho nút xóa timeline mới
+            timelineItem.querySelector('.remove-timeline-btn').addEventListener('click', function() {
+                this.closest('.timeline-item').remove();
+            });
+        }
+
+        // Lưu tin tức
+        function saveNews() {
+            const form = document.getElementById('news-form');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            
+            // Thu thập dữ liệu từ form
+            const newsData = {
+                id: document.getElementById('incident-id').value,
+                type: document.getElementById('incident-type').value,
+                status: document.getElementById('incident-status').value,
+                priority: document.getElementById('incident-priority').value,
+                title: document.getElementById('incident-title').value,
+                address: document.getElementById('incident-address').value,
+                province: document.getElementById('incident-province').value,
+                time: document.getElementById('incident-time').value,
+                description: document.getElementById('incident-description').value,
+                reporter: {
+                    name: document.getElementById('reporter-name').value,
+                    phone: document.getElementById('reporter-phone').value
+                },
+                timeline: []
+            };
+            
+            // Thu thập dữ liệu timeline
+            const timelineItems = document.querySelectorAll('.timeline-item');
+            timelineItems.forEach(item => {
+                const time = item.querySelector('.timeline-time').value;
+                const action = item.querySelector('.timeline-action').value;
+                if (time && action) {
+                    newsData.timeline.push({ time, action });
+                }
+            });
+            
+            if (currentEditingId) {
+                // Cập nhật tin tức hiện có
+                const index = currentNewsData.findIndex(item => item.id === currentEditingId);
+                if (index !== -1) {
+                    currentNewsData[index] = newsData;
+                }
+            } else {
+                // Thêm tin tức mới
+                currentNewsData.unshift(newsData);
+            }
+            
+            // Đóng modal và render lại bảng
+            closeEditModal();
+            renderNewsTable();
+            
+            // Hiển thị thông báo thành công
+            alert(currentEditingId ? 'Cập nhật sự cố thành công!' : 'Thêm sự cố mới thành công!');
+        }
+
+        // Xóa tin tức
+        function deleteNews(id) {
+            if (confirm('Bạn có chắc chắn muốn xóa sự cố này?')) {
+                currentNewsData = currentNewsData.filter(item => item.id !== id);
+                renderNewsTable();
+                alert('Xóa sự cố thành công!');
+            }
+        }
+
+        // Áp dụng bộ lọc
+        function applyFilters() {
+            const typeFilter = document.getElementById('type-filter').value;
+            const statusFilter = document.getElementById('status-filter').value;
+            const priorityFilter = document.getElementById('priority-filter').value;
+            const searchTerm = document.getElementById('search').value.toLowerCase();
+            
+            let filteredData = [...sampleNewsData];
+            
+            // Lọc theo loại sự cố
+            if (typeFilter !== 'all') {
+                filteredData = filteredData.filter(item => item.type === typeFilter);
+            }
+            
+            // Lọc theo trạng thái
+            if (statusFilter !== 'all') {
+                filteredData = filteredData.filter(item => item.status === statusFilter);
+            }
+            
+            // Lọc theo mức độ ưu tiên
+            if (priorityFilter !== 'all') {
+                filteredData = filteredData.filter(item => item.priority === priorityFilter);
+            }
+            
+            // Lọc theo từ khóa tìm kiếm
+            if (searchTerm) {
+                filteredData = filteredData.filter(item => 
+                    item.title.toLowerCase().includes(searchTerm) ||
+                    item.address.toLowerCase().includes(searchTerm) ||
+                    item.province.toLowerCase().includes(searchTerm) ||
+                    item.description.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            currentNewsData = filteredData;
+            currentPage = 1;
+            renderNewsTable();
+        }
+
+        // Đồng bộ dữ liệu
+        function syncData() {
+            // Giả lập đồng bộ dữ liệu
+            alert('Đang đồng bộ dữ liệu...');
+            setTimeout(() => {
+                alert('Đồng bộ dữ liệu thành công!');
+            }, 1000);
+        }
+
+        // Xuất Excel
+        function exportToExcel() {
+            // Giả lập xuất Excel
+            alert('Đang xuất dữ liệu ra Excel...');
+            setTimeout(() => {
+                alert('Xuất dữ liệu thành công!');
+            }, 1000);
+        }
