@@ -6,8 +6,8 @@
   "scripts": {
     "start": "npx http-server frontend -p 8080 -c-1",
     "dev": "npx http-server frontend -p 8080 -c-1",
-    "build": "npx esbuild frontend/assets/js/main.js --bundle --minify --sourcemap --outfile=frontend/dist/bundle.js",
-    "watch": "npx esbuild frontend/assets/js/main.js --bundle --sourcemap --outfile=frontend/dist/bundle.js --watch"
+  "build": "npx esbuild frontend/src/utils/main.js --bundle --minify --sourcemap --outfile=frontend/dist/bundle.js",
+  "watch": "npx esbuild frontend/src/utils/main.js --bundle --sourcemap --outfile=frontend/dist/bundle.js --watch"
   },
   "devDependencies": {
     "esbuild": "^0.18.18",

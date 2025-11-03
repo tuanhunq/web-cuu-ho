@@ -136,27 +136,28 @@
     // API Service Functions
     class ApiService {
         static async getIncidents(filters = {}) {
-            try {
-                // Mock API call - replace with actual API endpoint
-                const response = await fetch('/api/incidents', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(filters)
-                });
-                
-                if (!response.ok) {
-                    throw new Error('Failed to fetch incidents');
+                try {
+                    // Use reports endpoint for incidents
+                    const qs = new URLSearchParams(filters).toString();
+                    const url = qs ? `/api/reports?${qs}` : '/api/reports';
+                    const response = await fetch(url, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch incidents');
+                    }
+
+                    return await response.json();
+                } catch (error) {
+                    console.error('Error fetching incidents:', error);
+                    // Return mock data for demo
+                    return this.getMockIncidents();
                 }
-                
-                return await response.json();
-            } catch (error) {
-                console.error('Error fetching incidents:', error);
-                // Return mock data for demo
-                return this.getMockIncidents();
             }
-        }
         
         static async getNews() {
             try {
@@ -496,8 +497,8 @@
 
     // Load navbar và footer
     function loadNavbarAndFooter() {
-        // Load navbar
-        fetch('navbar.html')
+    // Load navbar
+    fetch('/src/components/navbar.html')
             .then(response => response.text())
             .then(data => {
                 document.getElementById('navbar-container').innerHTML = data;
@@ -514,8 +515,8 @@
             })
             .catch(error => console.error('Error loading navbar:', error));
 
-        // Load footer
-        fetch('footer.html')
+    // Load footer
+    fetch('/src/components/footer.html')
             .then(response => response.text())
             .then(data => {
                 document.getElementById('footer-container').innerHTML = data;
@@ -539,8 +540,8 @@
 
     // Load navbar và footer
     function loadNavbarAndFooter() {
-        // Load navbar
-        fetch('navbar.html')
+    // Load navbar
+    fetch('/src/components/navbar.html')
             .then(response => response.text())
             .then(data => {
                 document.getElementById('navbar-container').innerHTML = data;
@@ -557,8 +558,8 @@
             })
             .catch(error => console.error('Error loading navbar:', error));
 
-        // Load footer
-        fetch('footer.html')
+    // Load footer
+    fetch('/src/components/footer.html')
             .then(response => response.text())
             .then(data => {
                 document.getElementById('footer-container').innerHTML = data;
