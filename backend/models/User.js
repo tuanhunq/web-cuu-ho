@@ -1,127 +1,157 @@
-//Người dùng
-const { query } = require('../utils/db');
-const { sql } = require('mssql');
-
-class User {
-  static async findByEmail(email) {
-    const users = await query(`
-      SELECT * FROM Users 
-      WHERE Email = @param0
-    `, [email]);
-    return users[0];
-  }
-
-  static async create(userData) {
-    const result = await query(`
-      INSERT INTO Users (Email, Password, Name, Phone, Role)
-      OUTPUT INSERTED.*
-      VALUES (@param0, @param1, @param2, @param3, @param4)
-    `, [
-      userData.email,
-      userData.password,
-      userData.name,
-      userData.phone,
-      userData.role || 'user'
-    ]);
-    return result[0];
-  }
-
-  static async findById(id) {
-    const users = await query(`
-      SELECT Id, Email, Name, Phone, Role, CreatedAt, UpdatedAt
-      FROM Users 
-      WHERE Id = @param0
-    `, [id]);
-    return users[0];
-  }
-
-  static async update(id, userData) {
-    const result = await query(`
-      UPDATE Users
-      SET 
-        Name = @param1,
-        Phone = @param2,
-        UpdatedAt = GETDATE()
-      OUTPUT INSERTED.*
-      WHERE Id = @param0
-    `, [id, userData.name, userData.phone]);
-    return result[0];
-  }
-}
-
-module.exports = User;
-//Người dùng
-import mongoose from "mongoose";
-import bcrypt from "bcrypt";
+import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
+import jwt from 'jsonwebtoken';
+import config from '../config/index.js';
 
 const userSchema = new mongoose.Schema({
-  name: { type: String, default: "" },
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-  phone: { type: String, default: "" },
-  role: { type: String, enum: ["user", "admin", "rescue"], default: "user" },
-  createdAt: { type: Date, default: Date.now }
+    email: {
+        type: String,
+        required: [true, 'Email là bắt buộc'],
+        unique: true,
+        trim: true,
+        lowercase: true,
+        match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Email không hợp lệ']
+    },
+    password: {
+        type: String,
+        required: [true, 'Mật khẩu là bắt buộc'],
+        minlength: [6, 'Mật khẩu phải có ít nhất 6 ký tự']
+    },
+    name: {
+        type: String,
+        required: [true, 'Tên là bắt buộc'],
+        trim: true,
+        minlength: [2, 'Tên phải có ít nhất 2 ký tự']
+    },
+    phone: {
+        type: String,
+        required: [true, 'Số điện thoại là bắt buộc'],
+        match: [/^[0-9]{10}$/, 'Số điện thoại không hợp lệ']
+    },
+    role: {
+        type: String,
+        enum: {
+            values: ['user', 'admin', 'rescue'],
+            message: '{VALUE} không phải là role hợp lệ'
+        },
+        default: 'user'
+    },
+    active: {
+        type: Boolean,
+        default: true
+    },
+    resetPasswordToken: String,
+    resetPasswordExpire: Date,
+    lastLogin: Date,
+    loginAttempts: {
+        type: Number,
+        default: 0
+    },
+    lockUntil: Date
+}, {
+    timestamps: true
 });
 
-userSchema.pre("save", async function(next) {
-  if (!this.isModified("password")) return next();
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
-  next();
+// Indexes
+userSchema.index({ email: 1 }, { unique: true });
+userSchema.index({ phone: 1 });
+userSchema.index({ role: 1 });
+
+// Hash password before saving
+userSchema.pre('save', async function(next) {
+    if (!this.isModified('password')) return next();
+    
+    try {
+        const salt = await bcrypt.genSalt(config.password.saltRounds);
+        this.password = await bcrypt.hash(this.password, salt);
+        next();
+    } catch (err) {
+        next(err);
+    }
 });
 
-userSchema.methods.comparePassword = async function(candidate) {
-  return bcrypt.compare(candidate, this.password);
+// Compare password method
+userSchema.methods.comparePassword = async function(candidatePassword) {
+    try {
+        return await bcrypt.compare(candidatePassword, this.password);
+    } catch (err) {
+        throw new Error('Lỗi khi so sánh mật khẩu');
+    }
 };
 
-const { query } = require('../utils/db');
-const { sql } = require('mssql');
+// Generate JWT token
+userSchema.methods.generateAuthToken = function() {
+    return jwt.sign(
+        { 
+            id: this._id,
+            email: this.email,
+            role: this.role
+        },
+        config.jwt.secret,
+        { expiresIn: config.jwt.expiresIn }
+    );
+};
 
-class User {
-  static async findByEmail(email) {
-    const users = await query(`
-      SELECT * FROM Users 
-      WHERE Email = @param0
-    `, [email]);
-    return users[0];
-  }
+// Generate reset password token
+userSchema.methods.generateResetPasswordToken = function() {
+    const resetToken = crypto.randomBytes(32).toString('hex');
 
-  static async create(userData) {
-    const result = await query(`
-      INSERT INTO Users (Email, Password, Name, Phone, Role)
-      OUTPUT INSERTED.*
-      VALUES (@param0, @param1, @param2, @param3, @param4)
-    `, [
-      userData.email,
-      userData.password,
-      userData.name,
-      userData.phone,
-      userData.role || 'user'
-    ]);
-    return result[0];
-  }
+    this.resetPasswordToken = crypto
+        .createHash('sha256')
+        .update(resetToken)
+        .digest('hex');
 
-  static async findById(id) {
-    const users = await query(`
-      SELECT Id, Email, Name, Phone, Role, CreatedAt, UpdatedAt
-      FROM Users 
-      WHERE Id = @param0
-    `, [id]);
-    return users[0];
-  }
+    this.resetPasswordExpire = Date.now() + config.password.resetTokenExpires;
 
-  static async update(id, userData) {
-    const result = await query(`
-      UPDATE Users
-      SET 
-        Name = @param1,
-        Phone = @param2,
-        UpdatedAt = GETDATE()
-      OUTPUT INSERTED.*
-      WHERE Id = @param0
-    `, [id, userData.name, userData.phone]);
-    return result[0];
-  }
-}
+    return resetToken;
+};
 
-module.exports = User;
+// Check if user can login (not locked)
+userSchema.methods.canLogin = function() {
+    return !this.lockUntil || this.lockUntil < Date.now();
+};
+
+// Increment login attempts
+userSchema.methods.incrementLoginAttempts = async function() {
+    // If lock has expired, reset attempts and remove lock
+    if (this.lockUntil && this.lockUntil < Date.now()) {
+        await this.updateOne({
+            $set: {
+                loginAttempts: 1,
+                lockUntil: null
+            }
+        });
+        return;
+    }
+
+    const updates = {
+        $inc: { loginAttempts: 1 }
+    };
+
+    // Lock account if too many attempts
+    if (this.loginAttempts + 1 >= 5) {
+        updates.$set = {
+            lockUntil: Date.now() + 3600000 // Lock for 1 hour
+        };
+    }
+
+    await this.updateOne(updates);
+};
+
+// Reset login attempts
+userSchema.methods.resetLoginAttempts = async function() {
+    await this.updateOne({
+        loginAttempts: 0,
+        lockUntil: null,
+        lastLogin: new Date()
+    });
+};
+
+// Static method to find by email
+userSchema.statics.findByEmail = function(email) {
+    return this.findOne({ email: email.toLowerCase() });
+};
+
+const User = mongoose.model('User', userSchema);
+export default User;
