@@ -136,176 +136,84 @@
     </div>
     </div>
 
-       <section class="py-8 bg-gradient-to-b from-gray-50 to-white relative">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <section class="py-8 bg-gradient-to-b from-gray-50 to-white relative">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Phần tiêu đề - ĐÃ CHỈNH CĂN GIỮA VÀ MÀU SẮC -->
+        <div class="mb-6 text-center">
+            <h1 class="text-3xl font-bold text-gray-800">Bản đồ sự cố</h1>
+            <p class="text-gray-700 mt-2">Theo dõi và quản lý các sự cố trong khu vực thời gian thực</p>
+        </div>
 
-            <div class="flex flex-col lg:flex-row gap-8">
-                <!-- Bên trái: Panel kết hợp Bộ Lọc & Thống Kê -->
-                <div class="lg:w-1/3">
-                    <div class="combined-panel sticky-panel">
-                        <div class="panel-header">
-                            <h3 class="text-xl font-bold flex items-center">
-                                <i data-feather="activity" class="mr-2 w-5 h-5"></i>
-                                Quản Lý Sự Cố
-                            </h3>
-                            <p class="text-sm opacity-90 mt-1">Theo dõi và lọc các sự cố khẩn cấp</p>
-                        </div>
-                        
-                        
-                        <div class="panel-content">
-                            <!-- Tab Bộ Lọc -->
-                            <div class="tab-content active" id="filter-tab">
-                               
-                                
-                                <div class="filter-section">
-                                    <label class="filter-title">
-                                        <i data-feather="map-pin" class="w-4 h-4"></i>
-                                        Tỉnh/Thành phố
-                                    </label>
-                                    <select id="province-filter" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
-                                        <option value="all">Tất cả tỉnh thành</option>
-                                        <option value="hanoi">Hà Nội</option>
-                                        <option value="hcm">TP.Hồ Chí Minh</option>
-                                        <option value="danang">Đà Nẵng</option>
-                                        <option value="hue">Thừa Thiên Huế</option>
-                                        <option value="nghean">Nghệ An</option>
-                                        <option value="thanhhoa">Thanh Hóa</option>
-                                        <option value="haiphong">Hải Phòng</option>
-                                        <option value="cantho">Cần Thơ</option>
-                                        <option value="bacninh">Bắc Ninh</option>
-                                        <option value="haiduong">Hải Dương</option>
-                                        <option value="quangninh">Quảng Ninh</option>
-                                        <option value="thuathienhue">Thừa Thiên Huế</option>
-                                        <option value="binhdinh">Bình Định</option>
-                                        <option value="khanhhoa">Khánh Hòa</option>
-                                        <option value="lamdong">Lâm Đồng</option>
-                                        <option value="dongnai">Đồng Nai</option>
-                                        <option value="baria-vungtau">Bà Rịa - Vũng Tàu</option>
-                                        <option value="tiengiang">Tiền Giang</option>
-                                        <option value="bentre">Bến Tre</option>
-                                        <option value="soc trang">Sóc Trăng</option>
-                                        <option value="camau">Cà Mau</option>
-                                        <option value="quangnam">Quảng Nam</option>
-                                        <option value="ninhthuan">Ninh Thuận</option>
-                                        <option value="namdinh">Nam Định</option>
-                                        <option value="longan">Long An</option>
-                                        <option value="laocai">Lào Cai</option>
-                                        <option value="thainguyen">Thái Nguyên</option>
-                                    </select>
-                                </div>
-                                
-                                <div class="filter-section">
-                                    <label class="filter-title">
-                                        <i data-feather="alert-triangle" class="w-4 h-4"></i>
-                                        Loại sự cố
-                                    </label>
-                                    <select id="type-filter" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
-                                        <option value="all">Tất cả loại sự cố</option>
-                                        <option value="fire">Hỏa hoạn</option>
-                                        <option value="flood">Ngập lụt</option>
-                                        <option value="accident">Tai nạn giao thông</option>
-                                        <option value="disaster">Thiên tai</option>
-                                    </select>
-                                    
-                                  
-                                </div>
-                                
-                                <div class="filter-section">
-                                    <div class="flex gap-2">
-                                        <button id="reset-filters" class="flex-1 px-4 py-3 border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-xl transition flex items-center justify-center">
-                                            <i data-feather="refresh-cw" class="mr-2 w-4 h-4"></i> Đặt lại
-                                        </button>
-                                        <button id="locate-btn" class="flex-1 px-4 py-3 bg-red-500 text-white hover:bg-red-600 rounded-xl transition flex items-center justify-center">
-                                            <i data-feather="map-pin" class="mr-2 w-4 h-4"></i> Vị trí tôi
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Tab Thống Kê -->
-                            <div class="tab-content" id="stats-tab">    
-                                <div class="mt-6">
-                                    <h4 class="font-bold mb-4 text-gray-800 flex items-center">
-                                        <i data-feather="map" class="text-red-500 mr-2 w-4 h-4"></i>
-                                        Chú Thích Bản Đồ
-                                    </h4>
-                                    
-                                    <div class="space-y-3">
-                                        <div class="flex items-center p-3 bg-red-50 rounded-lg border border-red-200 hover:bg-red-100 transition cursor-pointer" data-type="fire">
-                                            <div class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center mr-3">
-                                                <i data-feather="flame" class="text-white w-4 h-4"></i>
-                                            </div>
-                                            <div class="flex-1">
-                                                <span class="font-semibold text-red-700">🔥 Hỏa hoạn</span>
-                                                <p class="text-sm text-red-600">Cháy nhà, cháy rừng, nổ</p>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="flex items-center p-3 bg-blue-50 rounded-lg border border-blue-200 hover:bg-blue-100 transition cursor-pointer" data-type="flood">
-                                            <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center mr-3">
-                                                <i data-feather="droplet" class="text-white w-4 h-4"></i>
-                                            </div>
-                                            <div class="flex-1">
-                                                <span class="font-semibold text-blue-700">💧 Ngập lụt</span>
-                                                <p class="text-sm text-blue-600">Ngập nước, lũ quét</p>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="flex items-center p-3 bg-orange-50 rounded-lg border border-orange-200 hover:bg-orange-100 transition cursor-pointer" data-type="accident">
-                                            <div class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center mr-3">
-                                                <i data-feather="activity" class="text-white w-4 h-4"></i>
-                                            </div>
-                                            <div class="flex-1">
-                                                <span class="font-semibold text-orange-700">🚗 Tai nạn giao thông</span>
-                                                <p class="text-sm text-orange-600">TNGT đường bộ, đường sắt</p>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="flex items-center p-3 bg-purple-50 rounded-lg border border-purple-200 hover:bg-purple-100 transition cursor-pointer" data-type="disaster">
-                                            <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center mr-3">
-                                                <i data-feather="alert-octagon" class="text-white w-4 h-4"></i>
-                                            </div>
-                                            <div class="flex-1">
-                                                <span class="font-semibold text-purple-700">🌪️ Thiên tai</span>
-                                                <p class="text-sm text-purple-600">Bão lụt, sạt lở, động đất</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Bên phải: Bản đồ -->
-                <div class="lg:w-2/3">
-                    <div id="incident-map" class="map-container"></div>
+        <!-- Bản đồ chiếm toàn bộ chiều rộng -->
+        <div class="w-full">
+            <div id="incident-map" class="map-container rounded-xl shadow-lg border border-gray-200 h-[calc(100vh-200px)]"></div>
+            
+            <div class="mt-4 flex flex-wrap gap-3 items-center justify-between">
+                <div class="flex flex-wrap gap-2">
+                    <button id="zoom-in-btn" class="bg-white border border-gray-300 px-4 py-2 rounded-lg flex items-center hover:bg-gray-50 transition shadow-sm font-medium">
+                        <i data-feather="zoom-in" class="mr-2 w-4 h-4"></i> Phóng to
+                    </button>
+                    <button id="zoom-out-btn" class="bg-white border border-gray-300 px-4 py-2 rounded-lg flex items-center hover:bg-gray-50 transition shadow-sm font-medium">
+                        <i data-feather="zoom-out" class="mr-2 w-4 h-4"></i> Thu nhỏ
+                    </button>
                     
-                    <div class="mt-4 flex flex-wrap gap-3 items-center justify-between">
-                        <div class="flex flex-wrap gap-2">
-                            <button id="zoom-in-btn" class="bg-white border border-gray-300 px-4 py-2 rounded-lg flex items-center hover:bg-gray-50 transition shadow-sm">
-                                <i data-feather="zoom-in" class="mr-2 w-4 h-4"></i> Phóng to
-                            </button>
-                            <button id="zoom-out-btn" class="bg-white border border-gray-300 px-4 py-2 rounded-lg flex items-center hover:bg-gray-50 transition shadow-sm">
-                                <i data-feather="zoom-out" class="mr-2 w-4 h-4"></i> Thu nhỏ
-                            </button>
-                        </div>
-                        
-                        <div class="flex items-center text-sm text-gray-600">
-                            <div class="flex items-center mr-4">
-                                <div class="w-3 h-3 bg-red-500 rounded-full mr-2 animate-pulse"></div>
-                                <span>Đang xử lý</span>
-                            </div>
-                            <div class="flex items-center">
-                                <div class="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
-                                <span>Đã giải quyết</span>
-                            </div>
-                        </div>
+                    <!-- Nút chuyển sang trang bản đồ sự cố -->
+                    <button id="incident-map-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-blue-700 transition shadow-sm font-medium">
+                        <i data-feather="map" class="mr-2 w-4 h-4"></i> Xem bản đồ sự cố chi tiết
+                    </button>
+                </div>
+                
+                <div class="flex items-center text-sm text-gray-600">
+                    <div class="flex items-center mr-4">
+                        <div class="w-3 h-3 bg-red-500 rounded-full mr-2 animate-pulse"></div>
+                        <span>Đang xử lý</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
+                        <span>Đã giải quyết</span>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
+
+<!-- Script để xử lý sự kiện click -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Khởi tạo feather icons
+    if (typeof feather !== 'undefined') {
+        feather.replace();
+    }
+    
+    // Xử lý sự kiện click nút bản đồ sự cố
+    const incidentMapBtn = document.getElementById('incident-map-btn');
+    if (incidentMapBtn) {
+        incidentMapBtn.addEventListener('click', function() {
+            // Chuyển hướng đến trang map.html
+            window.location.href = 'map.html';
+        });
+    }
+    
+    // Xử lý sự kiện cho các nút phóng to/thu nhỏ (nếu cần)
+    const zoomInBtn = document.getElementById('zoom-in-btn');
+    const zoomOutBtn = document.getElementById('zoom-out-btn');
+    
+    if (zoomInBtn) {
+        zoomInBtn.addEventListener('click', function() {
+            // Thêm logic phóng to bản đồ ở đây
+            console.log('Phóng to bản đồ');
+        });
+    }
+    
+    if (zoomOutBtn) {
+        zoomOutBtn.addEventListener('click', function() {
+            // Thêm logic thu nhỏ bản đồ ở đây
+            console.log('Thu nhỏ bản đồ');
+        });
+    }
+});
+</script>
 
     <!-- Nút Đăng Ký Cứu Hộ -->
     <section class="py-16 bg-gradient-to-b from-white to-gray-50">

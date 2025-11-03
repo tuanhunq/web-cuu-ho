@@ -1234,3 +1234,76 @@ function applyIncidentFilter() {
 if (window.location.pathname.includes('map.html')) {
     document.addEventListener('DOMContentLoaded', applyIncidentFilter);
 }
+
+
+
+
+
+
+
+// Xử lý tab switching cho panel
+document.addEventListener('DOMContentLoaded', function() {
+    // Tab switching
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    tabButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const targetTab = this.getAttribute('data-tab');
+            
+            // Remove active class from all tabs
+            tabButtons.forEach(btn => {
+                btn.classList.remove('border-red-500', 'text-red-500');
+                btn.classList.add('text-gray-500');
+            });
+            
+            // Hide all tab contents
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+                content.classList.add('hidden');
+            });
+            
+            // Activate current tab
+            this.classList.add('border-red-500', 'text-red-500');
+            this.classList.remove('text-gray-500');
+            
+            // Show target content
+            const targetContent = document.getElementById(targetTab);
+            targetContent.classList.remove('hidden');
+            targetContent.classList.add('active');
+        });
+    });
+    
+    // Filter by incident type from service cards
+    document.querySelectorAll('.service-card').forEach(card => {
+        card.addEventListener('click', function() {
+            const incidentType = this.getAttribute('data-incident-type');
+            filterByIncidentType(incidentType);
+        });
+    });
+    
+    // Reset filters
+    document.getElementById('reset-filters').addEventListener('click', function() {
+        document.getElementById('province-filter').value = 'all';
+        document.getElementById('type-filter').value = 'all';
+        resetAllFilters();
+    });
+});
+
+function filterByIncidentType(type) {
+    console.log('Filtering by incident type:', type);
+    // Logic filter sẽ được thêm sau
+    // Cập nhật select box
+    document.getElementById('type-filter').value = type;
+    
+    // Filter markers trên map
+    // filterMapMarkers(type);
+}
+
+function resetAllFilters() {
+    console.log('Resetting all filters');
+    // Reset map view
+    // resetMapView();
+}
+
+

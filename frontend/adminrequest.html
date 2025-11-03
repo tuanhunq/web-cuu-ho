@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bản Tin Khẩn Cấp - Hệ Thống Cứu Hộ Quốc Gia</title>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/request.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+</head>
+<body class="bg-gray-50">
+      <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex items-center space-x-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                    <span class="text-2xl font-bold bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">CỨU HỘ QUỐC GIA</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="adminindex.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Trang chủ</a>
+                    <a href="adminmap.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Bản đồ cứu hộ</a>
+                    <a href="adminrequest.html" class="nav-link text-red-500 font-bold transition">Bản tin</a>
+                    <a href="adminposst.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Báo tin</a>
+                    <div class="flex space-x-4">
+                    <a href="admin.html" class="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-lg font-medium transition-all shadow hover:shadow-lg">Admin</a>
+                    <a href="login.html" class="bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-all shadow hover:shadow-lg">Đăng nhập</a>
+                </div>
+                </div>
+                <div class="md:hidden flex items-center">
+                    <button id="menu-toggle" class="text-gray-700 hover:text-red-600" aria-label="Toggle menu">
+                        <i data-feather="menu"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-white py-2 px-4 shadow-lg">
+            <a href="index.html" class="block py-2 text-gray-700 hover:text-red-600 transition">Trang chủ</a>
+            <a href="map.html" class="block py-2 text-gray-700 hover:text-red-600 transition">Bản đồ cứu hộ</a>
+            <a href="request.html" class="block py-2 text-red-600 font-bold transition">Bản tin</a>
+            <a href="post.html#report" class="block py-2 text-gray-700 hover:text-red-600 transition">Báo tin</a> 
+            <a href="login.html" class="block py-2 text-white bg-red-600 rounded-md text-center mt-2">Đăng nhập</a>
+        </div>
+    </nav>
+
+    <section id="news-section" class="py-12 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+
+            <!-- Updated Filter Section -->
+            <div class="filter-section">
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label class="filter-label">Tất cả loại tin</label>
+                        <select id="filter-type" class="filter-select">
+                            <option value="all">Tất cả loại tin</option>
+                            <option value="emergency">Sự cố khẩn cấp</option>
+                            <option value="assistance">Kêu gọi cứu trợ</option>
+                            <option value="volunteer">Đoàn thiện nguyện</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label">Tất cả khu vực</label>
+                        <select id="filter-location" class="filter-select">
+                            <option value="all">Tất cả khu vực</option>
+                            <option value="ha-noi">Hà Nội</option>
+                            <option value="tp-hcm">TP.HCM</option>
+                            <option value="da-nang">Đà Nẵng</option>
+                            <option value="mien-bac">Miền Bắc</option>
+                            <option value="mien-trung">Miền Trung</option>
+                            <option value="tay-nguyen">Tây Nguyên</option>
+                            <option value="dak-lak">Đắk Lắk</option>
+                            <option value="binh-dinh">Bình Định</option>
+                            <option value="thai-nguyen">Thái Nguyên</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label">&nbsp;</label>
+                        <button id="refresh-news" class="refresh-btn">
+                            <i data-feather="refresh-cw" class="w-4 h-4"></i> Làm mới
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Filter Tabs -->
+            <div class="mb-6 overflow-x-auto">
+                <div class="flex space-x-2 pb-2">
+                    <button class="filter-tab px-4 py-2 rounded-full border border-gray-300 text-sm font-medium whitespace-nowrap filter-active" data-filter="all">Tất cả</button>
+                    <button class="filter-tab px-4 py-2 rounded-full border border-gray-300 text-sm font-medium whitespace-nowrap" data-filter="emergency">Sự cố khẩn cấp</button>
+                    <button class="filter-tab px-4 py-2 rounded-full border border-gray-300 text-sm font-medium whitespace-nowrap" data-filter="assistance">Kêu gọi cứu trợ</button>
+                    <button class="filter-tab px-4 py-2 rounded-full border border-gray-300 text-sm font-medium whitespace-nowrap" data-filter="volunteer">Đoàn thiện nguyện</button>
+                    <button class="filter-tab px-4 py-2 rounded-full border border-gray-300 text-sm font-medium whitespace-nowrap" data-filter="high-priority">Ưu tiên cao</button>
+                </div>
+            </div>
+
+            <!-- Loading Indicator -->
+            <div id="loading-indicator" class="loading hidden">
+                <div class="loading-spinner"></div>
+                <p class="mt-4 text-gray-600">Đang tải dữ liệu...</p>
+            </div>
+
+            <!-- Empty State -->
+            <div id="empty-state" class="empty-state hidden">
+                <i data-feather="inbox" class="w-16 h-16 mx-auto mb-4 text-gray-400"></i>
+                <h3 class="text-xl font-medium text-gray-500 mb-2">Không có bản tin nào</h3>
+                <p class="text-gray-400">Không tìm thấy bản tin nào phù hợp với bộ lọc của bạn.</p>
+                <button id="reset-filters" class="mt-4 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition">Đặt lại bộ lọc</button>
+            </div>
+
+            <!-- News Grid -->
+            <div id="news-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- News Cards sẽ được thêm động -->
+            </div>
+
+            <!-- Pagination -->
+            <div class="text-center mt-12 flex justify-center space-x-2" id="pagination">
+                <!-- Pagination sẽ được thêm động -->
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                        <span class="text-2xl font-bold bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">CỨU HỘ QUỐC GIA</span>
+                    </div>
+                    <p class="text-gray-400 leading-relaxed">Kết nối người dân với lực lượng cứu hộ trong các tình huống khẩn cấp.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Dịch Vụ</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Cứu hỏa</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Cứu hộ giao thông</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Y tế khẩn cấp</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Ứng phó thiên tai</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Liên Kết</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Bộ Công An</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Bộ Y Tế</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Ban Chỉ Đạo PCTT</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Cục Cứu Hộ Cứu Nạn</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Hỗ Trợ</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Câu hỏi thường gặp</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Hướng dẫn sử dụng</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Chính sách bảo mật</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Điều khoản dịch vụ</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-12 pt-8 text-center text-gray-400">
+                <p>© 2023 Hệ Thống Cứu Hộ Quốc Gia. Bản quyền thuộc về Bộ Công An.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/request.js"></script>
+</body>
+</html>
