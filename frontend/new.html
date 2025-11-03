@@ -3,80 +3,188 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đội Cứu Hộ - Hệ Thống Cứu Hộ Quốc Gia</title>
+    <title>Báo Tin - Hệ Thống Cứu Hộ Quốc Gia</title>
     <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
-    <link rel="stylesheet" href="assets/css/styles.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/feather-icons"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css" rel="stylesheet"> 
     <style>
-        .rescue-team-card {
-            transition: all 0.3s ease;
-        }
-        .rescue-team-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        }
-        .specialty-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            margin-right: 6px;
-            margin-bottom: 6px;
-        }
-        .stats-card {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            border-radius: 12px;
-            padding: 24px;
-            border-left: 4px solid #ef4444;
-        }
-        .region-filter {
+        .emergency-call-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 100;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e53e3e, #c53030);
+            box-shadow: 0 4px 15px rgba(229, 62, 62, 0.5);
             display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 24px;
-        }
-        .region-btn {
-            padding: 8px 16px;
-            border-radius: 20px;
-            border: 1px solid #d1d5db;
-            background: white;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .region-btn.active {
-            background: #ef4444;
+            align-items: center;
+            justify-content: center;
             color: white;
-            border-color: #ef4444;
+            font-size: 24px;
+            animation: pulse 2s infinite;
+            cursor: pointer;
         }
-        .team-modal {
-            animation: modalFadeIn 0.3s ease-out;
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
-        @keyframes modalFadeIn {
-            from {
-                opacity: 0;
-                transform: scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
+        
+        .location-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: 1px solid #5a6fd8;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-top: 8px;
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
         }
-        .availability-online {
+        
+        .location-btn:hover {
+            background: linear-gradient(135deg, #5a6fd8 0%, #6a45a2 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.4);
+        }
+        
+        .location-btn:active {
+            transform: translateY(0);
+        }
+        
+        .location-btn.loading {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+        
+        .location-btn i {
+            margin-right: 8px;
+        }
+        
+        .location-loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 8px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .success-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .success-modal-content {
+            background-color: white;
+            border-radius: 8px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .success-icon {
+            font-size: 48px;
             color: #10b981;
+            margin-bottom: 20px;
         }
-            .availability-busy {
-            color: #f59e0b;
+        
+        .media-preview-item {
+            position: relative;
+            margin-bottom: 10px;
         }
-            .availability-offline {
-            color: #6b7280;
+        
+        .remove-btn {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #e53e3e;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        
+        .custom-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            padding: 16px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            max-width: 400px;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .input-error {
+            border-color: #e53e3e !important;
+            background-color: #fef2f2;
+        }
+        
+        .step {
+            display: none;
+        }
+        
+        .step.active {
+            display: block;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #e53e3e, #c53030);
+            transition: width 0.3s ease;
+        }
+        
+        .legal-warning {
+            background: linear-gradient(135deg, #fef3c7, #fef3c7);
+            border: 2px solid #d97706;
+            border-left: 6px solid #d97706;
+        }
+        
+        .legal-checkbox {
+            accent-color: #d97706;
         }
     </style>
 </head>
 <body class="bg-gray-50">
-    <!-- Navigation -->
-    <nav class="bg-white shadow-md sticky top-0 z-50">
+    <nav class="bg-white shadow-md sticky top-0 z-50 ">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20 items-center">
                 <div class="flex items-center space-x-2">
@@ -89,8 +197,7 @@
                     <a href="index.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Trang chủ</a>
                     <a href="map.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Bản đồ cứu hộ</a>
                     <a href="request.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Bản tin</a>
-                    <a href="post.html#repost" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Báo tin</a>
-                    <a href="rescue-teams.html" class="nav-link text-red-500 font-bold transition">Đội cứu hộ</a>
+                    <a href="post.html#report" class="nav-link text-red-500 font-bold transition">Báo tin</a>
                 </div>
                 <div class="md:hidden flex items-center">
                     <button id="menu-toggle" class="text-gray-700 hover:text-red-600" aria-label="Toggle menu">
@@ -100,221 +207,205 @@
             </div>
         </div>
         <div id="mobile-menu" class="hidden md:hidden bg-white py-2 px-4 shadow-lg">
-            <a href="index.html" class="block py-2 text-gray-700 hover:text-red-600 transition">Trang chủ</a>
+            <a href="index.html#home" class="block py-2 text-gray-700 hover:text-red-600 transition">Trang chủ</a>
             <a href="map.html" class="block py-2 text-gray-700 hover:text-red-600 transition">Bản đồ cứu hộ</a>
-            <a href="request.html" class="block py-2 text-gray-700 hover:text-red-600 transition">Bản tin</a>
-            <a href="post.html#report" class="block py-2 text-gray-700 hover:text-red-600 transition">Báo tin</a>
-            <a href="rescue-teams.html" class="block py-2 text-red-600 font-bold transition">Đội cứu hộ</a>
+            <a href="request.html" class="block py-2 text-red-600 font-bold transition">Bản tin</a>
+            <a href="post.html#report" class="block py-2 text-gray-700 hover:text-red-600 transition">Báo tin</a> 
             <a href="login.html" class="block py-2 text-white bg-red-600 rounded-md text-center mt-2">Đăng nhập</a>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="bg-gradient-to-r from-red-500 to-orange-500 py-16 text-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 class="text-4xl md:text-5xl font-bold mb-4">Đội Cứu Hộ Quốc Gia</h1>
-            <p class="text-xl max-w-3xl mx-auto">Kết nối với các đội cứu hộ chuyên nghiệp trên toàn quốc, sẵn sàng ứng phó 24/7</p>
-        </div>
-    </section>
+    <!-- Nút gọi điện khẩn cấp -->
+    <div class="emergency-call-btn" onclick="makeEmergencyCall()">
+        <i data-feather="phone"></i>
+    </div>
 
-    <!-- Stats Section -->
-    <section class="py-12 bg-white">
+    <section id="report" class="hero-section py-20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div class="stats-card">
-                    <div class="flex items-center">
-                        <div class="bg-red-100 p-3 rounded-lg mr-4">
-                            <i data-feather="users" class="w-6 h-6 text-red-500"></i>
+            <div class="bg-white rounded-lg shadow-xl max-w-2xl mx-auto p-6">
+                <div class="flex justify-between items-center mb-6">
+                   <h3 class="text-2xl font-bold text-gray-900 text-center">Báo Cáo Sự Cố Khẩn Cấp</h3>
+                </div>
+                
+                <!-- Cảnh báo pháp lý -->
+                <div class="legal-warning p-4 rounded-r mb-6">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i data-feather="alert-triangle" class="h-5 w-5 text-amber-600"></i>
                         </div>
-                        <div>
-                            <p class="text-2xl font-bold text-gray-800">245</p>
-                            <p class="text-gray-600">Đội cứu hộ</p>
+                        <div class="ml-3">
+                            <h4 class="text-sm font-bold text-amber-800">CẢNH BÁO PHÁP LÝ QUAN TRỌNG</h4>
+                            <p class="text-sm text-amber-700 font-medium mt-1">
+                                HỆ THỐNG NÀY CHỈ SỬ DỤNG CHO CÁC TÌNH HUỐNG KHẨN CẤP THỰC SỰ. 
+                                <span class="font-bold">BÁO CÁO SAI SỰ THẬT, CUNG CẤP THÔNG TIN GIẢ MẠO SẼ BỊ XỬ LÝ THEO QUY ĐỊNH CỦA PHÁP LUẬT VIỆT NAM</span> 
+                                (Điều 142, 330 Bộ luật Hình sự 2015).
+                            </p>
                         </div>
                     </div>
                 </div>
-                <div class="stats-card">
-                    <div class="flex items-center">
-                        <div class="bg-blue-100 p-3 rounded-lg mr-4">
-                            <i data-feather="user-check" class="w-6 h-6 text-blue-500"></i>
-                        </div>
-                        <div>
-                            <p class="text-2xl font-bold text-gray-800">5,280</p>
-                            <p class="text-gray-600">Nhân viên cứu hộ</p>
-                        </div>
+
+                <div class="mb-6">
+                    <div class="bg-gray-200 rounded-full h-1">
+                        <div id="progress-bar" class="progress-bar rounded-full w-1/2"></div>
+                    </div>
+                    <div class="flex justify-between text-sm text-gray-500 mt-2">
+                        <span>Bước 1: Thông tin cá nhân</span>
+                        <span>Bước 2: Chi tiết sự cố</span>
                     </div>
                 </div>
-                <div class="stats-card">
-                    <div class="flex items-center">
-                        <div class="bg-green-100 p-3 rounded-lg mr-4">
-                            <i data-feather="check-circle" class="w-6 h-6 text-green-500"></i>
+
+                <form id="emergency-report-form" class="space-y-6">
+                    <!-- Bước 1: Thông tin cá nhân -->
+                    <div class="step active" id="step-1">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="emergency-name" class="block text-sm font-medium text-gray-700 mb-1">Họ và tên *</label>
+                                <input type="text" id="emergency-name" required class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                            </div>
+                            <div>
+                                <label for="cccd" class="block text-sm font-medium text-gray-700 mb-1">Số CCCD *</label>
+                                <input type="text" id="cccd" required pattern="[0-9]{12}" title="Số CCCD gồm 12 chữ số" class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" placeholder="Nhập 12 chữ số CCCD">
+                            </div>
                         </div>
-                        <div>
-                            <p class="text-2xl font-bold text-gray-800">12,450</p>
-                            <p class="text-gray-600">Ca cứu hộ thành công</p>
+                        
+                        <div class="mt-4">
+                            <label for="emergency-phone" class="block text-sm font-medium text-gray-700 mb-1">Số điện thoại *</label>
+                            <input type="tel" id="emergency-phone" required pattern="[0-9]{10,11}" title="Số điện thoại Việt Nam (10-11 số)" class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" placeholder="Nhập số điện thoại">
+                        </div>
+
+                        <div class="mt-4">
+                            <label for="emergency-email" class="block text-sm font-medium text-gray-700 mb-1">Email (tùy chọn)</label>
+                            <input type="email" id="emergency-email" class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                        </div>
+                        
+                        <!-- Xác nhận thông tin trung thực -->
+                        <div class="mt-6 p-4 border border-amber-300 rounded-lg bg-amber-50">
+                            <div class="flex items-start">
+                                <input type="checkbox" id="confirm-truthful" required class="legal-checkbox mt-1 mr-3 w-4 h-4">
+                                <label for="confirm-truthful" class="text-sm text-amber-800 font-medium">
+                                    <span class="font-bold">TÔI CAM KẾT:</span> Tất cả thông tin cung cấp trên đây là hoàn toàn trung thực và chính xác. 
+                                    Tôi hiểu rằng việc cung cấp thông tin sai sự thật sẽ bị xử lý theo quy định của pháp luật.
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6 flex justify-end">
+                            <button type="button" id="next-step-1" class="bg-red-600 hover:bg-red-700 text-white py-3 px-6 rounded-md transition shadow-md flex items-center justify-center font-medium">
+                                Tiếp theo <i data-feather="arrow-right" class="ml-2 w-4 h-4"></i>
+                            </button>
                         </div>
                     </div>
-                </div>
-                <div class="stats-card">
-                    <div class="flex items-center">
-                        <div class="bg-purple-100 p-3 rounded-lg mr-4">
-                            <i data-feather="map-pin" class="w-6 h-6 text-purple-500"></i>
+
+                    <!-- Bước 2: Chi tiết sự cố -->
+                    <div class="step" id="step-2">
+                        <!-- Cảnh báo ở bước 2 -->
+                        <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r mb-6">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <i data-feather="alert-octagon" class="h-5 w-5 text-amber-600"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm text-amber-700 font-medium">
+                                        <span class="font-bold">LƯU Ý QUAN TRỌNG:</span> Chỉ báo cáo các sự cố khẩn cấp thực sự. 
+                                        Báo cáo sai gây lãng phí nguồn lực cứu hộ và có thể bị truy cứu trách nhiệm hình sự.
+                                    </p>
+                                </div>
+                            </div>
                         </div>
+
                         <div>
-                            <p class="text-2xl font-bold text-gray-800">63</p>
-                            <p class="text-gray-600">Tỉnh thành phủ sóng</p>
+                            <label for="emergency-type" class="block text-sm font-medium text-gray-700 mb-1">Loại sự cố *</label>
+                            <select id="emergency-type" required class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                                <option value="">Chọn loại sự cố</option>
+                                <option value="fire">Hỏa hoạn</option>
+                                <option value="flood">Ngập lụt</option>
+                                <option value="traffic">Tai nạn giao thông</option>
+                                <option value="medical">Cấp cứu y tế</option>
+                                <option value="disaster">Thiên tai khác (bão, lở đất...)</option>
+                                <option value="other">Khác (mô tả bên dưới)</option>
+                            </select>
+                        </div>
+                        <div class="mt-4">
+                            <label for="emergency-location" class="block text-sm font-medium text-gray-700 mb-1">Địa điểm sự cố *</label>
+                            <input type="text" id="emergency-location" placeholder="Nhập địa chỉ chi tiết (ví dụ: Số 123, Đường ABC, Quận 1, TP.HCM)" required class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                            <div class="location-btn" onclick="getCurrentLocation()">
+                                <i data-feather="map-pin"></i> Sử dụng vị trí hiện tại
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <label for="emergency-severity" class="block text-sm font-medium text-gray-700 mb-1">Mức độ nghiêm trọng *</label>
+                            <select id="emergency-severity" required class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                                <option value="">Chọn mức độ</option>
+                                <option value="low">Thấp (không nguy hiểm tính mạng)</option>
+                                <option value="medium">Trung bình (cần hỗ trợ nhanh)</option>
+                                <option value="high">Cao (nguy hiểm tính mạng, nhiều người)</option>
+                                <option value="critical">Khẩn cấp (cần cứu hộ ngay lập tức)</option>
+                            </select>
+                        </div>
+                        <div class="mt-4">
+                            <label for="emergency-description" class="block text-sm font-medium text-gray-700 mb-1">Mô tả chi tiết *</label>
+                            <textarea id="emergency-description" rows="5" required class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" placeholder="Mô tả tình hình hiện tại, nguyên nhân, số người bị thương, nhu cầu hỗ trợ cụ thể..."></textarea>
+                        </div>
+                        
+                        <!-- Phần upload media -->
+                        <div class="mt-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tải lên hình ảnh/video (tùy chọn, tối đa 3 file)</label>
+                            <div class="flex items-center justify-center w-full">
+                                <label class="flex flex-col w-full h-32 border-2 border-dashed border-gray-300 hover:border-red-300 rounded-md cursor-pointer">
+                                    <div class="flex flex-col items-center justify-center pt-7">
+                                        <i data-feather="upload" class="w-8 h-8 text-gray-400"></i>
+                                        <p class="pt-1 text-sm text-gray-600">Kéo thả file vào đây hoặc click để chọn (ảnh/video)</p>
+                                    </div>
+                                    <input type="file" class="hidden" id="emergency-media" multiple accept="image/*,video/*">
+                                </label>
+                            </div>
+                            <div id="media-preview" class="mt-4 grid grid-cols-3 gap-4"></div>
+                        </div>
+                        
+                        <!-- Xác nhận cuối cùng trước khi gửi -->
+                        <div class="mt-6 p-4 border border-red-300 rounded-lg bg-red-50">
+                            <div class="flex items-start">
+                                <input type="checkbox" id="confirm-emergency" required class="legal-checkbox mt-1 mr-3 w-4 h-4">
+                                <label for="confirm-emergency" class="text-sm text-red-800 font-medium">
+                                    <span class="font-bold">XÁC NHẬN CUỐI CÙNG:</span> Đây là tình huống khẩn cấp thực sự cần sự hỗ trợ 
+                                    của lực lượng cứu hộ. Tôi cam kết thông tin cung cấp là hoàn toàn chính xác.
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6 flex justify-between">
+                            <button type="button" id="prev-step-2" class="bg-gray-600 hover:bg-gray-700 text-white py-3 px-6 rounded-md transition shadow-md flex items-center justify-center font-medium">
+                                <i data-feather="arrow-left" class="mr-2 w-4 h-4"></i> Quay lại
+                            </button>
+                            <button type="submit" class="bg-red-600 hover:bg-red-700 text-white py-3 px-6 rounded-md transition shadow-md flex items-center justify-center font-medium">
+                                <i data-feather="send" class="mr-2 w-4 h-4"></i> Gửi Báo Cáo Khẩn
+                            </button>
                         </div>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
     </section>
 
-    <!-- Main Content -->
-    <section class="py-12 bg-gray-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <!-- Filter Section -->
-            <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
-                <h2 class="text-2xl font-bold text-gray-800 mb-4">Tìm Đội Cứu Hộ</h2>
-                
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Khu vực</label>
-                        <select id="region-filter" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
-                            <option value="all">Tất cả khu vực</option>
-                            <option value="mien-bac">Miền Bắc</option>
-                            <option value="mien-trung">Miền Trung</option>
-                            <option value="tay-nguyen">Tây Nguyên</option>
-                            <option value="dong-nam-bo">Đông Nam Bộ</option>
-                            <option value="tay-nam-bo">Tây Nam Bộ</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Chuyên môn</label>
-                        <select id="specialty-filter" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
-                            <option value="all">Tất cả chuyên môn</option>
-                            <option value="cuu-ho-chay-no">Cứu hỏa</option>
-                            <option value="cuu-ho-duoi-nuoc">Cứu hộ dưới nước</option>
-                            <option value="cuu-ho-cao-oc">Cứu hộ cao ốc</option>
-                            <option value="cuu-ho-giao-thong">Cứu hộ giao thông</option>
-                            <option value="cuu-ho-thien-tai">Cứu hộ thiên tai</option>
-                            <option value="cap-cuu-y-te">Cấp cứu y tế</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Tình trạng</label>
-                        <select id="status-filter" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
-                            <option value="all">Tất cả tình trạng</option>
-                            <option value="online">Đang trực</option>
-                            <option value="busy">Đang bận</option>
-                            <option value="offline">Không trực</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="flex flex-wrap gap-4">
-                    <button id="search-btn" class="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-medium transition flex items-center">
-                        <i data-feather="search" class="w-4 h-4 mr-2"></i> Tìm kiếm
-                    </button>
-                    <button id="reset-filters" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-3 rounded-lg font-medium transition">
-                        Đặt lại
-                    </button>
-                </div>
+    <!-- Modal xác nhận thành công -->
+    <div id="success-modal" class="success-modal">
+        <div class="success-modal-content">
+            <div class="success-icon">
+                <i data-feather="check-circle"></i>
             </div>
-
-            <!-- Rescue Teams Grid -->
-            <div id="teams-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Team cards will be loaded here -->
-            </div>
-
-            <!-- Loading Indicator -->
-            <div id="loading-indicator" class="hidden text-center py-12">
-                <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-500"></div>
-                <p class="mt-4 text-gray-600">Đang tải dữ liệu...</p>
-            </div>
-
-            <!-- Empty State -->
-            <div id="empty-state" class="hidden text-center py-12">
-                <i data-feather="users" class="w-16 h-16 mx-auto mb-4 text-gray-400"></i>
-                <h3 class="text-xl font-medium text-gray-500 mb-2">Không tìm thấy đội cứu hộ</h3>
-                <p class="text-gray-400">Không có đội cứu hộ nào phù hợp với tiêu chí tìm kiếm của bạn.</p>
-                <button id="reset-empty-filters" class="mt-4 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition">Đặt lại bộ lọc</button>
-            </div>
-        </div>
-    </section>
-
-    <!-- How to Request Help Section -->
-    <section class="py-12 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">Cách Yêu Cầu Hỗ Trợ Cứu Hộ</h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div class="text-center">
-                    <div class="bg-red-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <span class="text-red-500 font-bold text-xl">1</span>
-                    </div>
-                    <h3 class="text-lg font-semibold mb-2">Tìm Đội Cứu Hộ</h3>
-                    <p class="text-gray-600">Tìm kiếm đội cứu hộ gần nhất phù hợp với tình huống của bạn</p>
-                </div>
-                
-                <div class="text-center">
-                    <div class="bg-red-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <span class="text-red-500 font-bold text-xl">2</span>
-                    </div>
-                    <h3 class="text-lg font-semibold mb-2">Liên Hệ Trực Tiếp</h3>
-                    <p class="text-gray-600">Gọi điện hoặc nhắn tin cho đội cứu hộ qua số điện thoại được cung cấp</p>
-                </div>
-                
-                <div class="text-center">
-                    <div class="bg-red-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <span class="text-red-500 font-bold text-xl">3</span>
-                    </div>
-                    <h3 class="text-lg font-semibold mb-2">Cung Cấp Thông Tin</h3>
-                    <p class="text-gray-600">Mô tả chi tiết tình huống và vị trí cần cứu hộ</p>
-                </div>
-                
-                <div class="text-center">
-                    <div class="bg-red-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <span class="text-red-500 font-bold text-xl">4</span>
-                    </div>
-                    <h3 class="text-lg font-semibold mb-2">Nhận Hỗ Trợ</h3>
-                    <p class="text-gray-600">Đội cứu hộ sẽ đến vị trí của bạn trong thời gian sớm nhất</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Team Detail Modal -->
-    <div id="team-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 p-4 team-modal">
-        <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-screen overflow-y-auto p-6">
-            <div class="flex justify-between items-center mb-6">
-                <h3 id="modal-team-name" class="text-2xl font-bold"></h3>
-                <button id="close-modal" class="text-gray-400 hover:text-gray-500 p-2 rounded-full hover:bg-gray-100 transition">
-                    <i data-feather="x" class="w-6 h-6"></i>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">Báo Cáo Đã Được Gửi Thành Công!</h3>
+            <p class="text-gray-600 mb-6">Đội cứu hộ sẽ liên hệ với bạn trong thời gian sớm nhất. Vui lòng giữ liên lạc.</p>
+            <div class="flex justify-center space-x-4">
+                <button onclick="closeSuccessModal()" class="bg-red-600 hover:bg-red-700 text-white py-2 px-6 rounded-md transition">
+                    Đóng
                 </button>
-            </div>
-            
-            <div id="modal-team-content" class="space-y-6">
-                <!-- Content will be loaded here -->
-            </div>
-            
-            <div class="mt-8 flex flex-wrap gap-3">
-                <button class="call-team flex items-center px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition">
-                    <i data-feather="phone" class="mr-2 w-4 h-4"></i> Gọi điện
-                </button>
-                <button class="message-team flex items-center px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition">
-                    <i data-feather="message-square" class="mr-2 w-4 h-4"></i> Nhắn tin
-                </button>
-                <button class="view-on-map flex items-center px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition">
-                    <i data-feather="map" class="mr-2 w-4 h-4"></i> Xem trên bản đồ
-                </button>
-                <button class="share-team flex items-center px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition">
-                    <i data-feather="share-2" class="mr-2 w-4 h-4"></i> Chia sẻ
+                <button onclick="makeEmergencyCall()" class="bg-green-600 hover:bg-green-700 text-white py-2 px-6 rounded-md transition flex items-center">
+                    <i data-feather="phone" class="mr-2 w-4 h-4"></i> Gọi Ngay 114
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Footer -->
     <footer class="bg-gray-900 text-white py-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
@@ -360,437 +451,598 @@
             </div>
         </div>
     </footer>
-
+    
     <script>
-        // Sample data for rescue teams
-        const rescueTeams = [
-            {
-                id: 1,
-                name: "Đội Cứu Hộ PCCC Số 1 Hà Nội",
-                region: "mien-bac",
-                location: "Hà Nội",
-                specialties: ["cuu-ho-chay-no", "cuu-ho-cao-oc"],
-                status: "online",
-                phone: "024 3824 4242",
-                members: 45,
-                established: 2010,
-                description: "Đội cứu hỏa chuyên nghiệp với trang thiết bị hiện đại, phục vụ 24/7 tại khu vực Hà Nội.",
-                equipment: ["Xe cứu hỏa", "Thang máy", "Bình chữa cháy", "Bộ đồ bảo hộ"],
-                responseTime: "5-10 phút",
-                rating: 4.8,
-                missions: 1245
+        // === CONFIGURATION ===
+        const CONFIG = {
+            totalSteps: 2,
+            maxMediaFiles: 3,
+            phoneRegex: /^(0[3|5|7|8|9])[0-9]{8}$/,
+            cccdRegex: /^[0-9]{12}$/,
+            emergencyTypes: {
+                fire: 'Hỏa hoạn',
+                flood: 'Ngập lụt', 
+                traffic: 'Tai nạn giao thông',
+                medical: 'Cấp cứu y tế',
+                disaster: 'Thiên tai',
+                other: 'Sự cố khác'
             },
-            {
-                id: 2,
-                name: "Đội Cứu Hộ Đường Thủy Sài Gòn",
-                region: "dong-nam-bo",
-                location: "TP.HCM",
-                specialties: ["cuu-ho-duoi-nuoc", "cuu-ho-giao-thong"],
-                status: "online",
-                phone: "028 3829 5151",
-                members: 32,
-                established: 2015,
-                description: "Chuyên cứu hộ đường thủy, tai nạn sông nước tại khu vực TP.HCM và các tỉnh lân cận.",
-                equipment: ["Thuyền cứu hộ", "Áo phao", "Máy lặn", "Dây cứu hộ"],
-                responseTime: "10-15 phút",
-                rating: 4.6,
-                missions: 892
+            severityLevels: {
+                low: 'Thấp',
+                medium: 'Trung bình', 
+                high: 'Cao',
+                critical: 'Rất cao (Khẩn cấp)'
             },
-            {
-                id: 3,
-                name: "Đội Cứu Hộ Cao ốc Đà Nẵng",
-                region: "mien-trung",
-                location: "Đà Nẵng",
-                specialties: ["cuu-ho-cao-oc", "cuu-ho-chay-no"],
-                status: "busy",
-                phone: "0236 3821 2323",
-                members: 28,
-                established: 2018,
-                description: "Chuyên xử lý các tình huống khẩn cấp tại các tòa nhà cao tầng, chung cư.",
-                equipment: ["Thang dây", "Dây an toàn", "Bộ đồ bảo hộ", "Thiết bị leo núi"],
-                responseTime: "8-12 phút",
-                rating: 4.7,
-                missions: 567
-            },
-            {
-                id: 4,
-                name: "Đội Cứu Hộ Thiên Tài Miền Trung",
-                region: "mien-trung",
-                location: "Quảng Nam",
-                specialties: ["cuu-ho-thien-tai", "cuu-ho-duoi-nuoc"],
-                status: "online",
-                phone: "0235 3827 3434",
-                members: 52,
-                established: 2012,
-                description: "Đội cứu hộ chuyên ứng phó với thiên tai, lũ lụt tại khu vực Miền Trung.",
-                equipment: ["Thuyền cứu hộ", "Máy bơm", "Thiết bị tìm kiếm", "Bộ sơ cứu"],
-                responseTime: "15-25 phút",
-                rating: 4.9,
-                missions: 1342
-            },
-            {
-                id: 5,
-                name: "Đội Cấp Cứu Y Tế 115 Hà Nội",
-                region: "mien-bac",
-                location: "Hà Nội",
-                specialties: ["cap-cuu-y-te"],
-                status: "online",
-                phone: "024 3825 1155",
-                members: 38,
-                established: 2008,
-                description: "Đội cấp cứu y tế chuyên nghiệp, sẵn sàng hỗ trợ 24/7 trong các tình huống y tế khẩn cấp.",
-                equipment: ["Xe cấp cứu", "Máy thở", "Bộ sơ cứu", "Máy khử rung tim"],
-                responseTime: "5-8 phút",
-                rating: 4.8,
-                missions: 2156
-            },
-            {
-                id: 6,
-                name: "Đội Cứu Hộ Giao Thông Cần Thơ",
-                region: "tay-nam-bo",
-                location: "Cần Thơ",
-                specialties: ["cuu-ho-giao-thong", "cap-cuu-y-te"],
-                status: "offline",
-                phone: "0292 3823 7878",
-                members: 24,
-                established: 2019,
-                description: "Chuyên xử lý các vụ tai nạn giao thông, cứu hộ và cấp cứu tại hiện trường.",
-                equipment: ["Xe cứu hộ", "Máy cắt", "Bộ sơ cứu", "Thiết bị nâng"],
-                responseTime: "10-15 phút",
-                rating: 4.5,
-                missions: 423
+            typeMapping: {
+                fire: 'tai-nan',
+                flood: 'thien-tai',
+                traffic: 'tai-nan',
+                medical: 'cuu-ho',
+                disaster: 'thien-tai',
+                other: 'canh-bao'
             }
-        ];
+        };
 
-        // Initialize the page
+        // === STATE MANAGEMENT ===
+        let currentStep = 1;
+
+        // === INITIALIZATION ===
         document.addEventListener('DOMContentLoaded', function() {
+            // Khởi tạo Feather Icons
             feather.replace();
-            loadRescueTeams();
+            
+            // Hiển thị bước đầu tiên
+            showStep(1);
+            
+            // Thiết lập event listeners
             setupEventListeners();
+            setupMediaPreview();
+            setupRealTimeValidation();
+            setupFormSubmission();
         });
 
-        function setupEventListeners() {
-            // Search button
-            document.getElementById('search-btn').addEventListener('click', loadRescueTeams);
-            
-            // Reset filters
-            document.getElementById('reset-filters').addEventListener('click', resetFilters);
-            document.getElementById('reset-empty-filters').addEventListener('click', resetFilters);
-            
-            // Close modal
-            document.getElementById('close-modal').addEventListener('click', closeModal);
-            document.getElementById('team-modal').addEventListener('click', function(e) {
-                if (e.target === this) closeModal();
+        // === PROGRESS MANAGEMENT ===
+        function updateProgress() {
+            const progressBar = document.getElementById('progress-bar');
+            if (progressBar) {
+                progressBar.style.width = `${(currentStep / CONFIG.totalSteps) * 100}%`;
+            }
+        }
+
+        function showStep(step) {
+            // Ẩn tất cả các bước
+            document.querySelectorAll('.step').forEach(s => {
+                s.classList.remove('active');
             });
             
-            // Mobile menu
-            const menuToggle = document.getElementById('menu-toggle');
-            const mobileMenu = document.getElementById('mobile-menu');
+            // Hiển thị bước hiện tại
+            const stepElement = document.getElementById(`step-${step}`);
+            if (stepElement) {
+                stepElement.classList.add('active');
+                currentStep = step;
+                updateProgress();
+                
+                // Cuộn mượt đến đầu form
+                stepElement.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start',
+                    inline: 'nearest'
+                });
+            }
+        }
+
+        // === STEP NAVIGATION ===
+        function nextStep(targetStep) {
+            if (validateStep(currentStep)) {
+                showStep(targetStep);
+            }
+        }
+
+        function prevStep(targetStep) {
+            showStep(targetStep);
+        }
+
+        // === VALIDATION ===
+        function validateStep(step) {
+            const stepElement = document.getElementById(`step-${step}`);
+            if (!stepElement) return true;
+
+            const requiredFields = stepElement.querySelectorAll(
+                'input[required], select[required], textarea[required]'
+            );
             
-            if (menuToggle && mobileMenu) {
-                menuToggle.addEventListener('click', function() {
-                    mobileMenu.classList.toggle('hidden');
-                    const icon = menuToggle.querySelector('i');
-                    if (mobileMenu.classList.contains('hidden')) {
-                        feather.icons.menu.replace();
-                    } else {
-                        feather.icons.x.replace();
+            let isValid = true;
+            let firstInvalidField = null;
+
+            requiredFields.forEach(field => {
+                const value = field.value.trim();
+                let fieldValid = true;
+
+                // Kiểm tra trống
+                if (!value) {
+                    fieldValid = false;
+                }
+                
+                // Kiểm tra số điện thoại
+                else if (field.type === 'tel' && field.id === 'emergency-phone') {
+                    fieldValid = validatePhone(value);
+                    if (!fieldValid) {
+                        showFieldError(field, 'Số điện thoại không hợp lệ. Vui lòng nhập số 10 chữ số bắt đầu bằng 0.');
+                    }
+                }
+                
+                // Kiểm tra CCCD
+                else if (field.id === 'cccd') {
+                    fieldValid = validateCCCD(value);
+                    if (!fieldValid) {
+                        showFieldError(field, 'Số CCCD không hợp lệ. Vui lòng nhập đúng 12 chữ số.');
+                    }
+                }
+
+                if (!fieldValid) {
+                    field.classList.add('border-red-500', 'input-error');
+                    isValid = false;
+                    if (!firstInvalidField) firstInvalidField = field;
+                } else {
+                    field.classList.remove('border-red-500', 'input-error');
+                    clearFieldError(field);
+                }
+            });
+
+            if (!isValid && firstInvalidField) {
+                showError('Vui lòng điền đầy đủ và đúng thông tin bắt buộc (*).');
+                firstInvalidField.focus();
+            }
+
+            return isValid;
+        }
+
+        function validatePhone(phone) {
+            return CONFIG.phoneRegex.test(phone);
+        }
+
+        function validateCCCD(cccd) {
+            return CONFIG.cccdRegex.test(cccd);
+        }
+
+        function showFieldError(field, message) {
+            // Xóa thông báo lỗi cũ
+            clearFieldError(field);
+            
+            // Thêm thông báo lỗi mới
+            const errorElement = document.createElement('p');
+            errorElement.className = 'text-red-500 text-xs mt-1';
+            errorElement.textContent = message;
+            errorElement.id = `${field.id}-error`;
+            
+            field.parentNode.appendChild(errorElement);
+        }
+
+        function clearFieldError(field) {
+            const existingError = document.getElementById(`${field.id}-error`);
+            if (existingError) {
+                existingError.remove();
+            }
+        }
+
+        // === MEDIA PREVIEW ===
+        function setupMediaPreview() {
+            const mediaInput = document.getElementById('emergency-media');
+            const preview = document.getElementById('media-preview');
+            if (!mediaInput || !preview) return;
+
+            mediaInput.addEventListener('change', e => {
+                preview.innerHTML = '';
+                const files = Array.from(e.target.files).slice(0, CONFIG.maxMediaFiles);
+                
+                files.forEach((file, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'media-preview-item relative';
+
+                    let mediaEl;
+                    if (file.type.startsWith('image/')) {
+                        mediaEl = document.createElement('img');
+                        mediaEl.src = URL.createObjectURL(file);
+                        mediaEl.className = 'w-full h-24 object-cover rounded-lg';
+                    } else if (file.type.startsWith('video/')) {
+                        mediaEl = document.createElement('video');
+                        mediaEl.src = URL.createObjectURL(file);
+                        mediaEl.className = 'w-full h-24 object-cover rounded-lg';
+                        mediaEl.controls = true;
+                    }
+                    
+                    if (mediaEl) div.appendChild(mediaEl);
+
+                    const removeBtn = document.createElement('button');
+                    removeBtn.type = 'button';
+                    removeBtn.className = 'remove-btn';
+                    removeBtn.innerHTML = '×';
+                    removeBtn.onclick = () => {
+                        div.remove();
+                        const dt = new DataTransfer();
+                        const filesArr = Array.from(mediaInput.files);
+                        filesArr.splice(index, 1);
+                        filesArr.forEach(f => dt.items.add(f));
+                        mediaInput.files = dt.files;
+                    };
+                    div.appendChild(removeBtn);
+
+                    preview.appendChild(div);
+                });
+            });
+        }
+
+        // === REAL-TIME VALIDATION ===
+        function setupRealTimeValidation() {
+            document.querySelectorAll('input[required], select[required], textarea[required]').forEach(input => {
+                input.addEventListener('input', () => {
+                    input.classList.remove('border-red-500', 'input-error');
+                    clearFieldError(input);
+                });
+            });
+
+            const phoneInput = document.getElementById('emergency-phone');
+            if (phoneInput) {
+                phoneInput.addEventListener('blur', function() {
+                    if (this.value && !validatePhone(this.value)) {
+                        this.classList.add('border-red-500', 'input-error');
+                        showFieldError(this, 'Số điện thoại không hợp lệ. Vui lòng nhập số 10 chữ số bắt đầu bằng 0.');
+                    }
+                });
+            }
+
+            const cccdInput = document.getElementById('cccd');
+            if (cccdInput) {
+                cccdInput.addEventListener('blur', function() {
+                    if (this.value && !validateCCCD(this.value)) {
+                        this.classList.add('border-red-500', 'input-error');
+                        showFieldError(this, 'Số CCCD không hợp lệ. Vui lòng nhập đúng 12 chữ số.');
                     }
                 });
             }
         }
 
-        function loadRescueTeams() {
-            showLoading();
-            
-            // Get filter values
-            const regionFilter = document.getElementById('region-filter').value;
-            const specialtyFilter = document.getElementById('specialty-filter').value;
-            const statusFilter = document.getElementById('status-filter').value;
-            
-            // Filter teams
-            const filteredTeams = rescueTeams.filter(team => {
-                const regionMatch = regionFilter === 'all' || team.region === regionFilter;
-                const specialtyMatch = specialtyFilter === 'all' || team.specialties.includes(specialtyFilter);
-                const statusMatch = statusFilter === 'all' || team.status === statusFilter;
-                
-                return regionMatch && specialtyMatch && statusMatch;
-            });
-            
-            // Display teams
-            displayTeams(filteredTeams);
-            
-            // Show empty state if no teams found
-            if (filteredTeams.length === 0) {
-                document.getElementById('empty-state').classList.remove('hidden');
-                document.getElementById('teams-grid').classList.add('hidden');
-            } else {
-                document.getElementById('empty-state').classList.add('hidden');
-                document.getElementById('teams-grid').classList.remove('hidden');
-            }
-            
-            hideLoading();
-        }
+        // === FORM SUBMISSION ===
+        function setupFormSubmission() {
+            const form = document.getElementById('emergency-report-form');
+            if (!form) return;
 
-        function displayTeams(teams) {
-            const grid = document.getElementById('teams-grid');
-            
-            grid.innerHTML = teams.map(team => createTeamCard(team)).join('');
-            
-            // Add event listeners to team cards
-            teams.forEach(team => {
-                const card = document.querySelector(`[data-team-id="${team.id}"]`);
-                if (card) {
-                    card.addEventListener('click', () => openTeamModal(team));
+            form.addEventListener('submit', async e => {
+                e.preventDefault();
+                if (!validateStep(currentStep)) return;
+
+                // Hiển thị cảnh báo cuối cùng trước khi gửi
+                const isConfirmed = confirm(
+                    "CẢNH BÁO PHÁP LÝ CUỐI CÙNG:\n\n" +
+                    "Bạn sắp gửi báo cáo khẩn cấp. Việc cung cấp thông tin sai sự thật:\n" +
+                    "• Gây lãng phí nguồn lực cứu hộ\n" +
+                    "• Có thể bị xử phạt hành chính hoặc truy cứu trách nhiệm hình sự\n" +
+                    "• Ảnh hưởng đến công tác cứu hộ thực sự\n\n" +
+                    "Bạn có CHẮC CHẮN đây là tình huống khẩn cấp thực sự và thông tin cung cấp là hoàn toàn chính xác?"
+                );
+
+                if (!isConfirmed) {
+                    return;
+                }
+
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<span class="animate-spin mr-2">⟳</span> Đang gửi...';
+                submitBtn.disabled = true;
+
+                try {
+                    const reportData = await createReportData();
+                    const success = saveReportToNewsPage(reportData);
+
+                    if (success) {
+                        showSuccessModal();
+                    } else {
+                        throw new Error('Lỗi lưu dữ liệu');
+                    }
+                } catch (err) {
+                    console.error(err);
+                    showError('❌ Có lỗi xảy ra khi gửi báo cáo. Vui lòng thử lại.');
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
                 }
             });
-            
-            feather.replace();
         }
 
-        function createTeamCard(team) {
-            const statusClass = getStatusClass(team.status);
-            const statusText = getStatusText(team.status);
-            const specialtiesHTML = team.specialties.map(specialty => 
-                `<span class="specialty-badge ${getSpecialtyClass(specialty)}">${getSpecialtyText(specialty)}</span>`
-            ).join('');
-            
-            return `
-                <div class="rescue-team-card bg-white rounded-xl shadow-md overflow-hidden cursor-pointer" data-team-id="${team.id}">
-                    <div class="p-6">
-                        <div class="flex justify-between items-start mb-4">
-                            <h3 class="text-xl font-bold text-gray-800">${team.name}</h3>
-                            <span class="${statusClass} flex items-center text-sm">
-                                <i data-feather="circle" class="w-3 h-3 mr-1"></i> ${statusText}
-                            </span>
-                        </div>
-                        
-                        <div class="mb-4">
-                            <div class="flex items-center text-gray-600 mb-2">
-                                <i data-feather="map-pin" class="w-4 h-4 mr-2"></i>
-                                ${team.location}
-                            </div>
-                            <div class="flex items-center text-gray-600">
-                                <i data-feather="phone" class="w-4 h-4 mr-2"></i>
-                                ${team.phone}
-                            </div>
-                        </div>
-                        
-                        <div class="mb-4">
-                            ${specialtiesHTML}
-                        </div>
-                        
-                        <div class="flex justify-between items-center text-sm text-gray-500">
-                            <div class="flex items-center">
-                                <i data-feather="users" class="w-4 h-4 mr-1"></i>
-                                ${team.members} thành viên
-                            </div>
-                            <div class="flex items-center">
-                                <i data-feather="star" class="w-4 h-4 mr-1 text-yellow-500"></i>
-                                ${team.rating}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
+        // === TẠO DỮ LIỆU BÁO CÁO ===
+        async function createReportData() {
+            const type = document.getElementById('emergency-type').value;
+            const location = document.getElementById('emergency-location').value;
+            const mediaFiles = document.getElementById('emergency-media').files;
+            const img = mediaFiles.length > 0
+                ? URL.createObjectURL(mediaFiles[0])
+                : 'https://images.unsplash.com/photo-1614732414444-096e5f1122d5?w=600&h=400&fit=crop';
+
+            return {
+                id: 'user_' + Date.now(),
+                title: `[BÁO CÁO] ${CONFIG.emergencyTypes[type] || 'Sự cố khẩn cấp'} tại ${location}`,
+                date: new Date().toISOString().split('T')[0],
+                type: CONFIG.typeMapping[type] || 'canh-bao',
+                location: generateLocationCode(location),
+                img,
+                content: document.getElementById('emergency-description').value,
+                severity: document.getElementById('emergency-severity').value,
+                reporter: {
+                    name: document.getElementById('emergency-name').value,
+                    cccd: document.getElementById('cccd').value,
+                    phone: document.getElementById('emergency-phone').value,
+                    email: document.getElementById('emergency-email').value || '',
+                    legalConfirmed: true,
+                    timestamp: new Date().toISOString()
+                },
+                timestamp: new Date().toISOString(),
+                status: 'pending',
+                verified: false,
+                source: 'user_report'
+            };
         }
 
-        function openTeamModal(team) {
-            const modal = document.getElementById('team-modal');
-            const title = document.getElementById('modal-team-name');
-            const content = document.getElementById('modal-team-content');
-            
-            title.textContent = team.name;
-            content.innerHTML = createTeamModalContent(team);
-            
-            modal.classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-            
-            feather.replace();
-            
-            // Setup modal buttons
-            setupModalButtons(team);
+        function generateLocationCode(locationText) {
+            return locationText
+                ? locationText.split(',')[0].trim().toLowerCase().replace(/\s+/g, '-').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                : 'toan-quoc';
         }
 
-        function createTeamModalContent(team) {
-            const statusClass = getStatusClass(team.status);
-            const statusText = getStatusText(team.status);
-            const specialtiesHTML = team.specialties.map(specialty => 
-                `<span class="specialty-badge ${getSpecialtyClass(specialty)}">${getSpecialtyText(specialty)}</span>`
-            ).join('');
-            
-            const equipmentHTML = team.equipment.map(item => 
-                `<li class="flex items-center">
-                    <i data-feather="check" class="w-4 h-4 text-green-500 mr-2"></i> ${item}
-                </li>`
-            ).join('');
-            
-            return `
-                <div class="space-y-6">
-                    <div class="flex flex-wrap gap-2">
-                        <span class="${statusClass} flex items-center px-3 py-1 rounded-full text-sm font-medium">
-                            <i data-feather="circle" class="w-3 h-3 mr-1"></i> ${statusText}
-                        </span>
-                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
-                            <i data-feather="map-pin" class="w-4 h-4 inline mr-1"></i>
-                            ${team.location}
-                        </span>
-                    </div>
-                    
-                    <div>
-                        <h4 class="font-semibold text-gray-800 mb-2">Giới thiệu</h4>
-                        <p class="text-gray-700">${team.description}</p>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <h4 class="font-semibold text-gray-800 mb-2">Thông tin đội</h4>
-                            <ul class="space-y-2 text-gray-700">
-                                <li class="flex justify-between">
-                                    <span>Thành lập:</span>
-                                    <span class="font-medium">${team.established}</span>
-                                </li>
-                                <li class="flex justify-between">
-                                    <span>Số thành viên:</span>
-                                    <span class="font-medium">${team.members} người</span>
-                                </li>
-                                <li class="flex justify-between">
-                                    <span>Thời gian phản hồi:</span>
-                                    <span class="font-medium">${team.responseTime}</span>
-                                </li>
-                                <li class="flex justify-between">
-                                    <span>Ca cứu hộ:</span>
-                                    <span class="font-medium">${team.missions} ca</span>
-                                </li>
-                                <li class="flex justify-between">
-                                    <span>Đánh giá:</span>
-                                    <span class="font-medium flex items-center">
-                                        <i data-feather="star" class="w-4 h-4 text-yellow-500 mr-1"></i> ${team.rating}/5
-                                    </span>
-                                </li>
-                            </ul>
-                        </div>
-                        
-                        <div>
-                            <h4 class="font-semibold text-gray-800 mb-2">Trang thiết bị</h4>
-                            <ul class="space-y-2">
-                                ${equipmentHTML}
-                            </ul>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <h4 class="font-semibold text-gray-800 mb-2">Chuyên môn</h4>
-                        <div class="flex flex-wrap gap-2">
-                            ${specialtiesHTML}
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function setupModalButtons(team) {
-            // Call button
-            document.querySelector('.call-team').addEventListener('click', function() {
-                window.location.href = `tel:${team.phone}`;
-            });
-            
-            // Message button
-            document.querySelector('.message-team').addEventListener('click', function() {
-                // In a real app, this would open a messaging interface
-                alert(`Gửi tin nhắn đến ${team.phone}`);
-            });
-            
-            // View on map button
-            document.querySelector('.view-on-map').addEventListener('click', function() {
-                window.location.href = `map.html?team=${team.id}`;
-            });
-            
-            // Share button
-            document.querySelector('.share-team').addEventListener('click', function() {
-                shareTeam(team);
-            });
-        }
-
-        function shareTeam(team) {
-            const shareText = `${team.name} - ${team.location}\nSố điện thoại: ${team.phone}\nChuyên môn: ${team.specialties.map(s => getSpecialtyText(s)).join(', ')}`;
-            
-            if (navigator.share) {
-                navigator.share({
-                    title: team.name,
-                    text: shareText,
-                    url: window.location.href
-                });
-            } else {
-                // Fallback for browsers that don't support Web Share API
-                navigator.clipboard.writeText(shareText).then(() => {
-                    alert('Đã sao chép thông tin đội cứu hộ vào clipboard!');
-                });
+        function saveReportToNewsPage(report) {
+            try {
+                const reports = JSON.parse(localStorage.getItem('newsData_user_reports') || '[]');
+                reports.unshift(report);
+                if (reports.length > 100) reports.splice(100);
+                localStorage.setItem('newsData_user_reports', JSON.stringify(reports));
+                return true;
+            } catch (err) {
+                console.error(err);
+                return false;
             }
         }
 
-        function resetFilters() {
-            document.getElementById('region-filter').value = 'all';
-            document.getElementById('specialty-filter').value = 'all';
-            document.getElementById('status-filter').value = 'all';
-            loadRescueTeams();
+        // === LOCATION SERVICES ===
+        async function getCurrentLocation() {
+            if (navigator.geolocation) {
+                const locationInput = document.getElementById('emergency-location');
+                const locationBtn = document.querySelector('.location-btn');
+                const originalText = locationBtn.innerHTML;
+                
+                // Hiển thị trạng thái loading
+                locationBtn.innerHTML = '<div class="location-loading"></div> Đang lấy vị trí...';
+                locationBtn.classList.add('loading');
+                locationBtn.disabled = true;
+                
+                const originalPlaceholder = locationInput.placeholder;
+                locationInput.placeholder = 'Đang lấy vị trí...';
+                
+                try {
+                    const position = await new Promise((resolve, reject) => {
+                        navigator.geolocation.getCurrentPosition(resolve, reject, {
+                            timeout: 15000,
+                            enableHighAccuracy: true
+                        });
+                    });
+                    
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+                    
+                    // Hiển thị tọa độ tạm thời
+                    locationInput.value = `Đang lấy địa chỉ... (${latitude.toFixed(6)}, ${longitude.toFixed(6)})`;
+                    
+                    // Gọi API để lấy địa chỉ
+                    const address = await getAddressFromCoordinates(latitude, longitude);
+                    
+                    if (address) {
+                        locationInput.value = address;
+                        showSuccess('✅ Đã lấy địa chỉ thành công!');
+                    } else {
+                        locationInput.value = `Vị trí: ${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
+                        showSuccess('✅ Đã lấy tọa độ! Vui lòng bổ sung địa chỉ nếu cần.');
+                    }
+                    
+                } catch (error) {
+                    console.error("Lỗi khi lấy vị trí:", error);
+                    handleLocationError(error);
+                } finally {
+                    // Khôi phục trạng thái ban đầu
+                    locationBtn.innerHTML = originalText;
+                    locationBtn.classList.remove('loading');
+                    locationBtn.disabled = false;
+                    locationInput.placeholder = originalPlaceholder;
+                }
+            } else {
+                showError('❌ Trình duyệt không hỗ trợ định vị. Vui lòng nhập thủ công.');
+            }
         }
 
-        function closeModal() {
-            document.getElementById('team-modal').classList.add('hidden');
-            document.body.style.overflow = 'auto';
+        // === GEOCODING SERVICE ===
+        async function getAddressFromCoordinates(lat, lng) {
+            try {
+                // Sử dụng OpenStreetMap Nominatim API (miễn phí)
+                const response = await fetch(
+                    `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`
+                );
+                
+                if (!response.ok) {
+                    throw new Error('Lỗi kết nối dịch vụ địa chỉ');
+                }
+                
+                const data = await response.json();
+                
+                if (data && data.address) {
+                    return formatAddress(data);
+                }
+                
+                return null;
+            } catch (error) {
+                console.error('Lỗi khi lấy địa chỉ:', error);
+                return null;
+            }
         }
 
-        function showLoading() {
-            document.getElementById('loading-indicator').classList.remove('hidden');
+        // === FORMAT ADDRESS ===
+        function formatAddress(data) {
+            const address = data.address;
+            let formattedAddress = '';
+            
+            // Xây dựng địa chỉ từ chi tiết đến tổng quát
+            if (address.road) {
+                formattedAddress += address.road;
+            }
+            
+            if (address.house_number) {
+                formattedAddress += ' số ' + address.house_number;
+            }
+            
+            if (address.suburb && !formattedAddress.includes(address.suburb)) {
+                formattedAddress += formattedAddress ? ', ' + address.suburb : address.suburb;
+            }
+            
+            if (address.quarter && !formattedAddress.includes(address.quarter)) {
+                formattedAddress += formattedAddress ? ', ' + address.quarter : address.quarter;
+            }
+            
+            if (address.neighbourhood && !formattedAddress.includes(address.neighbourhood)) {
+                formattedAddress += formattedAddress ? ', ' + address.neighbourhood : address.neighbourhood;
+            }
+            
+            if (address.city_district && !formattedAddress.includes(address.city_district)) {
+                formattedAddress += formattedAddress ? ', ' + address.city_district : address.city_district;
+            }
+            
+            if (address.district && !formattedAddress.includes(address.district)) {
+                formattedAddress += formattedAddress ? ', ' + address.district : address.district;
+            }
+            
+            if (address.city && !formattedAddress.includes(address.city)) {
+                formattedAddress += formattedAddress ? ', ' + address.city : address.city;
+            }
+            
+            if (address.town && !formattedAddress.includes(address.town)) {
+                formattedAddress += formattedAddress ? ', ' + address.town : address.town;
+            }
+            
+            if (address.province && !formattedAddress.includes(address.province)) {
+                formattedAddress += formattedAddress ? ', ' + address.province : address.province;
+            }
+            
+            if (address.state && !formattedAddress.includes(address.state)) {
+                formattedAddress += formattedAddress ? ', ' + address.state : address.state;
+            }
+            
+            if (address.country && !formattedAddress.includes(address.country)) {
+                formattedAddress += formattedAddress ? ', ' + address.country : address.country;
+            }
+            
+            return formattedAddress || data.display_name || '';
         }
 
-        function hideLoading() {
-            document.getElementById('loading-indicator').classList.add('hidden');
+        // === HANDLE LOCATION ERRORS ===
+        function handleLocationError(error) {
+            let errorMessage = '❌ Không thể lấy vị trí. Vui lòng nhập thủ công.';
+            
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    errorMessage = '❌ Quyền truy cập vị trí bị từ chối. Vui lòng cho phép truy cập vị trí.';
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    errorMessage = '❌ Thông tin vị trí không khả dụng.';
+                    break;
+                case error.TIMEOUT:
+                    errorMessage = '❌ Hết thời gian lấy vị trí. Vui lòng thử lại.';
+                    break;
+            }
+            
+            showError(errorMessage);
         }
 
-        // Utility functions
-        function getStatusClass(status) {
-            const classes = {
-                online: 'availability-online',
-                busy: 'availability-busy',
-                offline: 'availability-offline'
-            };
-            return classes[status] || classes.offline;
+        // === EMERGENCY CALL ===
+        function makeEmergencyCall() {
+            if (confirm("Bạn có chắc chắn muốn gọi số cứu hộ khẩn cấp 114?")) {
+                // Trong thực tế: window.location.href = "tel:114";
+                alert("Đang kết nối với số cứu hộ khẩn cấp 114...");
+            }
         }
 
-        function getStatusText(status) {
-            const texts = {
-                online: 'Đang trực',
-                busy: 'Đang bận',
-                offline: 'Không trực'
-            };
-            return texts[status] || texts.offline;
+        // === SUCCESS MODAL ===
+        function showSuccessModal() {
+            document.getElementById('success-modal').style.display = 'flex';
+            feather.replace();
         }
 
-        function getSpecialtyClass(specialty) {
-            const classes = {
-                'cuu-ho-chay-no': 'bg-red-100 text-red-800',
-                'cuu-ho-duoi-nuoc': 'bg-blue-100 text-blue-800',
-                'cuu-ho-cao-oc': 'bg-purple-100 text-purple-800',
-                'cuu-ho-giao-thong': 'bg-yellow-100 text-yellow-800',
-                'cuu-ho-thien-tai': 'bg-orange-100 text-orange-800',
-                'cap-cuu-y-te': 'bg-green-100 text-green-800'
-            };
-            return classes[specialty] || 'bg-gray-100 text-gray-800';
+        function closeSuccessModal() {
+            document.getElementById('success-modal').style.display = 'none';
+            // Reset form và quay về bước 1
+            document.getElementById('emergency-report-form').reset();
+            document.getElementById('media-preview').innerHTML = '';
+            showStep(1);
+            
+            // Chuyển hướng sau 3 giây
+            setTimeout(() => {
+                window.location.href = 'request.html';
+            }, 3000);
         }
 
-        function getSpecialtyText(specialty) {
-            const texts = {
-                'cuu-ho-chay-no': 'Cứu hỏa',
-                'cuu-ho-duoi-nuoc': 'Cứu hộ dưới nước',
-                'cuu-ho-cao-oc': 'Cứu hộ cao ốc',
-                'cuu-ho-giao-thong': 'Cứu hộ giao thông',
-                'cuu-ho-thien-tai': 'Cứu hộ thiên tai',
-                'cap-cuu-y-te': 'Cấp cứu y tế'
-            };
-            return texts[specialty] || 'Khác';
+        // === NOTIFICATION SYSTEM ===
+        function showError(msg) { 
+            showNotification(msg, 'error'); 
         }
+        
+        function showSuccess(msg) { 
+            showNotification(msg, 'success'); 
+        }
+        
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `custom-notification ${
+                type === 'error' ? 'bg-red-500' : 
+                type === 'success' ? 'bg-green-500' : 'bg-blue-500'
+            } text-white`;
+            
+            notification.innerHTML = `
+                <div class="flex justify-between items-center">
+                    <span>${message}</span>
+                    <button class="ml-4 text-white hover:text-gray-200">×</button>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Tự động xóa sau 5 giây
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 5000);
+            
+            // Xóa khi click
+            notification.querySelector('button').addEventListener('click', () => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            });
+        }
+
+        // === EVENT LISTENERS SETUP ===
+        function setupEventListeners() {
+            // Navigation buttons
+            document.getElementById('next-step-1').addEventListener('click', () => nextStep(2));
+            document.getElementById('prev-step-2').addEventListener('click', () => prevStep(1));
+            
+            // Mobile menu
+            document.getElementById('menu-toggle').addEventListener('click', function() {
+                const mobileMenu = document.getElementById('mobile-menu');
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
+
+        // Xuất global functions cho HTML
+        window.nextStep = nextStep;
+        window.prevStep = prevStep;
+        window.showStep = showStep;
+        window.getCurrentLocation = getCurrentLocation;
+        window.makeEmergencyCall = makeEmergencyCall;
+        window.closeSuccessModal = closeSuccessModal;
     </script>
 </body>
 </html>

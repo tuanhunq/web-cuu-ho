@@ -1176,3 +1176,61 @@
             });
         }
     });
+
+
+
+
+
+
+
+    // chuyển trang của index 
+    // Hàm xử lý khi click vào service card
+function filterByIncidentType(incidentType) {
+    // Lưu loại sự cố vào localStorage để trang map có thể đọc
+    localStorage.setItem('selectedIncidentType', incidentType);
+    
+    // Chuyển hướng đến trang map
+    window.location.href = 'map.html';
+}
+
+// Hàm áp dụng bộ lọc khi trang map được tải
+function applyIncidentFilter() {
+    const selectedType = localStorage.getItem('selectedIncidentType');
+    
+    if (selectedType) {
+        // Tìm dropdown loại sự cố và chọn giá trị tương ứng
+        const typeFilter = document.getElementById('type-filter');
+        if (typeFilter) {
+            // Map loại sự cố từ service card sang giá trị trong dropdown
+            const typeMapping = {
+                'disaster': 'disaster',
+                'fire': 'fire', 
+                'accident': 'accident',
+                'medical': 'medical' // Cần thêm option 'medical' vào dropdown nếu chưa có
+            };
+            
+            const filterValue = typeMapping[selectedType] || selectedType;
+            typeFilter.value = filterValue;
+            
+            // Kích hoạt sự kiện change để áp dụng bộ lọc
+            const event = new Event('change');
+            typeFilter.dispatchEvent(event);
+            
+            // Cuộn đến phần bản đồ
+            setTimeout(() => {
+                document.getElementById('incident-map').scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }, 500);
+        }
+        
+        // Xóa bộ lọc đã lưu sau khi áp dụng
+        localStorage.removeItem('selectedIncidentType');
+    }
+}
+
+// Gọi hàm này khi trang map được tải
+if (window.location.pathname.includes('map.html')) {
+    document.addEventListener('DOMContentLoaded', applyIncidentFilter);
+}

@@ -2718,3 +2718,180 @@ footer {
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
+
+/* Header Container - Hoàn toàn trong suốt trên ảnh nền */
+#navbar {
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    box-shadow: none !important;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    transition: all 0.3s ease;
+    border-bottom: none !important;
+}
+
+#navbar.scrolled {
+    background: rgba(0, 0, 0, 0.9) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Đảm bảo các phần tử trong header có màu trắng để nổi bật trên ảnh nền */
+
+
+/* Khi scroll - chuyển sang màu nổi */
+#navbar.scrolled .nav-link {
+    color: #fecaca !important; /* Màu hồng nhạt */
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+
+#navbar.scrolled .nav-link:hover {
+    color: #fca5a5 !important; /* Màu hồng đậm hơn khi hover */
+}
+
+#navbar .nav-link::after {
+    background: linear-gradient(to right, #ffffff, #fecaca) !important;
+}
+
+#navbar.scrolled .nav-link::after {
+    background: linear-gradient(to right, #fecaca, #fca5a5) !important;
+}
+
+/* Logo title - chuyển màu khi scroll */
+#navbar .logo-title {
+    background: linear-gradient(135deg, #ffffff, #fecaca) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+    text-shadow: none !important;
+    transition: all 0.3s ease;
+}
+
+#navbar.scrolled .logo-title {
+    background: linear-gradient(135deg, #fecaca, #f87171) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+}
+
+/* Logo subtitle - chuyển màu khi scroll */
+#navbar .logo-subtitle {
+    color: #3c4e72 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease;
+}
+
+#navbar.scrolled .logo-subtitle {
+    color: #e5e7eb !important;
+}
+
+/* Các button chuyển màu khi scroll */
+#navbar .btn-login {
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease;
+}
+
+#navbar.scrolled .btn-login {
+    color: #fecaca !important;
+    border: 1px solid rgba(254, 202, 202, 0.5) !important;
+}
+
+#navbar .btn-login:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+#navbar.scrolled .btn-login:hover {
+    background: rgba(254, 202, 202, 0.1) !important;
+    border-color: rgba(254, 202, 202, 0.8) !important;
+}
+
+#navbar .btn-register {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.9), rgba(249, 115, 22, 0.9)) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    transition: all 0.3s ease;
+}
+
+#navbar.scrolled .btn-register {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 1), rgba(249, 115, 22, 1)) !important;
+    border: 1px solid rgba(254, 202, 202, 0.5) !important;
+}
+
+#navbar .btn-emergency-header {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.9), rgba(220, 38, 38, 0.9)) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    transition: all 0.3s ease;
+}
+
+#navbar.scrolled .btn-emergency-header {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 1), rgba(220, 38, 38, 1)) !important;
+    border: 1px solid rgba(254, 202, 202, 0.5) !important;
+}
+
+/* Mobile menu toggle */
+#navbar .mobile-menu-toggle span {
+    background: #ffffff !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease;
+}
+
+#navbar.scrolled .mobile-menu-toggle span {
+    background: #fecaca !important;
+}
+
+/* User avatar */
+#navbar .user-avatar {
+    border: 2px solid rgba(255, 255, 255, 0.3) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+#navbar.scrolled .user-avatar {
+    border: 2px solid rgba(254, 202, 202, 0.5) !important;
+}
+
+/* Dropdown menu */
+#navbar .dropdown-menu {
+    background: rgba(0, 0, 0, 0.9) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Mobile menu */
+#mobile-menu {
+    background: rgba(0, 0, 0, 0.95) !important;
+    backdrop-filter: blur(25px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(25px) saturate(180%) !important;
+}
+
+/* Đảm bảo hero section có đủ khoảng trống cho header trong suốt */
+.hero-section {
+    margin-top: -80px;
+    padding-top: 80px;
+}
+
+@media (max-width: 768px) {
+    .hero-section {
+        margin-top: -70px;
+        padding-top: 70px;
+    }
+}
+
+
+
+
+
+
+
+
+
+
