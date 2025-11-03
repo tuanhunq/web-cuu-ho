@@ -3,11 +3,11 @@ import dotenv from "dotenv";
 import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
-import { connectDB } from "./utils/db.js";
-import authRoutes from "./routes/auth.js";
-import userRoutes from "./routes/user.js";
-import rescueRoutes from "./routes/rescue.js";
-import reportsRoutes from "./routes/reports.js";
+import { connectDB } from "./src/utils/db.js";
+import authRoutes from "./src/api/routes/auth.js";
+import userRoutes from "./src/api/routes/user.js";
+import rescueRoutes from "./src/api/routes/rescue.js";
+import reportsRoutes from "./src/api/routes/reports.js";
 
 // Load environment variables
 dotenv.config();

@@ -1,35 +1,40 @@
 version: '3.8'
 
 services:
-  sqlserver:
-    image: mcr.microsoft.com/mssql/server:2019-latest
-    container_name: rescue_sqlserver
+  mongodb:
+    image: mongo:latest
+    container_name: rescue_mongodb
     ports:
-      - "1433:1433"
-    environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD=YourStrong@Passw0rd
-      - MSSQL_PID=Express
+      - "27017:27017"
     volumes:
-      - sqlserver_data:/var/opt/mssql
+      - mongodb_data:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=cuuho
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   backend:
     build:
-      context: ../server
+      context: ../backend
       dockerfile: Dockerfile
     container_name: rescue_backend
     ports:
-      - "3000:3000"
+      - "5000:5000"
     depends_on:
-      - sqlserver
+      mongodb:
+        condition: service_healthy
     environment:
-      - DB_HOST=sqlserver
-      - DB_PORT=1433
-      - DB_NAME=rescue
-      - DB_USER=sa
-      - DB_PASSWORD=YourStrong@Passw0rd
+      - MONGO_URI=mongodb://mongodb:27017/cuuho
       - JWT_SECRET=your_jwt_secret_key
       - NODE_ENV=production
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   nginx:
     image: nginx:alpine
@@ -46,5 +51,15 @@ services:
     depends_on:
       - backend
 
+  admin:
+    build:
+      context: ../admin
+      dockerfile: Dockerfile
+    container_name: rescue_admin
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
 volumes:
-  sqlserver_data:
+  mongodb_data:

@@ -1,13 +1,12 @@
-import Report from "../models/Report.js";
+import { RescueService } from "../../services/rescueService.js";
 
 export async function createReport(req, res) {
   try {
     const { type, phone, location, description } = req.body;
-    const report = new Report({
-      userId: req.user?.id || null,
-      type, phone, location, description
-    });
-    await report.save();
+    const report = await RescueService.createReport(
+      { type, phone, location, description },
+      req.user?.id
+    );
     res.json({ message: "Yêu cầu đã được gửi", report });
   } catch (err) {
     res.status(500).json({ message: "Lỗi server", error: err.message });
