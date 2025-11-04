@@ -2895,3 +2895,147 @@ footer {
 
 
 
+
+
+
+
+
+
+/* Video Container Styles - Updated for larger size */
+.video-container {
+    animation: slideInFromRight 1s ease-out 0.5s both;
+}
+
+.video-container:hover .video-controls {
+    opacity: 1;
+}
+
+/* New slide in animation from right */
+@keyframes slideInFromRight {
+    from {
+        opacity: 0;
+        transform: translateX(100px) translateY(4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) translateY(4px);
+    }
+}
+
+/* Enhanced pulse animation for live indicator */
+@keyframes livePulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.8);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 0 0 12px rgba(239, 68, 68, 0);
+        transform: scale(1.05);
+    }
+}
+
+.video-container .bg-red-500 {
+    animation: livePulse 2s infinite;
+    border: 2px solid white;
+}
+
+/* Video glow effect on hover */
+.video-container:hover > div {
+    box-shadow: 0 25px 50px -12px rgba(239, 68, 68, 0.25);
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+/* Responsive adjustments for larger video */
+@media (max-width: 1024px) {
+    .video-container {
+        right: 4rem;
+        bottom: 8rem;
+    }
+    
+    .video-container video {
+        width: 280px;
+        height: 180px;
+    }
+}
+
+@media (max-width: 768px) {
+    .video-container {
+        position: relative;
+        bottom: auto;
+        right: auto;
+        margin: 2rem auto;
+        transform: none !important;
+        text-align: center;
+    }
+    
+    .video-container > div {
+        display: inline-block;
+        margin: 0 auto;
+    }
+    
+    .video-container video {
+        width: 320px;
+        height: 200px;
+    }
+}
+
+@media (max-width: 480px) {
+    .video-container video {
+        width: 280px;
+        height: 160px;
+    }
+}
+
+/* Enhanced modal styles */
+#video-modal {
+    animation: modalSlideUp 0.4s ease;
+}
+
+@keyframes modalSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Video quality indicator */
+.video-quality {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.7);
+    color: #10b981;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+/* Loading state for video */
+.video-loading {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+}
+
+.video-loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top: 3px solid #ef4444;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

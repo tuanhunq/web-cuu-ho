@@ -27,36 +27,154 @@ function initRecentIncidents() {
     setupRecentFilters();
 }
 
-// Hàm tạo dữ liệu mẫu (chỉ dùng khi không có dữ liệu từ bản đồ)
+// Hàm tạo dữ liệu mẫu với vị trí thực tế từ nhiều tỉnh thành
 function generateSampleIncidents() {
     const incidentTypes = ['fire', 'flood', 'accident', 'disaster'];
-    const provinces = ['Hà Nội', 'TP.Hồ Chí Minh', 'Đà Nẵng', 'Cần Thơ', 'Hải Phòng'];
     const statuses = ['active', 'resolved'];
     
+    // Danh sách tỉnh thành với tọa độ trung tâm thực tế
+    const provinces = [
+        { name: 'Hà Nội', lat: 21.0278, lng: 105.8342, radius: 0.3 },
+        { name: 'TP.Hồ Chí Minh', lat: 10.8231, lng: 106.6297, radius: 0.4 },
+        { name: 'Đà Nẵng', lat: 16.0544, lng: 108.2022, radius: 0.2 },
+        { name: 'Cần Thơ', lat: 10.0452, lng: 105.7469, radius: 0.25 },
+        { name: 'Hải Phòng', lat: 20.8449, lng: 106.6881, radius: 0.3 },
+        { name: 'Huế', lat: 16.4637, lng: 107.5909, radius: 0.2 },
+        { name: 'Nha Trang', lat: 12.2388, lng: 109.1967, radius: 0.25 },
+        { name: 'Đà Lạt', lat: 11.9404, lng: 108.4583, radius: 0.3 },
+        { name: 'Vũng Tàu', lat: 10.3460, lng: 107.0843, radius: 0.2 },
+        { name: 'Quy Nhơn', lat: 13.7820, lng: 109.2197, radius: 0.25 },
+        { name: 'Hạ Long', lat: 20.9599, lng: 107.0425, radius: 0.2 },
+        { name: 'Buôn Ma Thuột', lat: 12.6662, lng: 108.0382, radius: 0.3 },
+        { name: 'Thanh Hóa', lat: 19.8080, lng: 105.7766, radius: 0.4 },
+        { name: 'Nghệ An', lat: 18.6796, lng: 105.6813, radius: 0.5 },
+        { name: 'Quảng Ninh', lat: 21.0064, lng: 107.2925, radius: 0.4 },
+        { name: 'Lào Cai', lat: 22.4850, lng: 103.9700, radius: 0.3 },
+        { name: 'Sơn La', lat: 21.3257, lng: 103.9160, radius: 0.4 },
+        { name: 'Điện Biên', lat: 21.3924, lng: 103.0170, radius: 0.3 },
+        { name: 'Lai Châu', lat: 22.0680, lng: 103.1480, radius: 0.4 },
+        { name: 'Cao Bằng', lat: 22.6667, lng: 106.2500, radius: 0.3 },
+        { name: 'Lạng Sơn', lat: 21.8470, lng: 106.7570, radius: 0.3 },
+        { name: 'Bắc Giang', lat: 21.2710, lng: 106.1940, radius: 0.3 },
+        { name: 'Bắc Ninh', lat: 21.1861, lng: 106.0763, radius: 0.2 },
+        { name: 'Hải Dương', lat: 20.9373, lng: 106.3146, radius: 0.3 },
+        { name: 'Hưng Yên', lat: 20.6464, lng: 106.0511, radius: 0.2 },
+        { name: 'Thái Bình', lat: 20.4461, lng: 106.3366, radius: 0.3 },
+        { name: 'Nam Định', lat: 20.4200, lng: 106.1683, radius: 0.3 },
+        { name: 'Ninh Bình', lat: 20.2506, lng: 105.9745, radius: 0.3 },
+        { name: 'Hà Nam', lat: 20.5433, lng: 105.9222, radius: 0.2 },
+        { name: 'Quảng Bình', lat: 17.4687, lng: 106.6227, radius: 0.4 },
+        { name: 'Quảng Trị', lat: 16.7500, lng: 107.2000, radius: 0.3 },
+        { name: 'Thừa Thiên Huế', lat: 16.4674, lng: 107.5901, radius: 0.4 },
+        { name: 'Quảng Nam', lat: 15.5394, lng: 108.0191, radius: 0.5 },
+        { name: 'Quảng Ngãi', lat: 15.1200, lng: 108.8000, radius: 0.4 },
+        { name: 'Bình Định', lat: 14.1667, lng: 109.0000, radius: 0.5 },
+        { name: 'Phú Yên', lat: 13.0833, lng: 109.3167, radius: 0.4 },
+        { name: 'Khánh Hòa', lat: 12.2500, lng: 109.2000, radius: 0.5 },
+        { name: 'Ninh Thuận', lat: 11.5646, lng: 108.9886, radius: 0.4 },
+        { name: 'Bình Thuận', lat: 11.0833, lng: 108.1167, radius: 0.5 },
+        { name: 'Kon Tum', lat: 14.3833, lng: 107.9833, radius: 0.6 },
+        { name: 'Gia Lai', lat: 13.9833, lng: 108.0000, radius: 0.7 },
+        { name: 'Đắk Lắk', lat: 12.6667, lng: 108.0500, radius: 0.6 },
+        { name: 'Đắk Nông', lat: 12.0000, lng: 107.6833, radius: 0.5 },
+        { name: 'Lâm Đồng', lat: 11.9404, lng: 108.4583, radius: 0.6 },
+        { name: 'Bình Phước', lat: 11.7500, lng: 106.9167, radius: 0.5 },
+        { name: 'Tây Ninh', lat: 11.3131, lng: 106.0963, radius: 0.4 },
+        { name: 'Bình Dương', lat: 11.0667, lng: 106.6667, radius: 0.3 },
+        { name: 'Đồng Nai', lat: 11.1167, lng: 107.1833, radius: 0.5 },
+        { name: 'Bà Rịa - Vũng Tàu', lat: 10.4114, lng: 107.1364, radius: 0.4 },
+        { name: 'Long An', lat: 10.6667, lng: 106.1667, radius: 0.5 },
+        { name: 'Tiền Giang', lat: 10.4167, lng: 106.1667, radius: 0.4 },
+        { name: 'Bến Tre', lat: 10.2333, lng: 106.3833, radius: 0.4 },
+        { name: 'Trà Vinh', lat: 9.9347, lng: 106.3453, radius: 0.3 },
+        { name: 'Vĩnh Long', lat: 10.2500, lng: 105.9667, radius: 0.3 },
+        { name: 'Đồng Tháp', lat: 10.3333, lng: 105.6333, radius: 0.5 },
+        { name: 'An Giang', lat: 10.3833, lng: 105.4333, radius: 0.5 },
+        { name: 'Kiên Giang', lat: 10.0000, lng: 105.0833, radius: 0.7 },
+        { name: 'Hậu Giang', lat: 9.7667, lng: 105.6333, radius: 0.3 },
+        { name: 'Sóc Trăng', lat: 9.6025, lng: 105.9739, radius: 0.4 },
+        { name: 'Bạc Liêu', lat: 9.2833, lng: 105.7167, radius: 0.3 },
+        { name: 'Cà Mau', lat: 9.1769, lng: 105.1500, radius: 0.4 }
+    ];
+
+    // Tên đường phố phổ biến ở Việt Nam
+    const streets = [
+        'Nguyễn Huệ', 'Lê Lợi', 'Trần Hưng Đạo', 'Hai Bà Trưng', 'Lý Thường Kiệt',
+        'Nguyễn Trãi', 'Phan Đình Phùng', 'Điện Biên Phủ', 'Cách Mạng Tháng Tám',
+        'Lê Duẩn', 'Võ Văn Kiệt', 'Xô Viết Nghệ Tĩnh', 'Hoàng Văn Thụ',
+        'Nguyễn Văn Linh', 'Lê Văn Sỹ', 'Cộng Hòa', 'Lý Tự Trọng', 'Nam Kỳ Khởi Nghĩa',
+        'Đinh Tiên Hoàng', 'Bà Triệu', 'Tràng Tiền', 'Hàng Bài', 'Phố Huế',
+        'Kim Mã', 'Giảng Võ', 'Láng Hạ', 'Tây Sơn', 'Quang Trung'
+    ];
+
+    // Mô tả sự cố theo loại
+    const incidentDescriptions = {
+        fire: [
+            'Cháy lớn tại tòa nhà cao tầng, nhiều người mắc kẹt bên trong cần được giải cứu khẩn cấp',
+            'Hỏa hoạn tại khu chung cư, ngọn lửa bùng phát dữ dội và đang lan rộng',
+            'Cháy nhà máy, khói đen cuồn cuộn bao trùm khu vực, nguy cơ cháy nổ cao',
+            'Cháy rừng lan nhanh do thời tiết khô hạn, đe dọa khu dân cư lân cận',
+            'Cháy xe tải chở hàng hóa dễ cháy, gây ùn tắc giao thông nghiêm trọng'
+        ],
+        flood: [
+            'Ngập lụt nặng sau mưa lớn kéo dài, nhiều tuyến đường chìm trong biển nước',
+            'Lũ quét ập đến bất ngờ, cuốn trôi nhiều phương tiện và nhà cửa',
+            'Triều cường dâng cao kết hợp mưa lớn gây ngập sâu nhiều khu vực trung tâm',
+            'Vỡ đê tại khu vực nông thôn, nước lũ tràn vào nhà dân gây thiệt hại nặng',
+            'Ngập úng cục bộ do hệ thống thoát nước quá tải, giao thông tê liệt hoàn toàn'
+        ],
+        accident: [
+            'Tai nạn giao thông nghiêm trọng liên quan đến nhiều phương tiện, có người bị thương nặng',
+            'Xe container mất lái đâm vào nhà dân, gây hư hại công trình và thương vong',
+            'Tai nạn xe khách trên quốc lộ, nhiều hành khách cần được cứu hộ khẩn cấp',
+            'Đâm va giữa xe tải và xe máy, nạn nhân bị mắc kẹt cần được cấp cứu',
+            'Sập cầu trên tuyến đường liên xã, nhiều phương tiện rơi xuống sông'
+        ],
+        disaster: [
+            'Sạt lở đất nghiêm trọng sau mưa lớn, vùi lấp nhiều nhà dân',
+            'Lốc xoáy quét qua khu dân cư, làm tốc mái nhiều công trình',
+            'Động đất nhẹ xảy ra tại khu vực miền núi, gây nứt nẻ nhà cửa',
+            'Bão lớn đổ bộ vào đất liền, gió giật mạnh và mưa lớn diện rộng',
+            'Sụt lún đất đô thị, nhiều công trình có nguy cơ sập đổ'
+        ]
+    };
+
     const incidents = [];
     
     for (let i = 1; i <= 183; i++) {
+        // Chọn ngẫu nhiên một tỉnh thành
+        const province = provinces[Math.floor(Math.random() * provinces.length)];
         const type = incidentTypes[Math.floor(Math.random() * incidentTypes.length)];
         const status = statuses[Math.floor(Math.random() * statuses.length)];
-        const province = provinces[Math.floor(Math.random() * provinces.length)];
+        
+        // Tạo tọa độ ngẫu nhiên trong phạm vi tỉnh thành
+        const randomLat = province.lat + (Math.random() - 0.5) * province.radius;
+        const randomLng = province.lng + (Math.random() - 0.5) * province.radius;
+        
+        // Chọn ngẫu nhiên tên đường
+        const street = streets[Math.floor(Math.random() * streets.length)];
+        const addressNumber = Math.floor(Math.random() * 300) + 1;
+        
+        // Chọn mô tả ngẫu nhiên theo loại sự cố
+        const description = incidentDescriptions[type][Math.floor(Math.random() * incidentDescriptions[type].length)];
         
         incidents.push({
             id: `SC${String(i).padStart(4, '0')}`,
-            title: `Sự cố ${type} tại ${province}`,
+            title: `${getIncidentTypeText(type)} tại ${province.name}`,
             type: type,
             status: status,
             priority: Math.floor(Math.random() * 3) + 1, // 1-3
-            address: `Số ${Math.floor(Math.random() * 100) + 1}, Đường ABC, ${province}`,
-            province: province,
+            address: `Số ${addressNumber}, Đường ${street}, ${province.name}`,
+            province: province.name.toLowerCase().replace(/\./g, '').replace(/\s+/g, ''),
             time: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000), // Trong 7 ngày qua
-            description: `Mô tả chi tiết về sự cố ${type} tại ${province}. Đây là mô tả mẫu cho sự cố số ${i}.`,
+            description: description,
             reporter: {
                 name: `Người báo cáo ${i}`,
-                phone: `0123.456.78${String(i).padStart(2, '0')}`
+                phone: `0123.456.78${String(i % 100).padStart(2, '0')}`
             },
             coordinates: {
-                lat: 21.0 + Math.random() * 5,
-                lng: 105.0 + Math.random() * 5
+                lat: randomLat,
+                lng: randomLng
             }
         });
     }
@@ -64,6 +182,16 @@ function generateSampleIncidents() {
     return incidents;
 }
 
+// Hàm hỗ trợ chuyển đổi loại sự cố thành text
+function getIncidentTypeText(type) {
+    const typeMap = {
+        'fire': 'Hỏa hoạn',
+        'flood': 'Ngập lụt', 
+        'accident': 'Tai nạn giao thông',
+        'disaster': 'Thiên tai'
+    };
+    return typeMap[type] || 'Sự cố';
+}
 // Hàm hiển thị sự cố gần đây
 function displayRecentIncidents(filteredIncidents = null) {
     const incidentsList = document.getElementById('recent-incidents-list');

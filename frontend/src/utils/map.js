@@ -3097,3 +3097,128 @@ setTimeout(() => {
         console.log('⚠️ Hàm updateRecentIncidentsFromMap chưa khả dụng');
     }
 }, 1000);
+
+
+
+
+class MapManager {
+    constructor() {
+        this.map = null;
+        this.markers = [];
+        this.selectedIncidentType = null;
+        this.init();
+    }
+
+    init() {
+        // Lấy loại sự cố từ localStorage
+        this.selectedIncidentType = localStorage.getItem('selectedIncidentType') || 'all';
+        
+        // Khởi tạo bản đồ
+        this.map = L.map('incident-map').setView([16.047079, 108.206230], 6);
+        
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(this.map);
+
+        this.loadSampleData();
+        this.applyInitialFilter();
+        this.setupEventListeners();
+    }
+
+    loadSampleData() {
+        // Dữ liệu mẫu
+        const sampleData = [
+            { id: 1, type: 'fire', title: 'Cháy nhà dân', coordinates: [21.0285, 105.8542], address: 'Hà Nội', status: 'active' },
+            { id: 2, type: 'flood', title: 'Ngập lụt', coordinates: [10.762622, 106.660172], address: 'TP.HCM', status: 'active' },
+            { id: 3, type: 'accident', title: 'Tai nạn giao thông', coordinates: [16.047079, 108.206230], address: 'Đà Nẵng', status: 'resolved' },
+            { id: 4, type: 'disaster', title: 'Sạt lở đất', coordinates: [21.8, 104.9], address: 'Yên Bái', status: 'active' },
+            { id: 5, type: 'disaster', title: 'Bão số 9', coordinates: [15.5, 108.5], address: 'Quảng Nam', status: 'active' },
+            { id: 6, type: 'medical', title: 'Cấp cứu y tế', coordinates: [20.5, 106.0], address: 'Hải Phòng', status: 'active' }
+        ];
+
+        sampleData.forEach(incident => this.addMarker(incident));
+    }
+
+    addMarker(incident) {
+        const colors = { fire: 'red', flood: 'blue', accident: 'orange', disaster: 'purple', medical: 'green' };
+        const color = colors[incident.type] || 'red';
+
+        const icon = L.divIcon({
+            className: 'custom-marker',
+            html: `<div style="background-color: ${color}" class="w-6 h-6 rounded-full border-2 border-white shadow-lg"></div>`,
+            iconSize: [24, 24],
+            iconAnchor: [12, 12]
+        });
+
+        const marker = L.marker(incident.coordinates, { icon })
+            .addTo(this.map)
+            .bindPopup(`<strong>${incident.title}</strong><br>${incident.address}`);
+        
+        marker.incidentData = incident;
+        this.markers.push(marker);
+    }
+
+    applyInitialFilter() {
+        if (this.selectedIncidentType && this.selectedIncidentType !== 'all') {
+            // Áp dụng filter
+            this.filterMarkers('type', this.selectedIncidentType);
+            
+            // Cập nhật select box
+            const typeFilter = document.getElementById('type-filter');
+            if (typeFilter) typeFilter.value = this.selectedIncidentType;
+            
+            // Xóa filter khỏi localStorage
+            localStorage.removeItem('selectedIncidentType');
+        }
+    }
+
+    filterMarkers(filterType, value) {
+        this.markers.forEach(marker => {
+            const incident = marker.incidentData;
+            let shouldShow = true;
+
+            if (filterType === 'type' && value !== 'all') {
+                shouldShow = incident.type === value;
+            }
+
+            if (shouldShow) {
+                this.map.addLayer(marker);
+            } else {
+                this.map.removeLayer(marker);
+            }
+        });
+    }
+
+    setupEventListeners() {
+        // Filter events
+        const typeFilter = document.getElementById('type-filter');
+        if (typeFilter) {
+            typeFilter.addEventListener('change', (e) => {
+                this.filterMarkers('type', e.target.value);
+            });
+        }
+
+        // Reset filters
+        const resetBtn = document.getElementById('reset-filters');
+        if (resetBtn) {
+            resetBtn.addEventListener('click', () => {
+                this.resetFilters();
+            });
+        }
+    }
+
+    resetFilters() {
+        document.getElementById('type-filter').value = 'all';
+        this.markers.forEach(marker => this.map.addLayer(marker));
+    }
+}
+
+// Khởi tạo khi DOM ready
+document.addEventListener('DOMContentLoaded', function() {
+    new MapManager();
+    
+    // Khởi tạo feather icons
+    if (typeof feather !== 'undefined') {
+        feather.replace();
+    }
+});

@@ -1,129 +1,657 @@
-// Authentication System
-class AuthSystem {
+// assets/js/login.js - Enhanced Login System with Default Accounts
+
+// User Management System
+class UserManager {
     constructor() {
         this.currentUser = null;
-        this.init();
+        this.users = this.loadUsers();
+        this.initializeDefaultAccounts();
     }
 
-    init() {
-        this.loadCurrentUser();
-        this.bindEvents();
-        this.updateUI();
-    }
+    initializeDefaultAccounts() {
+        const defaultUsers = [
+            {
+                id: this.generateId(),
+                fullname: 'Quản Trị Viên Hệ Thống',
+                username: 'admin',
+                email: 'admin@cuuhocapquocgia.gov.vn',
+                phone: '0901234567',
+                password: this.hashPassword('Admin@123'),
+                role: 'admin',
+                organization: 'Bộ Công An',
+                isActive: true,
+                createdAt: new Date().toISOString(),
+                verified: true
+            },
+            {
+                id: this.generateId(),
+                fullname: 'Trung Tá Nguyễn Văn A',
+                username: 'cong_an_hanoi',
+                email: 'congan.hanoi@cuuhocap.gov.vn',
+                phone: '0912345678',
+                password: this.hashPassword('CongAn@123'),
+                role: 'rescuer',
+                organization: 'Công An Hà Nội',
+                isActive: true,
+                createdAt: new Date().toISOString(),
+                verified: true
+            },
+            {
+                id: this.generateId(),
+                fullname: 'Đại Úy Trần Văn B',
+                username: 'quan_doi_bp',
+                email: 'quandoi.bp@cuuhocap.gov.vn',
+                phone: '0923456789',
+                password: this.hashPassword('QuanDoi@123'),
+                role: 'rescuer',
+                organization: 'Quân Đội Biên Phòng',
+                isActive: true,
+                createdAt: new Date().toISOString(),
+                verified: true
+            },
+            {
+                id: this.generateId(),
+                fullname: 'Đội Trưởng Lê Thị C',
+                username: 'doi_cuuho_so1',
+                email: 'cuuho.so1@cuuhocap.gov.vn',
+                phone: '0934567890',
+                password: this.hashPassword('CuuHo@123'),
+                role: 'rescuer',
+                organization: 'Đội Cứu Hộ Số 1',
+                isActive: true,
+                createdAt: new Date().toISOString(),
+                verified: true
+            }
+        ];
 
-    bindEvents() {
-        // Login form submission
-        const loginForm = document.getElementById('login-form');
-        if (loginForm) {
-            loginForm.addEventListener('submit', (e) => this.handleLogin(e));
-        }
-
-        // Register form submission
-        const registerForm = document.getElementById('register-form');
-        if (registerForm) {
-            registerForm.addEventListener('submit', (e) => this.handleRegister(e));
-        }
-
-        // Tab switching
-        const loginTab = document.querySelector('[data-tab="login"]');
-        const registerTab = document.querySelector('[data-tab="register"]');
-        const switchToRegisterLinks = document.querySelectorAll('.switch-to-register');
-        const switchToLoginLinks = document.querySelectorAll('.switch-to-login');
-
-        if (loginTab) loginTab.addEventListener('click', () => this.switchTab('login'));
-        if (registerTab) registerTab.addEventListener('click', () => this.switchTab('register'));
-        switchToRegisterLinks.forEach(link => link.addEventListener('click', (e) => {
-            e.preventDefault();
-            this.switchTab('register');
-        }));
-        switchToLoginLinks.forEach(link => link.addEventListener('click', (e) => {
-            e.preventDefault();
-            this.switchTab('login');
-        }));
-
-        // Password toggle
-        document.querySelectorAll('.toggle-password').forEach(button => {
-            button.addEventListener('click', (e) => this.togglePassword(e));
+        // Thêm tài khoản mặc định nếu chưa tồn tại
+        defaultUsers.forEach(defaultUser => {
+            const exists = this.users.some(user => 
+                user.email === defaultUser.email || user.phone === defaultUser.phone
+            );
+            if (!exists) {
+                this.users.push(defaultUser);
+            }
         });
 
-        // Real-time password validation
-        const passwordInput = document.getElementById('reg-password');
-        if (passwordInput) {
-            passwordInput.addEventListener('input', (e) => this.validatePasswordStrength(e.target.value));
-        }
-
-        // Generate password button
-        const generatePasswordBtn = document.getElementById('generate-password');
-        if (generatePasswordBtn) {
-            generatePasswordBtn.addEventListener('click', () => this.generatePassword());
-        }
-
-        // Real-time form validation
-        this.setupRealTimeValidation();
+        this.saveUsers();
     }
 
-    setupRealTimeValidation() {
+    loadUsers() {
+        const stored = localStorage.getItem('rescue_system_users');
+        return stored ? JSON.parse(stored) : [];
+    }
+
+    saveUsers() {
+        localStorage.setItem('rescue_system_users', JSON.stringify(this.users));
+    }
+
+    generateId() {
+        return Date.now().toString(36) + Math.random().toString(36).substr(2);
+    }
+
+    hashPassword(password) {
+        // Trong thực tế nên sử dụng bcrypt, nhưng đây là demo đơn giản
+        return btoa(unescape(encodeURIComponent(password)));
+    }
+
+    verifyPassword(inputPassword, storedPassword) {
+        return this.hashPassword(inputPassword) === storedPassword;
+    }
+
+    usernameExists(username) {
+        return this.users.some(user => user.username === username);
+    }
+
+    emailExists(email) {
+        return this.users.some(user => user.email === email);
+    }
+
+    phoneExists(phone) {
+        return this.users.some(user => user.phone === phone);
+    }
+
+    authenticate(username, password) {
+        const user = this.users.find(u => 
+            (u.username === username || u.email === username || u.phone === username) && 
+            u.isActive
+        );
+
+        if (!user) {
+            return { success: false, message: 'Tài khoản không tồn tại hoặc đã bị khóa' };
+        }
+
+        if (!this.verifyPassword(password, user.password)) {
+            return { success: false, message: 'Mật khẩu không chính xác' };
+        }
+
+        // Tạo bản sao không bao gồm mật khẩu
+        const { password: _, ...userWithoutPassword } = user;
+        return { success: true, user: userWithoutPassword };
+    }
+
+    registerUser(userData) {
+        // Kiểm tra email/số điện thoại đã tồn tại
+        if (this.emailExists(userData.email)) {
+            throw new Error('Email đã được sử dụng');
+        }
+
+        if (this.phoneExists(userData.phone)) {
+            throw new Error('Số điện thoại đã được sử dụng');
+        }
+
+        if (this.usernameExists(userData.username)) {
+            throw new Error('Tên đăng nhập đã tồn tại');
+        }
+
+        const newUser = {
+            id: this.generateId(),
+            fullname: userData.fullname,
+            username: userData.username,
+            email: userData.email,
+            phone: userData.phone,
+            password: this.hashPassword(userData.password),
+            role: userData.role,
+            organization: userData.organization || '',
+            isActive: true,
+            createdAt: new Date().toISOString(),
+            verified: false // Cần xác thực email/số điện thoại
+        };
+
+        this.users.push(newUser);
+        this.saveUsers();
+
+        // Trả về user không bao gồm mật khẩu
+        const { password: _, ...userWithoutPassword } = newUser;
+        return userWithoutPassword;
+    }
+
+    getUserById(id) {
+        const user = this.users.find(u => u.id === id);
+        if (user) {
+            const { password: _, ...userWithoutPassword } = user;
+            return userWithoutPassword;
+        }
+        return null;
+    }
+
+    getAllUsers() {
+        return this.users.map(user => {
+            const { password: _, ...userWithoutPassword } = user;
+            return userWithoutPassword;
+        });
+    }
+
+    updateUser(id, updates) {
+        const userIndex = this.users.findIndex(u => u.id === id);
+        if (userIndex !== -1) {
+            // Không cho phép cập nhật mật khẩu qua hàm này
+            const { password, ...safeUpdates } = updates;
+            this.users[userIndex] = { ...this.users[userIndex], ...safeUpdates };
+            this.saveUsers();
+            return true;
+        }
+        return false;
+    }
+
+    deleteUser(id) {
+        const userIndex = this.users.findIndex(u => u.id === id);
+        if (userIndex !== -1) {
+            this.users.splice(userIndex, 1);
+            this.saveUsers();
+            return true;
+        }
+        return false;
+    }
+
+    // Lưu thông tin user đã đăng nhập
+    setCurrentUser(user) {
+        this.currentUser = user;
+        localStorage.setItem('rescue_system_current_user', JSON.stringify(user));
+    }
+
+    getCurrentUser() {
+        if (!this.currentUser) {
+            const savedUser = localStorage.getItem('rescue_system_current_user');
+            if (savedUser) {
+                this.currentUser = JSON.parse(savedUser);
+            }
+        }
+        return this.currentUser;
+    }
+
+    logout() {
+        this.currentUser = null;
+        localStorage.removeItem('rescue_system_current_user');
+    }
+
+    isLoggedIn() {
+        return this.getCurrentUser() !== null;
+    }
+
+    // Kiểm tra quyền admin
+    isAdmin() {
+        const user = this.getCurrentUser();
+        return user && user.role === 'admin';
+    }
+
+    // Kiểm tra quyền rescuer
+    isRescuer() {
+        const user = this.getCurrentUser();
+        return user && user.role === 'rescuer';
+    }
+}
+
+// Main functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize User Manager
+    window.userManager = new UserManager();
+
+    // Kiểm tra nếu đã đăng nhập thì chuyển hướng đến admin
+    if (window.userManager.isLoggedIn() && !window.location.href.includes('login.html')) {
+        window.location.href = 'admin.html';
+    }
+
+    // Initialize Feather icons
+    if (typeof feather !== 'undefined') {
+        feather.replace();
+    }
+
+    // Mobile menu toggle
+    const menuToggle = document.getElementById('menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    if (menuToggle && mobileMenu) {
+        menuToggle.addEventListener('click', function() {
+            mobileMenu.classList.toggle('hidden');
+            
+            // Update menu icon
+            const icon = menuToggle.querySelector('i');
+            if (mobileMenu.classList.contains('hidden')) {
+                icon.setAttribute('data-feather', 'menu');
+            } else {
+                icon.setAttribute('data-feather', 'x');
+            }
+            feather.replace();
+        });
+    }
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', function(event) {
+        if (mobileMenu && !mobileMenu.contains(event.target) && 
+            menuToggle && !menuToggle.contains(event.target) && 
+            !mobileMenu.classList.contains('hidden')) {
+            mobileMenu.classList.add('hidden');
+            
+            // Reset menu icon
+            const icon = menuToggle.querySelector('i');
+            icon.setAttribute('data-feather', 'menu');
+            feather.replace();
+        }
+    });
+
+    // Login Page Specific Functionality
+    const loginForm = document.getElementById('login-form');
+    const registerForm = document.getElementById('register-form');
+    const loginAlert = document.getElementById('login-alert');
+    const alertMessage = document.getElementById('alert-message');
+    const formTabs = document.querySelectorAll('.form-tab');
+    const switchToRegister = document.querySelector('.switch-to-register');
+    const switchToLogin = document.querySelector('.switch-to-login');
+    const togglePasswordButtons = document.querySelectorAll('.toggle-password');
+    const generatePasswordBtn = document.getElementById('generate-password');
+    const passwordStrengthBar = document.getElementById('password-strength-bar');
+
+    // Thêm demo accounts info
+    const demoAccountsInfo = document.createElement('div');
+    demoAccountsInfo.className = 'demo-accounts-info bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4';
+    demoAccountsInfo.innerHTML = `
+        <h4 class="font-semibold text-blue-800 mb-2">📋 Tài khoản demo để thử nghiệm:</h4>
+        <div class="space-y-1 text-sm text-blue-700">
+            <div><strong>Admin:</strong> admin / Admin@123</div>
+            <div><strong>Công an:</strong> cong_an_hanoi / CongAn@123</div>
+            <div><strong>Quân đội:</strong> quan_doi_bp / QuanDoi@123</div>
+            <div><strong>Cứu hộ:</strong> doi_cuuho_so1 / CuuHo@123</div>
+        </div>
+    `;
+
+    // Chèn demo accounts info vào form đăng nhập
+    if (loginForm) {
+        loginForm.parentNode.insertBefore(demoAccountsInfo, loginForm.nextSibling);
+    }
+
+    // Only initialize login functionality if on login page
+    if (loginForm && registerForm) {
+        // Tab Switching
+        formTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                const targetTab = this.getAttribute('data-tab');
+                
+                // Update active tab
+                formTabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Show corresponding form
+                if (targetTab === 'login') {
+                    showLoginForm();
+                    demoAccountsInfo.style.display = 'block';
+                } else {
+                    showRegisterForm();
+                    demoAccountsInfo.style.display = 'none';
+                }
+                
+                // Hide any existing alerts
+                hideAlert();
+            });
+        });
+
+        // Switch to Register
+        switchToRegister?.addEventListener('click', function(e) {
+            e.preventDefault();
+            formTabs.forEach(tab => tab.classList.remove('active'));
+            document.querySelector('[data-tab="register"]').classList.add('active');
+            showRegisterForm();
+            hideAlert();
+            demoAccountsInfo.style.display = 'none';
+        });
+
+        // Switch to Login
+        switchToLogin?.addEventListener('click', function(e) {
+            e.preventDefault();
+            formTabs.forEach(tab => tab.classList.remove('active'));
+            document.querySelector('[data-tab="login"]').classList.add('active');
+            showLoginForm();
+            hideAlert();
+            demoAccountsInfo.style.display = 'block';
+        });
+
+        // Toggle Password Visibility
+        togglePasswordButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const targetId = this.getAttribute('data-target');
+                const passwordInput = document.getElementById(targetId);
+                const icon = this.querySelector('i');
+                
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    feather.replace();
+                    icon.setAttribute('data-feather', 'eye-off');
+                } else {
+                    passwordInput.type = 'password';
+                    feather.replace();
+                    icon.setAttribute('data-feather', 'eye');
+                }
+                feather.replace();
+            });
+        });
+
+        // Generate Strong Password
+        generatePasswordBtn?.addEventListener('click', function() {
+            const password = generateStrongPassword();
+            document.getElementById('reg-password').value = password;
+            document.getElementById('reg-confirm-password').value = password;
+            
+            // Update password strength
+            checkPasswordStrength(password);
+            
+            // Show success message
+            showAlert('Mật khẩu mạnh đã được tạo tự động!', 'success');
+            
+            // Refresh icons
+            feather.replace();
+        });
+
+        // Password Strength Checker
+        const regPasswordInput = document.getElementById('reg-password');
+        regPasswordInput?.addEventListener('input', function() {
+            checkPasswordStrength(this.value);
+        });
+
+        // Form Validation and Submission
+        loginForm.addEventListener('submit', handleLogin);
+        registerForm.addEventListener('submit', handleRegister);
+
+        // Auto-fill demo account for testing
+        const demoFillBtn = document.createElement('button');
+        demoFillBtn.type = 'button';
+        demoFillBtn.className = 'text-xs text-green-600 hover:text-green-800 font-medium mt-2';
+        demoFillBtn.textContent = 'Điền tài khoản Admin demo';
+        demoFillBtn.addEventListener('click', function() {
+            document.getElementById('username').value = 'admin';
+            document.getElementById('password').value = 'Admin@123';
+            showAlert('Đã điền thông tin tài khoản Admin demo', 'success');
+        });
+
+        const usernameGroup = document.querySelector('#username').closest('.form-group');
+        usernameGroup.appendChild(demoFillBtn);
+
+        // Initialize password strength for existing password
+        if (regPasswordInput?.value) {
+            checkPasswordStrength(regPasswordInput.value);
+        }
+    }
+
+    // General Utility Functions
+    function showLoginForm() {
+        loginForm.classList.add('active');
+        registerForm.classList.remove('active');
+    }
+
+    function showRegisterForm() {
+        registerForm.classList.add('active');
+        loginForm.classList.remove('active');
+    }
+
+    function showAlert(message, type = 'error') {
+        if (!loginAlert || !alertMessage) return;
+        
+        alertMessage.textContent = message;
+        loginAlert.className = `alert alert-${type}`;
+        loginAlert.style.display = 'flex';
+        
+        // Auto hide success messages after 5 seconds
+        if (type === 'success') {
+            setTimeout(hideAlert, 5000);
+        }
+        
+        // Refresh icons
+        feather.replace();
+    }
+
+    function hideAlert() {
+        if (loginAlert) {
+            loginAlert.style.display = 'none';
+        }
+    }
+
+    function checkPasswordStrength(password) {
+        if (!passwordStrengthBar) return;
+        
+        let strength = 0;
+        
+        if (password.length >= 8) strength++;
+        if (/[a-z]/.test(password)) strength++;
+        if (/[A-Z]/.test(password)) strength++;
+        if (/[0-9]/.test(password)) strength++;
+        if (/[^A-Za-z0-9]/.test(password)) strength++;
+        
+        passwordStrengthBar.className = 'password-strength-bar';
+        
+        if (password.length === 0) {
+            passwordStrengthBar.style.width = '0';
+        } else if (strength <= 2) {
+            passwordStrengthBar.classList.add('weak');
+        } else if (strength <= 4) {
+            passwordStrengthBar.classList.add('medium');
+        } else {
+            passwordStrengthBar.classList.add('strong');
+        }
+    }
+
+    function generateStrongPassword() {
+        const length = 12;
+        const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
+        let password = "";
+        
+        // Ensure at least one of each required character type
+        password += "ABCDEFGHIJKLMNOPQRSTUVWXYZ".charAt(Math.floor(Math.random() * 26));
+        password += "abcdefghijklmnopqrstuvwxyz".charAt(Math.floor(Math.random() * 26));
+        password += "0123456789".charAt(Math.floor(Math.random() * 10));
+        password += "!@#$%^&*".charAt(Math.floor(Math.random() * 8));
+        
+        // Fill the rest
+        for (let i = password.length; i < length; i++) {
+            password += charset.charAt(Math.floor(Math.random() * charset.length));
+        }
+        
+        // Shuffle the password
+        return password.split('').sort(() => 0.5 - Math.random()).join('');
+    }
+
+    function validateLoginForm(formData) {
+        const errors = {};
+        
+        if (!formData.username.trim()) {
+            errors.username = 'Vui lòng nhập tên đăng nhập, email hoặc số điện thoại';
+        }
+        
+        if (!formData.password) {
+            errors.password = 'Vui lòng nhập mật khẩu';
+        } else if (formData.password.length < 6) {
+            errors.password = 'Mật khẩu phải có ít nhất 6 ký tự';
+        }
+        
+        return errors;
+    }
+
+    function validateRegisterForm(formData) {
+        const errors = {};
+        
+        // Full name validation
+        if (!formData.fullname.trim()) {
+            errors.fullname = 'Vui lòng nhập họ và tên';
+        } else if (formData.fullname.trim().length < 2) {
+            errors.fullname = 'Họ và tên phải có ít nhất 2 ký tự';
+        }
+        
         // Username validation
-        const usernameInput = document.getElementById('reg-username');
-        if (usernameInput) {
-            usernameInput.addEventListener('blur', () => this.validateUsername());
+        if (!formData.username.trim()) {
+            errors.username = 'Vui lòng nhập tên đăng nhập';
+        } else if (!/^[a-zA-Z0-9_]+$/.test(formData.username)) {
+            errors.username = 'Tên đăng nhập chỉ được chứa chữ cái, số và dấu gạch dưới';
         }
-
+        
         // Email validation
-        const emailInput = document.getElementById('reg-email');
-        if (emailInput) {
-            emailInput.addEventListener('blur', () => this.validateEmail());
+        if (!formData.email.trim()) {
+            errors.email = 'Vui lòng nhập email';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+            errors.email = 'Email không hợp lệ';
         }
-
+        
         // Phone validation
-        const phoneInput = document.getElementById('reg-phone');
-        if (phoneInput) {
-            phoneInput.addEventListener('blur', () => this.validatePhone());
+        if (!formData.phone.trim()) {
+            errors.phone = 'Vui lòng nhập số điện thoại';
+        } else if (!/^(0[3|5|7|8|9])+([0-9]{8})$/.test(formData.phone)) {
+            errors.phone = 'Số điện thoại không hợp lệ';
         }
-
-        // Fullname validation
-        const fullnameInput = document.getElementById('reg-fullname');
-        if (fullnameInput) {
-            fullnameInput.addEventListener('blur', () => this.validateFullname());
+        
+        // Password validation
+        if (!formData.password) {
+            errors.password = 'Vui lòng nhập mật khẩu';
+        } else if (formData.password.length < 8) {
+            errors.password = 'Mật khẩu phải có ít nhất 8 ký tự';
+        } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/.test(formData.password)) {
+            errors.password = 'Mật khẩu phải chứa ít nhất một chữ hoa, một chữ thường, một số và một ký tự đặc biệt';
         }
-
+        
         // Confirm password validation
-        const confirmPasswordInput = document.getElementById('reg-confirm-password');
-        if (confirmPasswordInput) {
-            confirmPasswordInput.addEventListener('blur', () => this.validateConfirmPassword());
+        if (!formData.confirmPassword) {
+            errors.confirmPassword = 'Vui lòng xác nhận mật khẩu';
+        } else if (formData.password !== formData.confirmPassword) {
+            errors.confirmPassword = 'Mật khẩu xác nhận không khớp';
         }
+        
+        // Role validation
+        if (!formData.role) {
+            errors.role = 'Vui lòng chọn vai trò';
+        }
+        
+        // Terms validation
+        if (!formData.acceptTerms) {
+            errors.acceptTerms = 'Bạn phải đồng ý với điều khoản dịch vụ';
+        }
+        
+        return errors;
     }
 
-    async handleLogin(e) {
+    function displayErrors(errors, formType) {
+        // Clear previous errors
+        document.querySelectorAll('.error-message').forEach(el => {
+            el.style.display = 'none';
+        });
+        
+        // Display new errors
+        Object.keys(errors).forEach(field => {
+            const errorElement = document.getElementById(`${formType}-${field}-error`);
+            if (errorElement) {
+                errorElement.textContent = errors[field];
+                errorElement.style.display = 'block';
+            }
+        });
+    }
+
+    async function handleLogin(e) {
         e.preventDefault();
         
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
-        const rememberMe = document.getElementById('remember-me').checked;
-
-        // Basic validation
-        if (!username || !password) {
-            this.showAlert('Vui lòng nhập đầy đủ thông tin đăng nhập', 'error');
+        const formData = {
+            username: document.getElementById('username').value,
+            password: document.getElementById('password').value,
+            rememberMe: document.getElementById('remember-me').checked
+        };
+        
+        // Validate form
+        const errors = validateLoginForm(formData);
+        if (Object.keys(errors).length > 0) {
+            displayErrors(errors, 'login');
             return;
         }
-
+        
+        // Clear errors
+        displayErrors({}, 'login');
+        
         // Show loading state
-        this.setLoadingState('login', true);
-
-        // Simulate API call delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        const result = userManager.authenticate(username, password);
-
-        if (result.success) {
-            this.login(result.user, rememberMe);
-        } else {
-            this.showAlert(result.message, 'error');
-            this.setLoadingState('login', false);
+        const loginBtn = document.getElementById('login-btn');
+        loginBtn.classList.add('loading');
+        loginBtn.disabled = true;
+        
+        try {
+            // Use UserManager for authentication
+            const result = window.userManager.authenticate(formData.username, formData.password);
+            
+            if (result.success) {
+                // Lưu thông tin user đã đăng nhập
+                window.userManager.setCurrentUser(result.user);
+                
+                // Show success message
+                showAlert('Đăng nhập thành công! Đang chuyển hướng đến trang quản trị...', 'success');
+                
+                // Redirect to admin page after delay
+                setTimeout(() => {
+                    window.location.href = 'admin.html';
+                }, 2000);
+            } else {
+                throw new Error(result.message);
+            }
+            
+        } catch (error) {
+            showAlert(error.message);
+        } finally {
+            loginBtn.classList.remove('loading');
+            loginBtn.disabled = false;
         }
     }
 
-    async handleRegister(e) {
+    async function handleRegister(e) {
         e.preventDefault();
         
         const formData = {
@@ -137,438 +665,123 @@ class AuthSystem {
             organization: document.getElementById('reg-organization').value,
             acceptTerms: document.getElementById('accept-terms').checked
         };
-
-        // Sanitize inputs
-        Object.keys(formData).forEach(key => {
-            if (typeof formData[key] === 'string') {
-                formData[key] = SecurityManager.sanitizeInput(formData[key]);
-            }
-        });
-
+        
         // Validate form
-        if (!this.validateRegistration(formData)) {
+        const errors = validateRegisterForm(formData);
+        if (Object.keys(errors).length > 0) {
+            displayErrors(errors, 'reg');
             return;
         }
-
+        
+        // Clear errors
+        displayErrors({}, 'reg');
+        
         // Show loading state
-        this.setLoadingState('register', true);
-
-        // Simulate API call delay
-        await new Promise(resolve => setTimeout(resolve, 1500));
-
+        const registerBtn = document.getElementById('register-btn');
+        registerBtn.classList.add('loading');
+        registerBtn.disabled = true;
+        
         try {
-            const newUser = userManager.registerUser(formData);
-            this.showAlert('Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.', 'success');
+            // Use UserManager for registration
+            const newUser = window.userManager.registerUser(formData);
             
-            // Switch to login tab after successful registration
+            // Show success message
+            showAlert('Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.', 'success');
+            
+            // Switch to login form after delay
             setTimeout(() => {
-                this.switchTab('login');
-                this.setLoadingState('register', false);
-                // Pre-fill username
+                formTabs.forEach(tab => tab.classList.remove('active'));
+                document.querySelector('[data-tab="login"]').classList.add('active');
+                showLoginForm();
+                hideAlert();
+                
+                // Auto-fill the new username
                 document.getElementById('username').value = formData.username;
             }, 3000);
-
+            
         } catch (error) {
-            this.showAlert(error.message, 'error');
-            this.setLoadingState('register', false);
+            showAlert(error.message);
+        } finally {
+            registerBtn.classList.remove('loading');
+            registerBtn.disabled = false;
         }
     }
 
-    validateRegistration(formData) {
-        let isValid = true;
-
-        // Reset all errors
-        this.clearAllErrors();
-
-        // Validate fullname
-        if (!SecurityManager.validateFullname(formData.fullname)) {
-            this.showError('reg-fullname', 'Họ và tên phải từ 2 đến 50 ký tự');
-            isValid = false;
-        }
-
-        // Validate username
-        if (!SecurityManager.validateUsername(formData.username)) {
-            this.showError('reg-username', 'Tên đăng nhập phải từ 3-20 ký tự và chỉ chứa chữ cái, số và dấu gạch dưới');
-            isValid = false;
-        } else if (userManager.usernameExists(formData.username)) {
-            this.showError('reg-username', 'Tên đăng nhập đã tồn tại');
-            isValid = false;
-        }
-
-        // Validate email
-        if (!SecurityManager.validateEmail(formData.email)) {
-            this.showError('reg-email', 'Email không hợp lệ');
-            isValid = false;
-        } else if (userManager.emailExists(formData.email)) {
-            this.showError('reg-email', 'Email đã được sử dụng');
-            isValid = false;
-        }
-
-        // Validate phone
-        if (!SecurityManager.validatePhone(formData.phone)) {
-            this.showError('reg-phone', 'Số điện thoại không hợp lệ');
-            isValid = false;
-        } else if (userManager.phoneExists(formData.phone)) {
-            this.showError('reg-phone', 'Số điện thoại đã được sử dụng');
-            isValid = false;
-        }
-
-        // Validate password
-        const passwordValidation = SecurityManager.validatePassword(formData.password);
-        if (!passwordValidation.isValid) {
-            this.showError('reg-password', 'Mật khẩu không đủ mạnh');
-            isValid = false;
-        }
-
-        // Validate confirm password
-        if (formData.password !== formData.confirmPassword) {
-            this.showError('reg-confirm-password', 'Mật khẩu xác nhận không khớp');
-            isValid = false;
-        }
-
-        // Validate role
-        if (!formData.role) {
-            this.showError('reg-role', 'Vui lòng chọn vai trò');
-            isValid = false;
-        }
-
-        // Validate organization
-        if (!SecurityManager.validateOrganization(formData.organization)) {
-            this.showError('reg-organization', 'Tên tổ chức không được vượt quá 100 ký tự');
-            isValid = false;
-        }
-
-        // Validate terms
-        if (!formData.acceptTerms) {
-            this.showError('accept-terms', 'Bạn phải đồng ý với điều khoản dịch vụ');
-            isValid = false;
-        }
-
-        return isValid;
-    }
-
-    validateUsername() {
-        const username = document.getElementById('reg-username').value;
-        
-        if (!username) return;
-
-        if (!SecurityManager.validateUsername(username)) {
-            this.showError('reg-username', 'Tên đăng nhập phải từ 3-20 ký tự và chỉ chứa chữ cái, số và dấu gạch dưới');
-        } else if (userManager.usernameExists(username)) {
-            this.showError('reg-username', 'Tên đăng nhập đã tồn tại');
-        } else {
-            this.showSuccess('reg-username');
-        }
-    }
-
-    validateEmail() {
-        const email = document.getElementById('reg-email').value;
-        
-        if (!email) return;
-
-        if (!SecurityManager.validateEmail(email)) {
-            this.showError('reg-email', 'Email không hợp lệ');
-        } else if (userManager.emailExists(email)) {
-            this.showError('reg-email', 'Email đã được sử dụng');
-        } else {
-            this.showSuccess('reg-email');
-        }
-    }
-
-    validatePhone() {
-        const phone = document.getElementById('reg-phone').value;
-        
-        if (!phone) return;
-
-        if (!SecurityManager.validatePhone(phone)) {
-            this.showError('reg-phone', 'Số điện thoại không hợp lệ (định dạng: 09xxxxxxxx hoặc 03xxxxxxxx)');
-        } else if (userManager.phoneExists(phone)) {
-            this.showError('reg-phone', 'Số điện thoại đã được sử dụng');
-        } else {
-            this.showSuccess('reg-phone');
-        }
-    }
-
-    validateFullname() {
-        const fullname = document.getElementById('reg-fullname').value;
-        
-        if (!fullname) return;
-
-        if (!SecurityManager.validateFullname(fullname)) {
-            this.showError('reg-fullname', 'Họ và tên phải từ 2 đến 50 ký tự');
-        } else {
-            this.showSuccess('reg-fullname');
-        }
-    }
-
-    validateConfirmPassword() {
-        const password = document.getElementById('reg-password').value;
-        const confirmPassword = document.getElementById('reg-confirm-password').value;
-        
-        if (!confirmPassword) return;
-
-        if (password !== confirmPassword) {
-            this.showError('reg-confirm-password', 'Mật khẩu xác nhận không khớp');
-        } else {
-            this.showSuccess('reg-confirm-password');
-        }
-    }
-
-    validatePasswordStrength(password) {
-        const validation = SecurityManager.validatePassword(password);
-        const strengthBar = document.getElementById('password-strength-bar');
-        const requirements = {
-            length: document.getElementById('req-length'),
-            lowercase: document.getElementById('req-lowercase'),
-            uppercase: document.getElementById('req-uppercase'),
-            number: document.getElementById('req-number'),
-            special: document.getElementById('req-special')
+    // General utility functions for other pages
+    window.makeApiCall = async function(url, options = {}) {
+        const defaultOptions = {
+            headers: {
+                'Content-Type': 'application/json',
+            },
         };
 
-        // Update strength bar
-        strengthBar.className = 'password-strength-bar';
-        if (password.length === 0) {
-            strengthBar.style.width = '0%';
-        } else {
-            const strengthClasses = ['strength-weak', 'strength-medium', 'strength-strong', 'strength-very-strong'];
-            strengthBar.classList.add(strengthClasses[Math.min(validation.strength - 1, 3)]);
-        }
+        const mergedOptions = {
+            ...defaultOptions,
+            ...options,
+            headers: {
+                ...defaultOptions.headers,
+                ...options.headers,
+            },
+        };
 
-        // Update requirements
-        Object.keys(requirements).forEach(key => {
-            const element = requirements[key];
-            if (element) {
-                if (validation.requirements[key]) {
-                    element.classList.add('met');
-                    element.classList.remove('unmet');
-                    element.querySelector('i').setAttribute('data-feather', 'check-circle');
-                } else {
-                    element.classList.add('unmet');
-                    element.classList.remove('met');
-                    element.querySelector('i').setAttribute('data-feather', 'circle');
-                }
+        try {
+            const response = await fetch(url, mergedOptions);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
-        });
-
-        feather.replace();
-    }
-
-    generatePassword() {
-        const strongPassword = SecurityManager.generateStrongPassword();
-        document.getElementById('reg-password').value = strongPassword;
-        document.getElementById('reg-confirm-password').value = strongPassword;
-        this.validatePasswordStrength(strongPassword);
-        this.showSuccess('reg-password');
-        this.showSuccess('reg-confirm-password');
-        
-        // Hiển thị thông báo
-        this.showAlert('Đã tạo mật khẩu mạnh tự động!', 'success');
-    }
-
-    login(user, rememberMe = false) {
-        this.currentUser = user;
-        
-        // Store user session
-        if (rememberMe) {
-            localStorage.setItem('currentUser', JSON.stringify(user));
-        } else {
-            sessionStorage.setItem('currentUser', JSON.stringify(user));
+            
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('API call failed:', error);
+            throw error;
         }
+    };
 
-        // Update UI
-        this.updateUI();
+    window.showNotification = function(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg transform transition-transform duration-300 ${
+            type === 'success' ? 'bg-green-500 text-white' :
+            type === 'error' ? 'bg-red-500 text-white' :
+            type === 'warning' ? 'bg-yellow-500 text-white' :
+            'bg-blue-500 text-white'
+        }`;
+        notification.textContent = message;
 
-        // Show success message and redirect based on role
-        this.showAlert(`Đăng nhập thành công! Chào mừng ${user.fullname}`, 'success');
-        
+        document.body.appendChild(notification);
+
+        // Animate in
         setTimeout(() => {
-            this.redirectBasedOnRole(user.role);
-        }, 1500);
-    }
+            notification.classList.add('translate-x-0');
+        }, 100);
 
-    redirectBasedOnRole(role) {
-        switch(role) {
-            case 'admin':
-                window.location.href = 'admin-dashboard.html';
-                break;
-            case 'rescuer':
-            case 'moderator':
-            case 'coordinator':
-                window.location.href = 'rescuer-dashboard.html';
-                break;
-            case 'viewer':
-            default:
-                window.location.href = 'index.html?login=success';
-        }
-    }
-
-    logout() {
-        this.currentUser = null;
-        localStorage.removeItem('currentUser');
-        sessionStorage.removeItem('currentUser');
-        this.updateUI();
-        
-        // Redirect to login page
-        window.location.href = 'login.html';
-    }
-
-    loadCurrentUser() {
-        const userData = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
-        if (userData) {
-            this.currentUser = JSON.parse(userData);
-        }
-    }
-
-    isLoggedIn() {
-        return this.currentUser !== null;
-    }
-
-    updateUI() {
-        // This will be implemented in main.js for navigation updates
-        console.log('UI updated for user:', this.currentUser);
-    }
-
-    switchTab(tabName) {
-        // Update tabs
-        document.querySelectorAll('.form-tab').forEach(tab => {
-            tab.classList.toggle('active', tab.dataset.tab === tabName);
-        });
-
-        // Update forms
-        document.querySelectorAll('.form-content').forEach(form => {
-            form.classList.toggle('active', form.id === `${tabName}-form`);
-        });
-
-        // Clear form and errors when switching tabs
-        this.clearAllErrors();
-        this.hideAlert();
-
-        if (tabName === 'login') {
-            document.getElementById('login-form').reset();
-        } else {
-            document.getElementById('register-form').reset();
-            this.validatePasswordStrength('');
-        }
-    }
-
-    togglePassword(e) {
-        const button = e.currentTarget;
-        const targetId = button.dataset.target;
-        const passwordInput = document.getElementById(targetId);
-        const icon = button.querySelector('i');
-
-        if (passwordInput.type === 'password') {
-            passwordInput.type = 'text';
-            icon.setAttribute('data-feather', 'eye-off');
-        } else {
-            passwordInput.type = 'password';
-            icon.setAttribute('data-feather', 'eye');
-        }
-        feather.replace();
-    }
-
-    setLoadingState(formType, isLoading) {
-        const button = document.getElementById(`${formType}-btn`);
-        const spinner = document.getElementById(`${formType}-spinner`);
-        const text = document.getElementById(`${formType}-text`);
-
-        if (isLoading) {
-            button.disabled = true;
-            spinner.style.display = 'block';
-            text.textContent = formType === 'login' ? 'Đang đăng nhập...' : 'Đang đăng ký...';
-        } else {
-            button.disabled = false;
-            spinner.style.display = 'none';
-            text.textContent = formType === 'login' ? 'Đăng Nhập' : 'Đăng Ký Tài Khoản';
-        }
-    }
-
-    showAlert(message, type = 'error') {
-        const alert = document.getElementById('login-alert');
-        const messageElement = document.getElementById('alert-message');
-
-        alert.className = `alert alert-${type}`;
-        messageElement.textContent = message;
-        alert.style.display = 'flex';
-
-        // Auto hide success messages
-        if (type === 'success') {
+        // Remove after 5 seconds
+        setTimeout(() => {
+            notification.classList.remove('translate-x-0');
+            notification.classList.add('translate-x-full');
             setTimeout(() => {
-                this.hideAlert();
-            }, 5000);
-        }
-    }
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 300);
+        }, 5000);
+    };
 
-    hideAlert() {
-        const alert = document.getElementById('login-alert');
-        alert.style.display = 'none';
-    }
-
-    showError(fieldId, message) {
-        const input = document.getElementById(fieldId);
-        const errorElement = document.getElementById(`${fieldId}-error`);
-
-        if (input && errorElement) {
-            input.classList.add('error');
-            input.classList.remove('success');
-            errorElement.textContent = message;
-            errorElement.style.display = 'block';
-        }
-    }
-
-    showSuccess(fieldId) {
-        const input = document.getElementById(fieldId);
-        const errorElement = document.getElementById(`${fieldId}-error`);
-
-        if (input && errorElement) {
-            input.classList.remove('error');
-            input.classList.add('success');
-            errorElement.style.display = 'none';
-        }
-    }
-
-    clearAllErrors() {
-        document.querySelectorAll('.error-message').forEach(el => {
-            el.style.display = 'none';
-        });
-        document.querySelectorAll('.form-input').forEach(el => {
-            el.classList.remove('error', 'success');
-        });
-    }
-}
-
-// Initialize authentication system
-let authSystem;
-
-document.addEventListener('DOMContentLoaded', function() {
-    authSystem = new AuthSystem();
-});
-
-//request.js// Login functionality
-document.addEventListener('DOMContentLoaded', function() {
-    const loginForm = document.getElementById('login-form');
-    
-    if (loginForm) {
-        loginForm.addEventListener('submit', function(e) {
+    // Add smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
             e.preventDefault();
-            
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            
-            // Basic validation
-            if (!email || !password) {
-                alert('Vui lòng điền đầy đủ thông tin đăng nhập');
-                return;
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
             }
-            
-            // Simulate login process
-            console.log('Login attempt:', { email, password });
-            
-            // Here you would typically make an API call
-            // For demo purposes, we'll just redirect
-            setTimeout(() => {
-                window.location.href = 'dashboard.html';
-            }, 1000);
         });
-    }
+    });
+
+    console.log('Enhanced Login System loaded successfully');
+    console.log('Default accounts initialized:', window.userManager.getAllUsers());
 });
