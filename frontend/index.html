@@ -11,20 +11,12 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="assets/css/styles.css">
     <style>
-        /* Thêm hiệu ứng hover cho các thẻ dịch vụ */
-        .service-card {
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        .service-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
+    
     </style>
 </head>
 <body class="bg-gray-50">
     <!-- Navigation -->
-    <nav id="navbar" class="shadow-md sticky top-0 z-50 transition-all duration-300">
+    <nav id="navbar" class="shadow-md sticky top-0 z-50 transition-all duration-300 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20 items-center">
                 <div class="flex items-center space-x-2">
@@ -38,7 +30,6 @@
                     <a href="pages/map.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Bản đồ cứu hộ</a>
                     <a href="pages/request.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Bản tin</a>
                     <a href="pages/post.html" class="nav-link text-gray-700 hover:text-red-500 font-medium transition">Báo tin</a>
-                    
                 </div>
                 <div class="md:hidden flex items-center">
                     <button id="menu-toggle" class="text-gray-700 hover:text-red-600" aria-label="Toggle menu">
@@ -47,298 +38,187 @@
                 </div>
             </div>
         </div>
-        <div id="mobile-menu" class="hidden md:hidden bg-white py-2 px-4 shadow-lg">
-            <a href="index.html#home" class="block py-2 text-gray-700 hover:text-red-600 transition">Trang chủ</a>
-            <a href="map.html" class="block py-2 text-gray-700 hover:text-red-600 transition">Bản đồ cứu hộ</a>
-            <a href="request.html" class="block py-2 text-red-600 font-bold transition">Bản tin</a>
-            <a href="post.html#report" class="block py-2 text-gray-700 hover:text-red-600 transition">Báo tin</a>
-            <a href="login.html" class="block py-2 text-white bg-red-600 rounded-md text-center mt-2">Đăng nhập</a>
+        <div id="mobile-menu" class="hidden md:hidden bg-white py-4 px-4 shadow-lg">
+            <a href="index.html#home" class="block py-3 text-gray-700 hover:text-red-600 transition">Trang chủ</a>
+            <a href="map.html" class="block py-3 text-gray-700 hover:text-red-600 transition">Bản đồ cứu hộ</a>
+            <a href="request.html" class="block py-3 text-red-600 font-bold transition">Bản tin</a>
+            <a href="post.html#report" class="block py-3 text-gray-700 hover:text-red-600 transition">Báo tin</a>
+            <a href="login.html" class="block py-3 text-white bg-red-600 rounded-md text-center mt-4">Đăng nhập</a>
         </div>
     </nav>
 
     <!-- Hero Section -->
-    <section id="home" class="hero-section py-20 min-h-[80vh]" style="background-image: url('https://www.tapchicongsan.org.vn/image/journal/article?img_id=114021286&t=1622418445678'); background-size: cover; background-position: center; position: relative;">
-        <div class="absolute inset-0 bg-black opacity-50" style="z-index: 1;"></div> <!-- Overlay mờ hơn để tăng thẩm mỹ và dễ đọc -->
+    <section id="home" class="hero-section py-16" style="background-image: url('https://www.tapchicongsan.org.vn/image/journal/article?img_id=114021286&t=1622418445678'); background-size: cover; background-position: center; position: relative;">
+        <div class="absolute inset-0 bg-black opacity-50" style="z-index: 1;"></div>
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative" style="z-index: 2;">
             <div class="flex flex-col md:flex-row items-center">
-                <div class="md:w-1/2 mb-10 md:mb-0">
-                    <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-6">
+                <div class="md:w-1/2 mb-12 md:mb-0">
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-8">
                         <span class="bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">Hệ Thống Cứu Hộ</span> <br>
-                        
+                        <span class="text-white">Quốc Gia</span>
                     </h1>
-                    <p class="text-lg text-white mb-8 max-w-lg leading-relaxed"> <!-- Thay text-gray-600 thành text-white để thẩm mỹ hơn -->
+                    <p class="text-xl text-white mb-10 max-w-lg leading-relaxed">
                         Kết nối người dân với lực lượng cứu hộ trong các tình huống khẩn cấp như thiên tai, hỏa hoạn, tai nạn giao thông và các sự cố đe dọa tính mạng.
                     </p>
-                    <div class="flex space-x-4">
-                        <a href="pages/post.html" class="emergency-btn bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white px-6 py-3 rounded-lg font-medium transition-all shadow-lg flex items-center">
+                    <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                        <a href="pages/post.html" class="emergency-btn bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white px-8 py-4 rounded-lg font-medium transition-all shadow-lg flex items-center justify-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                             </svg>
-                            BÁO TIN
+                            BÁO TIN KHẨN CẤP
                         </a>
-                        <a href="pages/map.html" class="border-2 border-red-500 text-red-500 hover:bg-red-50 px-6 py-3 rounded-lg font-medium transition-all shadow flex items-center">
+                        <a href="pages/map.html" class="border-2 border-white text-white hover:bg-white hover:bg-opacity-10 px-8 py-4 rounded-lg font-medium transition-all shadow flex items-center justify-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>  
-                            XEM BẢN ĐỒ
+                            XEM BẢN ĐỒ CỨU HỘ
                         </a>
                     </div>
                 </div>  
+                <div class="md:w-1/2 flex justify-center">
+                    <!-- Có thể thêm hình ảnh minh họa tại đây -->
+                </div>
             </div>
-            <!-- Thay thế phần video container bằng code này -->
-<div class="absolute top-8 right-8 z-10 video-container">
-    <div class="bg-black bg-opacity-80 rounded-xl p-4 shadow-2xl backdrop-blur-sm border border-white border-opacity-20 transform hover:scale-105 transition-transform duration-300">
-        <video 
-            id="background-video"
-            class="w-72 h-48 rounded-lg object-cover shadow-lg"
-            autoplay 
-            muted 
-            loop
-            playsinline
-            poster="assets/video-poster.jpg"
-        >
-            <source src="assets/emergency-rescue-demo.mp4" type="video/mp4">
-            <source src="assets/emergency-rescue-demo.webm" type="video/webm">
-            Your browser does not support the video tag.
-        </video>
-        
-        <!-- Video controls overlay -->
-        <div class="absolute bottom-3 left-3 right-3 flex justify-between items-center opacity-0 hover:opacity-100 transition-opacity duration-300 video-controls">
-            <button id="video-mute" class="bg-black bg-opacity-70 text-white p-2 rounded-full hover:bg-opacity-90 transition transform hover:scale-110">
-                <i data-feather="volume-x" class="w-4 h-4"></i>
-            </button>
-            <button id="video-expand" class="bg-black bg-opacity-70 text-white p-2 rounded-full hover:bg-opacity-90 transition transform hover:scale-110">
-                <i data-feather="maximize" class="w-4 h-4"></i>
-            </button>
-        </div>
-        
-        <!-- Video title - đơn giản hơn -->
-        <div class="absolute -bottom-2 -right-2 bg-gradient-to-r from-red-500 to-orange-500 text-white text-xs px-3 py-1 rounded-full font-medium shadow-lg">
-            Cứu hộ
-        </div>
-    </div>
-</div>
-
-<!-- Modal for expanded video -->
-<div id="video-modal" class="hidden fixed inset-0 bg-black bg-opacity-95 z-50 flex items-center justify-center p-4">
-    <div class="relative max-w-6xl w-full">
-        <button id="close-video-modal" class="absolute -top-12 right-0 text-white hover:text-red-300 transition transform hover:scale-110">
-            <i data-feather="x" class="w-8 h-8"></i>
-        </button>
-        <div class="bg-gradient-to-br from-gray-900 to-black rounded-xl p-2 shadow-2xl">
-            <video 
-                id="modal-video"
-                class="w-full h-auto rounded-lg"
-                controls
-                autoplay
-            >
-                <source src="assets/emergency-rescue-demo.mp4" type="video/mp4">
-                <source src="assets/emergency-rescue-demo.webm" type="video/webm">
-            </video>
-        </div>
-        <div class="text-center mt-4 text-white text-lg font-semibold">
-            📹 Hoạt động cứu hộ
-        </div>
-    </div>
-</div>
         </div>
     </section>
 
-    <div class="flex flex-col items-center justify-center min-h-screen bg-gray-50 py-12 px-4">
-        <div class="text-center mb-12">
-            <h2 class="text-3xl font-bold text-gray-800 mb-4">Dịch Vụ Ứng Cứu Khẩn Cấp</h2>
-            <p class="text-gray-600 max-w-2xl mx-auto">Chúng tôi cung cấp các dịch vụ ứng cứu nhanh chóng và hiệu quả trong mọi tình huống khẩn cấp</p>
-        </div>
-        
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
-        <div class="service-card bg-white border border-gray-100 p-8 shadow-sm rounded-xl text-center transition-all duration-300 hover:shadow-md hover:-translate-y-1 cursor-pointer" 
-            data-incident-type="disaster" onclick="navigateToMapWithFilter('disaster')">
-            <div class="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mb-6 mx-auto">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
+    <!-- Dịch Vụ Ứng Cứu Khẩn Cấp -->
+    <section class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-800 mb-6">Dịch Vụ Ứng Cứu Khẩn Cấp</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">Chúng tôi cung cấp các dịch vụ ứng cứu nhanh chóng và hiệu quả trong mọi tình huống khẩn cấp, đảm bảo an toàn cho người dân</p>
             </div>
-            <h3 class="font-bold text-xl mb-3 text-gray-800">Thiên Tai</h3>
-            <p class="text-gray-600 leading-relaxed">Bão lụt, động đất, sạt lở đất và các hiện tượng thiên tai khác</p>
-        </div>
-        
-        <div class="service-card bg-white border border-gray-100 p-8 shadow-sm rounded-xl text-center transition-all duration-300 hover:shadow-md hover:-translate-y-1 cursor-pointer"
-            data-incident-type="fire" onclick="navigateToMapWithFilter('fire')">
-            <div class="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mb-6 mx-auto">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z" />
-                </svg>
-            </div>
-            <h3 class="font-bold text-xl mb-3 text-gray-800">Hỏa Hoạn</h3>
-            <p class="text-gray-600 leading-relaxed">Cứu hỏa, ứng cứu các vụ cháy nổ, sự cố công nghiệp</p>
-        </div>
-        
-        <div class="service-card bg-white border border-gray-100 p-8 shadow-sm rounded-xl text-center transition-all duration-300 hover:shadow-md hover:-translate-y-1 cursor-pointer"
-            data-incident-type="accident" onclick="navigateToMapWithFilter('accident')">
-            <div class="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mb-6 mx-auto">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                </svg>
-            </div>
-            <h3 class="font-bold text-xl mb-3 text-gray-800">Giao Thông</h3>
-            <p class="text-gray-600 leading-relaxed">Tai nạn đường bộ, hàng không, hàng hải và đường sắt</p>
-        </div>
-        
-        <div class="service-card bg-white border border-gray-100 p-8 shadow-sm rounded-xl text-center transition-all duration-300 hover:shadow-md hover:-translate-y-1 cursor-pointer"
-            data-incident-type="medical" onclick="navigateToMapWithFilter('medical')">
-            <div class="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mb-6 mx-auto">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                </svg>
-            </div>
-            <h3 class="font-bold text-xl mb-3 text-gray-800">Y Tế</h3>
-            <p class="text-gray-600 leading-relaxed">Cấp cứu y tế, tai nạn lao động, sự cố sức khỏe</p>
-        </div>
-    </div>
-    </div>
-
-  <section class="py-8 bg-gradient-to-b from-gray-50 to-white relative">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Phần tiêu đề - ĐÃ CHỈNH CĂN GIỮA VÀ MÀU SẮC -->
-        <div class="mb-6 text-center">
-            <h1 class="text-3xl font-bold text-gray-800">Bản đồ sự cố</h1>
-            <p class="text-gray-700 mt-2">Theo dõi và quản lý các sự cố trong khu vực thời gian thực</p>
-        </div>
-
-        <!-- Bản đồ chiếm toàn bộ chiều rộng -->
-        <div class="w-full">
-            <div id="incident-map" class="map-container rounded-xl shadow-lg border border-gray-200 h-[calc(100vh-200px)]"></div>
             
-            <div class="mt-4 flex flex-wrap gap-3 items-center justify-between">
-                <div class="flex flex-wrap gap-2">
-                    <button id="zoom-in-btn" class="bg-white border border-gray-300 px-4 py-2 rounded-lg flex items-center hover:bg-gray-50 transition shadow-sm font-medium">
-                        <i data-feather="zoom-in" class="mr-2 w-4 h-4"></i> Phóng to
-                    </button>
-                    <button id="zoom-out-btn" class="bg-white border border-gray-300 px-4 py-2 rounded-lg flex items-center hover:bg-gray-50 transition shadow-sm font-medium">
-                        <i data-feather="zoom-out" class="mr-2 w-4 h-4"></i> Thu nhỏ
-                    </button>
-                    
-                    <!-- Nút chuyển sang trang bản đồ sự cố -->
-                    <button id="incident-map-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-blue-700 transition shadow-sm font-medium">
-                        <i data-feather="map" class="mr-2 w-4 h-4"></i> Xem bản đồ sự cố chi tiết
-                    </button>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="service-card bg-white border border-gray-100 p-8 shadow-sm rounded-xl text-center transition-all duration-300 hover:shadow-md hover:-translate-y-1 cursor-pointer" 
+                    data-incident-type="disaster" onclick="navigateToMapWithFilter('disaster')">
+                    <div class="w-20 h-20 bg-red-100 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-2xl mb-4 text-gray-800">Thiên Tai</h3>
+                    <p class="text-gray-600 leading-relaxed">Bão lụt, động đất, sạt lở đất và các hiện tượng thiên tai khác</p>
                 </div>
                 
-                <div class="flex items-center text-sm text-gray-600">
-                    <div class="flex items-center mr-4">
-                        <div class="w-3 h-3 bg-red-500 rounded-full mr-2 animate-pulse"></div>
-                        <span>Đang xử lý</span>
+                <div class="service-card bg-white border border-gray-100 p-8 shadow-sm rounded-xl text-center transition-all duration-300 hover:shadow-md hover:-translate-y-1 cursor-pointer"
+                    data-incident-type="fire" onclick="navigateToMapWithFilter('fire')">
+                    <div class="w-20 h-20 bg-red-100 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z" />
+                        </svg>
                     </div>
-                    <div class="flex items-center">
-                        <div class="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
-                        <span>Đã giải quyết</span>
+                    <h3 class="font-bold text-2xl mb-4 text-gray-800">Hỏa Hoạn</h3>
+                    <p class="text-gray-600 leading-relaxed">Cứu hỏa, ứng cứu các vụ cháy nổ, sự cố công nghiệp</p>
+                </div>
+                
+                <div class="service-card bg-white border border-gray-100 p-8 shadow-sm rounded-xl text-center transition-all duration-300 hover:shadow-md hover:-translate-y-1 cursor-pointer"
+                    data-incident-type="accident" onclick="navigateToMapWithFilter('accident')">
+                    <div class="w-20 h-20 bg-red-100 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-2xl mb-4 text-gray-800">Tai Nạn Giao Thông</h3>
+                    <p class="text-gray-600 leading-relaxed">Tai nạn đường bộ, hàng không, hàng hải và đường sắt</p>
+                </div>
+                
+                <div class="service-card bg-white border border-gray-100 p-8 shadow-sm rounded-xl text-center transition-all duration-300 hover:shadow-md hover:-translate-y-1 cursor-pointer"
+                    data-incident-type="flood" onclick="navigateToMapWithFilter('flood')">
+                    <div class="w-20 h-20 bg-red-100 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-2xl mb-4 text-gray-800">Ngập Lụt</h3>
+                    <p class="text-gray-600 leading-relaxed">Ngập lụt đô thị, lũ lụt, sạt lở và các sự cố liên quan đến nước</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bản đồ sự cố -->
+    <section class="py-16 bg-gradient-to-b from-gray-50 to-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-12 text-center">
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">Bản Đồ Sự Cố</h2>
+                <p class="text-xl text-gray-700 max-w-3xl mx-auto">Theo dõi và quản lý các sự cố trong khu vực thời gian thực để có phản ứng kịp thời</p>
+            </div>
+
+            <div class="w-full">
+                <div id="incident-map" class="map-container rounded-xl shadow-lg border border-gray-200 h-96 lg:h-[500px] mb-8"></div>
+                
+                <div class="flex flex-col lg:flex-row gap-4 items-center justify-between">
+                    <div class="flex flex-wrap gap-3">
+                        <button id="zoom-in-btn" class="bg-white border border-gray-300 px-5 py-3 rounded-lg flex items-center hover:bg-gray-50 transition shadow-sm font-medium">
+                            <i data-feather="zoom-in" class="mr-2 w-4 h-4"></i> Phóng to
+                        </button>
+                        <button id="zoom-out-btn" class="bg-white border border-gray-300 px-5 py-3 rounded-lg flex items-center hover:bg-gray-50 transition shadow-sm font-medium">
+                            <i data-feather="zoom-out" class="mr-2 w-4 h-4"></i> Thu nhỏ
+                        </button>
+                        
+                        <button id="incident-map-btn" class="bg-blue-600 text-white px-5 py-3 rounded-lg flex items-center hover:bg-blue-700 transition shadow-sm font-medium">
+                            <i data-feather="map" class="mr-2 w-4 h-4"></i> Xem bản đồ chi tiết
+                        </button>
+                    </div>
+                    
+                    <div class="flex items-center text-sm text-gray-600 mt-4 lg:mt-0">
+                        <div class="flex items-center mr-6">
+                            <div class="w-4 h-4 bg-red-500 rounded-full mr-2 animate-pulse"></div>
+                            <span>Đang xử lý</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-4 h-4 bg-green-500 rounded-full mr-2"></div>
+                            <span>Đã giải quyết</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
-
-<!-- Script để xử lý sự kiện click -->
-<script>
-// Hàm chuyển hướng đến trang map với bộ lọc
-function navigateToMapWithFilter(incidentType) {
-    // Lưu loại sự cố vào localStorage để trang map có thể đọc
-    localStorage.setItem('selectedIncidentType', incidentType);
-    
-    // Chuyển hướng đến trang map
-    window.location.href = 'pages/map.html';
-}
-
-// Hàm lọc theo loại sự cố (giữ lại cho tương thích)
-function filterByIncidentType(type) {
-    navigateToMapWithFilter(type);
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    // Khởi tạo feather icons
-    if (typeof feather !== 'undefined') {
-        feather.replace();
-    }
-    
-    // Xử lý sự kiện click nút bản đồ sự cố
-    const incidentMapBtn = document.getElementById('incident-map-btn');
-    if (incidentMapBtn) {
-        incidentMapBtn.addEventListener('click', function() {
-            // Chuyển hướng đến trang map.html
-            window.location.href = 'pages/map.html';
-        });
-    }
-    
-    // Xử lý sự kiện cho các nút phóng to/thu nhỏ (nếu cần)
-    const zoomInBtn = document.getElementById('zoom-in-btn');
-    const zoomOutBtn = document.getElementById('zoom-out-btn');
-    
-    if (zoomInBtn) {
-        zoomInBtn.addEventListener('click', function() {
-            // Thêm logic phóng to bản đồ ở đây
-            console.log('Phóng to bản đồ');
-        });
-    }
-    
-    if (zoomOutBtn) {
-        zoomOutBtn.addEventListener('click', function() {
-            // Thêm logic thu nhỏ bản đồ ở đây
-            console.log('Thu nhỏ bản đồ');
-        });
-    }
-
-    // Xử lý menu mobile
-    const menuToggle = document.getElementById('menu-toggle');
-    const mobileMenu = document.getElementById('mobile-menu');
-    
-    if (menuToggle && mobileMenu) {
-        menuToggle.addEventListener('click', function() {
-            mobileMenu.classList.toggle('hidden');
-            feather.replace();
-        });
-    }
-});
-</script>
+    </section>
 
     <!-- Nút Đăng Ký Cứu Hộ -->
     <section class="py-16 bg-gradient-to-b from-white to-gray-50">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <div class="bg-gradient-to-r from-red-500 to-orange-500 rounded-2xl p-12 shadow-lg">
-                <h2 class="text-3xl font-bold text-white mb-4">Trở Thành Người Cứu Hộ</h2>
-                <p class="text-red-100 text-lg mb-8 max-w-2xl mx-auto">Tham gia cùng chúng tôi để hỗ trợ cộng đồng trong các tình huống khẩn cấp. Mỗi đóng góp của bạn có thể cứu sống nhiều người.</p>
+                <h2 class="text-4xl font-bold text-white mb-6">Trở Thành Người Cứu Hộ</h2>
+                <p class="text-red-100 text-xl mb-10 max-w-2xl mx-auto">Tham gia cùng chúng tôi để hỗ trợ cộng đồng trong các tình huống khẩn cấp. Mỗi đóng góp của bạn có thể cứu sống nhiều người.</p>
                 
-                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <div class="flex flex-col sm:flex-row gap-4 justify-center mb-12">
                     <a href="pages/login.html" class="bg-white text-red-600 hover:bg-gray-100 px-8 py-4 rounded-xl font-bold text-lg transition-all shadow-lg flex items-center justify-center">
                         <i data-feather="user-plus" class="mr-3 w-5 h-5"></i>
                         Đăng Ký Cứu Hộ
                     </a>
-                   
+                    <a href="pages/login.html" class="bg-transparent border-2 border-white text-white hover:bg-white hover:bg-opacity-10 px-8 py-4 rounded-xl font-bold text-lg transition-all shadow-lg flex items-center justify-center">
+                        <i data-feather="log-in" class="mr-3 w-5 h-5"></i>
+                        Đăng Nhập
+                    </a>
                 </div>
                 
-                <div class="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-6 text-white">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-8 text-white">
                     <div class="flex flex-col items-center">
-                        <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mb-3">
-                            <i data-feather="shield" class="w-6 h-6"></i>
+                        <div class="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mb-4">
+                            <i data-feather="shield" class="w-8 h-8"></i>
                         </div>
-                        <h4 class="font-bold mb-1">Đào Tạo Chuyên Nghiệp</h4>
-                        <p class="text-red-100 text-sm">Được đào tạo kỹ năng cứu hộ bài bản</p>
+                        <h4 class="font-bold text-lg mb-2">Đào Tạo Chuyên Nghiệp</h4>
+                        <p class="text-red-100">Được đào tạo kỹ năng cứu hộ bài bản</p>
                     </div>
                     <div class="flex flex-col items-center">
-                        <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mb-3">
-                            <i data-feather="users" class="w-6 h-6"></i>
+                        <div class="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mb-4">
+                            <i data-feather="users" class="w-8 h-8"></i>
                         </div>
-                        <h4 class="font-bold mb-1">Cộng Đồng Hỗ Trợ</h4>
-                        <p class="text-red-100 text-sm">Tham gia mạng lưới cứu hộ quốc gia</p>
+                        <h4 class="font-bold text-lg mb-2">Cộng Đồng Hỗ Trợ</h4>
+                        <p class="text-red-100">Tham gia mạng lưới cứu hộ quốc gia</p>
                     </div>
                     <div class="flex flex-col items-center">
-                        <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mb-3">
-                            <i data-feather="award" class="w-6 h-6"></i>
+                        <div class="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mb-4">
+                            <i data-feather="award" class="w-8 h-8"></i>
                         </div>
-                        <h4 class="font-bold mb-1">Ghi Nhận Công Lao</h4>
-                        <p class="text-red-100 text-sm">Được ghi nhận và vinh danh đóng góp</p>
+                        <h4 class="font-bold text-lg mb-2">Ghi Nhận Công Lao</h4>
+                        <p class="text-red-100">Được ghi nhận và vinh danh đóng góp</p>
                     </div>
                 </div>
             </div>
@@ -369,22 +249,33 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
     </div>
 
-        <!-- Footer -->
-        <footer class="bg-gray-900 text-white py-16">
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 footer-grid">
                 <div>
-                    <div class="flex items-center mb-4">
+                    <div class="flex items-center mb-6">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                         </svg>
                         <span class="text-2xl font-bold bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">CỨU HỘ QUỐC GIA</span>
                     </div>
-                    <p class="text-gray-400 leading-relaxed">Kết nối người dân với lực lượng cứu hộ trong các tình huống khẩn cấp.</p>
+                    <p class="text-gray-400 leading-relaxed mb-4">Kết nối người dân với lực lượng cứu hộ trong các tình huống khẩn cấp.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition">
+                            <i data-feather="facebook" class="w-5 h-5"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition">
+                            <i data-feather="twitter" class="w-5 h-5"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition">
+                            <i data-feather="instagram" class="w-5 h-5"></i>
+                        </a>
+                    </div>
                 </div>
                 <div>
-                    <h4 class="font-bold mb-4">Dịch Vụ</h4>
-                    <ul class="space-y-2">
+                    <h4 class="font-bold text-lg mb-6">Dịch Vụ</h4>
+                    <ul class="space-y-3">
                         <li><a href="#" class="text-gray-400 hover:text-white transition">Cứu hỏa</a></li>
                         <li><a href="#" class="text-gray-400 hover:text-white transition">Cứu hộ giao thông</a></li>
                         <li><a href="#" class="text-gray-400 hover:text-white transition">Y tế khẩn cấp</a></li>
@@ -392,8 +283,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     </ul>
                 </div>
                 <div>
-                    <h4 class="font-bold mb-4">Liên Kết</h4>
-                    <ul class="space-y-2">
+                    <h4 class="font-bold text-lg mb-6">Liên Kết</h4>
+                    <ul class="space-y-3">
                         <li><a href="#" class="text-gray-400 hover:text-white transition">Bộ Công An</a></li>
                         <li><a href="#" class="text-gray-400 hover:text-white transition">Bộ Y Tế</a></li>
                         <li><a href="#" class="text-gray-400 hover:text-white transition">Ban Chỉ Đạo PCTT</a></li>
@@ -401,8 +292,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     </ul>
                 </div>
                 <div>
-                    <h4 class="font-bold mb-4">Hỗ Trợ</h4>
-                    <ul class="space-y-2">
+                    <h4 class="font-bold text-lg mb-6">Hỗ Trợ</h4>
+                    <ul class="space-y-3">
                         <li><a href="#" class="text-gray-400 hover:text-white transition">Câu hỏi thường gặp</a></li>
                         <li><a href="#" class="text-gray-400 hover:text-white transition">Hướng dẫn sử dụng</a></li>
                         <li><a href="#" class="text-gray-400 hover:text-white transition">Chính sách bảo mật</a></li>
@@ -416,14 +307,74 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
     </footer>
 
-        <!-- Scripts -->
+    <!-- Scripts -->
     <script src="https://unpkg.com/feather-icons"></script>
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js"></script>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        // Hàm chuyển hướng đến trang map với bộ lọc
+        function navigateToMapWithFilter(incidentType) {
+            // Lưu loại sự cố vào localStorage để trang map có thể đọc
+            localStorage.setItem('selectedIncidentType', incidentType);
+            
+            // Chuyển hướng đến trang map
+            window.location.href = 'pages/map.html';
+        }
+
+        // Hàm lọc theo loại sự cố (giữ lại cho tương thích)
+        function filterByIncidentType(type) {
+            navigateToMapWithFilter(type);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Khởi tạo feather icons
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            }
+            
+            // Xử lý sự kiện click nút bản đồ sự cố
+            const incidentMapBtn = document.getElementById('incident-map-btn');
+            if (incidentMapBtn) {
+                incidentMapBtn.addEventListener('click', function() {
+                    // Chuyển hướng đến trang map.html
+                    window.location.href = 'pages/map.html';
+                });
+            }
+            
+            // Xử lý sự kiện cho các nút phóng to/thu nhỏ (nếu cần)
+            const zoomInBtn = document.getElementById('zoom-in-btn');
+            const zoomOutBtn = document.getElementById('zoom-out-btn');
+            
+            if (zoomInBtn) {
+                zoomInBtn.addEventListener('click', function() {
+                    // Thêm logic phóng to bản đồ ở đây
+                    console.log('Phóng to bản đồ');
+                });
+            }
+            
+            if (zoomOutBtn) {
+                zoomOutBtn.addEventListener('click', function() {
+                    // Thêm logic thu nhỏ bản đồ ở đây
+                    console.log('Thu nhỏ bản đồ');
+                });
+            }
+
+            // Xử lý menu mobile
+            const menuToggle = document.getElementById('menu-toggle');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            if (menuToggle && mobileMenu) {
+                menuToggle.addEventListener('click', function() {
+                    mobileMenu.classList.toggle('hidden');
+                    feather.replace();
+                });
+            }
+        });
+    </script>
     <script src="src/utils/main.js"></script>
     <script src="src/utils/map.js"></script>
     <script src="/assets/js/auth-manager.js"></script>
     <script src="src/services/user-manager.js"></script>
     <script src="src/services/security-manager.js"></script>
-    </body>
-    </html>
+</body>
+</html>
