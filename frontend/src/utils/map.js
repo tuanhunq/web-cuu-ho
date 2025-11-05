@@ -3222,3 +3222,203 @@ document.addEventListener('DOMContentLoaded', function() {
         feather.replace();
     }
 });
+
+
+
+
+
+// src/utils/map-filter.js
+
+class IncidentFilter {
+    constructor() {
+        this.currentFilter = 'all';
+        this.incidents = [];
+        this.init();
+    }
+
+    init() {
+        // Kiểm tra xem có filter được chọn từ trang chủ không
+        const savedFilter = localStorage.getItem('selectedIncidentType');
+        if (savedFilter) {
+            this.currentFilter = savedFilter;
+            localStorage.removeItem('selectedIncidentType'); // Xóa sau khi sử dụng
+        }
+        
+        this.setupFilterButtons();
+        this.loadIncidents();
+        this.applyFilter();
+    }
+
+    setupFilterButtons() {
+        // Thiết lập sự kiện cho các nút lọc
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        filterButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                const filterType = e.target.dataset.filter;
+                this.setFilter(filterType);
+            });
+        });
+
+        // Cập nhật trạng thái nút lọc ban đầu
+        this.updateActiveFilterButton();
+    }
+
+    setFilter(filterType) {
+        this.currentFilter = filterType;
+        this.applyFilter();
+        this.updateActiveFilterButton();
+    }
+
+    updateActiveFilterButton() {
+        // Cập nhật trạng thái active cho các nút lọc
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        filterButtons.forEach(button => {
+            if (button.dataset.filter === this.currentFilter) {
+                button.classList.add('active');
+            } else {
+                button.classList.remove('active');
+            }
+        });
+    }
+
+    loadIncidents() {
+        // Giả lập dữ liệu sự cố - trong thực tế sẽ gọi API
+        this.incidents = [
+            {
+                id: 1,
+                type: 'disaster',
+                title: 'Bão số 9 đổ bộ vào miền Trung',
+                location: { lat: 16.047079, lng: 108.206230 },
+                status: 'active',
+                description: 'Bão mạnh cấp 12-13, giật cấp 15',
+                timestamp: new Date('2023-10-15T08:00:00')
+            },
+            {
+                id: 2,
+                type: 'fire',
+                title: 'Cháy chung cư tại Hà Nội',
+                location: { lat: 21.027763, lng: 105.834160 },
+                status: 'active',
+                description: 'Cháy lớn tại tầng 15 chung cư',
+                timestamp: new Date('2023-10-15T10:30:00')
+            },
+            {
+                id: 3,
+                type: 'accident',
+                title: 'Tai nạn giao thông trên cao tốc',
+                location: { lat: 10.823099, lng: 106.629664 },
+                status: 'active',
+                description: 'Va chạm liên hoàn 5 xe',
+                timestamp: new Date('2023-10-15T14:20:00')
+            },
+            {
+                id: 4,
+                type: 'flood',
+                title: 'Ngập lụt khu vực nội thành',
+                location: { lat: 10.762622, lng: 106.660172 },
+                status: 'active',
+                description: 'Ngập sâu 0.5-1m sau mưa lớn',
+                timestamp: new Date('2023-10-15T16:45:00')
+            },
+            {
+                id: 5,
+                type: 'disaster',
+                title: 'Sạt lở đất tại vùng núi',
+                location: { lat: 22.356569, lng: 104.810314 },
+                status: 'resolved',
+                description: 'Sạt lở vùi lấp 2 nhà dân',
+                timestamp: new Date('2023-10-14T09:15:00')
+            }
+        ];
+    }
+
+    applyFilter() {
+        const filteredIncidents = this.currentFilter === 'all' 
+            ? this.incidents 
+            : this.incidents.filter(incident => incident.type === this.currentFilter);
+
+        this.displayIncidents(filteredIncidents);
+        this.updateMapMarkers(filteredIncidents);
+        this.updateIncidentCounter(filteredIncidents);
+    }
+
+    displayIncidents(incidents) {
+        const container = document.getElementById('incidents-list');
+        if (!container) return;
+
+        if (incidents.length === 0) {
+            container.innerHTML = `
+                <div class="text-center py-8 text-gray-500">
+                    <i data-feather="alert-circle" class="w-12 h-12 mx-auto mb-4"></i>
+                    <p>Không có sự cố nào thuộc loại này</p>
+                </div>
+            `;
+            feather.replace();
+            return;
+        }
+
+        container.innerHTML = incidents.map(incident => `
+            <div class="incident-item bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-4" data-incident-id="${incident.id}">
+                <div class="flex justify-between items-start mb-2">
+                    <h3 class="font-semibold text-gray-800">${incident.title}</h3>
+                    <span class="incident-badge ${this.getIncidentBadgeClass(incident.type)} px-2 py-1 rounded-full text-xs font-medium">
+                        ${this.getIncidentTypeLabel(incident.type)}
+                    </span>
+                </div>
+                <p class="text-gray-600 text-sm mb-3">${incident.description}</p>
+                <div class="flex justify-between items-center text-sm text-gray-500">
+                    <span>${this.formatTime(incident.timestamp)}</span>
+                    <span class="status ${incident.status === 'active' ? 'text-red-500' : 'text-green-500'}">
+                        ${incident.status === 'active' ? 'Đang xử lý' : 'Đã giải quyết'}
+                    </span>
+                </div>
+            </div>
+        `).join('');
+
+        feather.replace();
+    }
+
+    updateMapMarkers(incidents) {
+        // Gọi hàm từ map.js để cập nhật markers
+        if (typeof window.mapManager !== 'undefined') {
+            window.mapManager.updateIncidentMarkers(incidents);
+        }
+    }
+
+    updateIncidentCounter(incidents) {
+        const counterElement = document.getElementById('incident-counter');
+        if (counterElement) {
+            const activeCount = incidents.filter(i => i.status === 'active').length;
+            counterElement.textContent = `${activeCount} sự cố đang hoạt động`;
+        }
+    }
+
+    getIncidentTypeLabel(type) {
+        const labels = {
+            'disaster': 'Thiên Tai',
+            'fire': 'Hỏa Hoạn',
+            'accident': 'Giao Thông',
+            'flood': 'Ngập Lụt'
+        };
+        return labels[type] || type;
+    }
+
+    getIncidentBadgeClass(type) {
+        const classes = {
+            'disaster': 'bg-blue-100 text-blue-800',
+            'fire': 'bg-red-100 text-red-800',
+            'accident': 'bg-yellow-100 text-yellow-800',
+            'flood': 'bg-cyan-100 text-cyan-800'
+        };
+        return classes[type] || 'bg-gray-100 text-gray-800';
+    }
+
+    formatTime(timestamp) {
+        return new Date(timestamp).toLocaleString('vi-VN');
+    }
+}
+
+// Khởi tạo bộ lọc khi trang được tải
+document.addEventListener('DOMContentLoaded', function() {
+    window.incidentFilter = new IncidentFilter();
+});

@@ -51,10 +51,7 @@
                             <i class="fas fa-newspaper w-5 text-center"></i>
                             <span class="ml-3 font-medium">Tin tức & Bài viết</span>
                         </a>
-                        <a href="#" class="nav-item flex items-center px-3 py-3 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg" data-tab="weather">
-                            <i class="fas fa-cloud-sun w-5 text-center"></i>
-                            <span class="ml-3 font-medium">Dự báo Thời tiết</span>
-                        </a>
+                       
                     </div>
                     
                     <!-- Emergency Management -->
@@ -596,56 +593,9 @@
     </div>
 </div>
                 
-                <!-- Weather Management Tab -->
-                <div id="weather" class="tab-content">
-                    <div class="bg-white rounded-lg border border-gray-200">
-                        <div class="p-6 border-b border-gray-200">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <h3 class="text-xl font-semibold text-gray-900">Quản lý Dự báo Thời tiết</h3>
-                                    <p class="text-gray-600 mt-1">Dự báo thời tiết và cảnh báo thiên tai</p>
-                                </div>
-                                <button id="add-weather-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition flex items-center">
-                                    <i class="fas fa-plus mr-2"></i>
-                                    Thêm dự báo
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Weather Forecast -->
-                        <div class="p-6 border-b border-gray-200">
-                            <h4 class="text-lg font-semibold text-gray-900 mb-4">Dự báo 7 ngày tới</h4>
-                            <div class="grid grid-cols-2 md:grid-cols-7 gap-4" id="weather-forecast">
-                                <!-- Weather forecast will be populated by JavaScript -->
-                            </div>
-                        </div>
-
-                        <!-- Weather Alerts -->
-                        <div class="p-6">
-                            <h4 class="text-lg font-semibold text-gray-900 mb-4">Cảnh báo thời tiết</h4>
-                            <div class="overflow-x-auto">
-                                <table class="min-w-full divide-y divide-gray-200">
-                                    <thead class="bg-gray-50">
-                                        <tr>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Loại cảnh báo</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Khu vực</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mức độ</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thời gian</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thao tác</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="bg-white divide-y divide-gray-200" id="weather-alerts-table-body">
-                                        <!-- Weather alerts will be populated by JavaScript -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        
                 
-                <!-- Reports Management Tab -->
+              <!-- Reports Management Tab -->
 <div id="reports" class="tab-content">
     <!-- Stats Overview -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
@@ -818,59 +768,307 @@
 </div>
                 
                 <!-- Incidents Management Tab -->
-                <div id="incidents" class="tab-content">
-                    <div class="bg-white rounded-lg border border-gray-200">
-                        <div class="p-6 border-b border-gray-200">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <h3 class="text-xl font-semibold text-gray-900">Sự cố Đang xử lý</h3>
-                                    <p class="text-gray-600 mt-1">Theo dõi và quản lý các sự cố đang được xử lý</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-6">
-                            <p class="text-gray-600">Nội dung quản lý sự cố đang xử lý sẽ được hiển thị tại đây.</p>
-                        </div>
-                    </div>
+<div id="incidents" class="tab-content">
+    <!-- Stats Overview -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+        <div class="stats-card rounded-lg shadow-sm p-6">
+            <div class="flex items-center">
+                <div class="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-clock text-white text-xl"></i>
                 </div>
-                
-                <!-- Users Management Tab -->
-                <div id="users" class="tab-content">
-                    <div class="bg-white rounded-lg border border-gray-200">
-                        <div class="p-6 border-b border-gray-200">
-                            <div class="flex justify-between items-center">
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-white opacity-90">Đang chờ xử lý</p>
+                    <p class="text-2xl font-bold text-white">24</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stats-card rounded-lg shadow-sm p-6">
+            <div class="flex items-center">
+                <div class="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-exclamation-triangle text-white text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-white opacity-90">Khẩn cấp</p>
+                    <p class="text-2xl font-bold text-white">8</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stats-card rounded-lg shadow-sm p-6">
+            <div class="flex items-center">
+                <div class="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-user-check text-white text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-white opacity-90">Đã xác nhận</p>
+                    <p class="text-2xl font-bold text-white">12</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stats-card rounded-lg shadow-sm p-6">
+            <div class="flex items-center">
+                <div class="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-hourglass-half text-white text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-white opacity-90">Chờ bổ sung thông tin</p>
+                    <p class="text-2xl font-bold text-white">4</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters and Actions -->
+    <div class="bg-white rounded-lg shadow-sm mb-6">
+        <div class="p-6 border-b">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div class="flex flex-col sm:flex-row gap-4 flex-1">
+                    <div class="relative flex-1">
+                        <input type="text" id="search-incidents-input" placeholder="Tìm kiếm sự cố..." 
+                               class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                    </div>
+                    <select id="type-incidents-filter" class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                        <option value="all">Tất cả loại</option>
+                        <option value="fire">Cháy</option>
+                        <option value="flood">Ngập lụt</option>
+                        <option value="accident">Tai nạn</option>
+                        <option value="medical">Y tế</option>
+                        <option value="disaster">Thiên tai</option>
+                        <option value="other">Khác</option>
+                    </select>
+                    <select id="priority-incidents-filter" class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                        <option value="all">Tất cả mức độ</option>
+                        <option value="critical">Rất cao</option>
+                        <option value="high">Cao</option>
+                        <option value="medium">Trung bình</option>
+                        <option value="low">Thấp</option>
+                    </select>
+                </div>
+                <div class="flex gap-3">
+                    <button id="toggle-incidents-filters" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition flex items-center">
+                        <i class="fas fa-filter mr-2"></i>
+                        Bộ lọc nâng cao
+                    </button>
+                    <button id="sync-incidents-btn" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition flex items-center">
+                        <i class="fas fa-sync-alt mr-2"></i>
+                        Đồng bộ
+                    </button>
+                    <button id="export-incidents-btn" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition flex items-center">
+                        <i class="fas fa-download mr-2"></i>
+                        Xuất Excel
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Advanced Filters -->
+        <div id="advanced-incidents-filters" class="advanced-filters hidden p-6 border-b bg-gray-50">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Ngày báo cáo từ</label>
+                    <input type="date" id="incidents-start-date" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Đến ngày</label>
+                    <input type="date" id="incidents-end-date" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Khu vực</label>
+                    <select id="region-incidents-filter" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                        <option value="all">Tất cả</option>
+                        <option value="north">Miền Bắc</option>
+                        <option value="central">Miền Trung</option>
+                        <option value="south">Miền Nam</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Trạng thái xử lý</label>
+                    <select id="status-incidents-filter" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                        <option value="all">Tất cả</option>
+                        <option value="pending">Chờ xác nhận</option>
+                        <option value="verified">Đã xác nhận</option>
+                        <option value="in-progress">Đang xử lý</option>
+                        <option value="need-info">Cần bổ sung thông tin</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Incidents Table -->
+    <div class="bg-white rounded-lg shadow-sm">
+        <div class="p-6 border-b">
+            <h3 class="text-lg font-semibold text-gray-900">Danh sách sự cố đang xử lý</h3>
+        </div>
+        <div class="p-6">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thông tin sự cố</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Người báo cáo</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thời gian</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mức độ</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200" id="incidents-table-body">
+                        <!-- Incidents data will be populated by JavaScript -->
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#INC-001</td>
+                            <td class="px-6 py-4">
                                 <div>
-                                    <h3 class="text-xl font-semibold text-gray-900">Quản lý Tài khoản</h3>
-                                    <p class="text-gray-600 mt-1">Quản lý tài khoản người dùng hệ thống</p>
+                                    <p class="text-sm font-medium text-gray-900">Cháy nhà tại Quận 1</p>
+                                    <p class="text-sm text-gray-500">123 Nguyễn Huệ, P. Bến Nghé, Q.1</p>
                                 </div>
-                                <button id="add-user-btn" class="bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 transition flex items-center">
-                                    <i class="fas fa-plus mr-2"></i>
-                                    Thêm người dùng
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-900">Nguyễn Văn A</p>
+                                    <p class="text-sm text-gray-500">0909123456</p>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <div>
+                                    <p>10:30 AM</p>
+                                    <p>01/11/2025</p>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                    Rất cao
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                    Chờ xác nhận
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <button class="text-green-600 hover:text-green-900 mr-3 verify-incident-btn" data-id="INC-001">
+                                    <i class="fas fa-check-circle mr-1"></i> Xác nhận
                                 </button>
-                            </div>
-                        </div>
-                        <div class="p-6">
-                            <div class="overflow-x-auto">
-                                <table class="min-w-full divide-y divide-gray-200">
-                                    <thead class="bg-gray-50">
-                                        <tr>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tên đăng nhập</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Họ tên</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vai trò</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thao tác</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="bg-white divide-y divide-gray-200" id="users-table-body">
-                                        <!-- Users data will be populated by JavaScript -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
+                                <button class="text-blue-600 hover:text-blue-900 mr-3 view-incident-btn" data-id="INC-001">
+                                    <i class="fas fa-eye mr-1"></i> Xem
+                                </button>
+                                <button class="text-red-600 hover:text-red-900 reject-incident-btn" data-id="INC-001">
+                                    <i class="fas fa-times-circle mr-1"></i> Từ chối
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#INC-002</td>
+                            <td class="px-6 py-4">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-900">Ngập lụt tại Quận Bình Thạnh</p>
+                                    <p class="text-sm text-gray-500">45 Điện Biên Phủ, P.25, Q. Bình Thạnh</p>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-900">Trần Thị B</p>
+                                    <p class="text-sm text-gray-500">0918123456</p>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <div>
+                                    <p>09:15 AM</p>
+                                    <p>01/11/2025</p>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-800">
+                                    Cao
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                    Đã xác nhận
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <button class="text-green-600 hover:text-green-900 mr-3 assign-incident-btn" data-id="INC-002">
+                                    <i class="fas fa-user-check mr-1"></i> Phân công
+                                </button>
+                                <button class="text-blue-600 hover:text-blue-900 mr-3 view-incident-btn" data-id="INC-002">
+                                    <i class="fas fa-eye mr-1"></i> Xem
+                                </button>
+                                <button class="text-gray-600 hover:text-gray-900 update-incident-btn" data-id="INC-002">
+                                    <i class="fas fa-edit mr-1"></i> Cập nhật
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#INC-003</td>
+                            <td class="px-6 py-4">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-900">Tai nạn giao thông trên QL1A</p>
+                                    <p class="text-sm text-gray-500">Km 15+200, QL1A, H. Nhà Bè</p>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-900">Lê Văn C</p>
+                                    <p class="text-sm text-gray-500">0935123456</p>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <div>
+                                    <p>08:45 AM</p>
+                                    <p>01/11/2025</p>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                    Trung bình
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
+                                    Cần bổ sung thông tin
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <button class="text-green-600 hover:text-green-900 mr-3 request-info-btn" data-id="INC-003">
+                                    <i class="fas fa-comment-alt mr-1"></i> Yêu cầu thông tin
+                                </button>
+                                <button class="text-blue-600 hover:text-blue-900 mr-3 view-incident-btn" data-id="INC-003">
+                                    <i class="fas fa-eye mr-1"></i> Xem
+                                </button>
+                                <button class="text-red-600 hover:text-red-900 reject-incident-btn" data-id="INC-003">
+                                    <i class="fas fa-times-circle mr-1"></i> Từ chối
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination -->
+            <div class="mt-6 flex justify-between items-center">
+                <p class="text-sm text-gray-700">
+                    Hiển thị <span id="incidents-showing-from">1</span>-<span id="incidents-showing-to">3</span> của <span id="incidents-total-items">24</span> sự cố
+                </p>
+                <div class="flex space-x-2" id="incidents-pagination">
+                    <button class="px-3 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="px-3 py-2 bg-red-600 text-white rounded-lg">1</button>
+                    <button class="px-3 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">2</button>
+                    <button class="px-3 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">3</button>
+                    <button class="px-3 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
                 
                 <!-- Roles Management Tab -->
                 <div id="roles" class="tab-content">
